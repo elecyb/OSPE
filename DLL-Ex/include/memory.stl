@@ -1,0 +1,880 @@
+// -*- C++ -*-
+#ifndef __STD_MEMORY
+#define __STD_MEMORY
+#pragma option push -b -a8 -pc -Vx- -Ve- -w-inl -w-aus -w-sig
+
+/***************************************************************************
+ *
+ * memory - declarations for the Standard Library memory implementation
+ *
+ ***************************************************************************
+ *
+ * Copyright (c) 1994
+ * Hewlett-Packard Company
+ *
+ * Permission to use, copy, modify, distribute and sell this software
+ * and its documentation for any purpose is hereby granted without fee,
+ * provided that the above copyright notice appear in all copies and
+ * that both that copyright notice and this permission notice appear
+ * in supporting documentation.  Hewlett-Packard Company makes no
+ * representations about the suitability of this software for any
+ * purpose.  It is provided "as is" without express or implied warranty.
+ *
+ *
+ ***************************************************************************
+ *
+ * Copyright (c) 1994-1999 Rogue Wave Software, Inc.  All Rights Reserved.
+ *
+ * This computer software is owned by Rogue Wave Software, Inc. and is
+ * protected by U.S. copyright laws and other laws and by international
+ * treaties.  This computer software is furnished by Rogue Wave Software,
+ * Inc. pursuant to a written license agreement and may be used, copied,
+ * transmitted, and stored only in accordance with the terms of such
+ * license and with the inclusion of the above copyright notice.  This
+ * computer software or any other copies thereof may not be provided or
+ * otherwise made available to any other person.
+ *
+ * U.S. Government Restricted Rights.  This computer software is provided
+ * with Restricted Rights.  Use, duplication, or disclosure by the
+ * Government is subject to restrictions as set forth in subparagraph (c)
+ * (1) (ii) of The Rights in Technical Data and Computer Software clause
+ * at DFARS 252.227-7013 or subparagraphs (c) (1) and (2) of the
+ * Commercial Computer Software – Restricted Rights at 48 CFR 52.227-19,
+ * as applicable.  Manufacturer is Rogue Wave Software, Inc., 5500
+ * Flatiron Parkway, Boulder, Colorado 80301 USA.
+ *
+ **************************************************************************/ 
+
+#include <stdcomp.h>
+
+#ifndef _RWSTD_NO_NEW_HEADER
+#include <cstddef>
+#include <cstdlib>
+#include <climits>
+#else
+#include <stddef.h>
+#include <stdlib.h>
+#include <limits.h>
+
+#endif //_RWSTD_NO_NEW_HEADER
+
+#include <new>
+#include <rw/iterator>
+#include <utility>
+#include <rw/rwstderr.h>
+#include <rw/stdmutex.h>
+//
+// Turn off the warnings under the MSVC compiler that
+// say 'bool reserved for future use' and turn off warnings
+// that say 'debug information truncated to 256 characters'
+//
+#ifdef _RWSTD_MSVC_BOOL_WARNING
+#pragma warning ( disable : 4237 )
+#endif
+#if defined(_MSC_VER) && !defined(__BORLANDC__)
+#pragma warning ( disable : 4786 )
+#endif
+
+#ifdef _RWSTD_NO_NEW_DECL
+extern void _RWSTDExportFunc(*) operator new(size_t size, void* ptr);
+#endif
+
+#ifdef _RWSTD_NO_NEW_HEADER
+#include <exception>
+#endif
+
+#ifndef _RWSTD_NO_NAMESPACE
+namespace __rwstd {
+#endif
+
+//
+// Template used for empty base optimization
+//
+  template <class T , class Base>
+  class __rw_basis : public Base
+  {
+    T __data_;
+  public:
+    __rw_basis(const __rw_basis& b) : __data_(b.__data_) {;}
+    __rw_basis(const T& t, const Base& b) : Base(b), __data_(t) {;}
+    __rw_basis(int t, const Base& b) : Base(b), __data_((T)t) {;}   // TEMP
+    __rw_basis operator=(const T& t) { __data_ = t; return *this; }
+    __rw_basis operator=(int t) { __data_ = (T)t; return *this; }   // TEMP
+    __rw_basis operator=(const __rw_basis& r) 
+    { __data_ = r.__data_; return *this; }
+    __rw_basis operator=(const Base& b) 
+    { *this = __rw_basis<T,Base>(__data_,b); return *this; }
+    operator T() { return __data_; }
+    T data() const { return __data_; }
+  };
+
+// Default buffer size for containers.    
+#ifndef _RWSTD_CONTAINER_BUFFER_SIZE 
+#define _RWSTD_CONTAINER_BUFFER_SIZE 1024
+#endif
+
+#ifndef _RWSTD_VECTOR_CONST_ENLARGE
+  // Double buffer size every time new space is needed
+  // This is the standard compliant method, resulting
+  // in a linear increase in execution time for
+  // individual additions to a container.
+  // if __n is zero then  get initial buffer size from
+  // _RWSTD_CONTAINER_BUFFER_SIZE.  Only vector calls 
+  // this function with a non-zero value for cursize.  
+  // Return new buffer size in bytes.
+  // Third parameter not used.
+  template <class T, class size>
+  inline size __rw_allocation_size(T*,size cursize, size)
+  {
+    if (cursize)
+      return cursize*2;
+    else
+      return
+#ifdef __BORLANDC__  // RW-BUG fix
+      (_RWSTD_CONTAINER_BUFFER_SIZE > sizeof(T)) ? (_RWSTD_CONTAINER_BUFFER_SIZE/sizeof(T)) : 1;
+#else
+      _RWSTD_CONTAINER_BUFFER_SIZE/sizeof(T);
+#endif
+  }
+#else
+  // Increment the buffer size by a set amount
+  // indicated by __delta (if __delta is 0 then
+  // get delta size from _RWSTD_CONTAINER_BUFFER_SIZE
+  // if __n is zero then  get initial buffer size from
+  // _RWSTD_CONTAINER_BUFFER_SIZE.  Only vector calls
+  // this function with a non-zero value for cursize.
+  // Return new buffer size in bytes.
+  template <class T, class size>
+  inline size __rw_allocation_size(T*,size __n, size __delta)
+  {
+    if (__n)
+      return __n + (__delta ?
+             __delta : _RWSTD_CONTAINER_BUFFER_SIZE/sizeof(T));
+    else
+#ifdef __BORLANDC__  // RW-BUG fix
+      (_RWSTD_CONTAINER_BUFFER_SIZE > sizeof(T)) ? (_RWSTD_CONTAINER_BUFFER_SIZE/sizeof(T)) : 1;
+#else
+      _RWSTD_CONTAINER_BUFFER_SIZE/sizeof(T);
+#endif
+  }
+#endif // _RWSTD_CONTAINER_CONST_ENLARGE
+
+#if defined(_RWSTD_NO_DESTROY_NONBUILTIN)
+  template <class T> struct __FS : public T
+  {
+    __FS() { ; }
+    //
+    // Calls destructor, but does not free the space.
+    //
+    void operator delete (void*) {;} 
+  };
+#endif // _RWSTD_NO_DESTROY_NONBUILTIN
+#ifdef __TURBOC__
+#pragma option -w-inl
+#pragma option -w-par
+#endif
+
+  template <class T>
+  inline void __destroy (T* pointer)
+  {
+#if defined(_RWSTD_NO_DESTROY_NONBUILTIN)
+    delete (__FS<T>*) (pointer);
+#else
+#if defined(_RWSTD_EXPLICIT_SCOPE_DESTROY)
+    pointer->T::~T();
+#else
+    pointer->~T();
+#endif // _RWSTD_EXPLICIT_SCOPE_DESTROY
+#endif // _RWSTD_NO_DESTROY_NONBUILTIN
+  }
+  template <class T1, class T2>
+  inline void __construct (T1* p, const T2& value)
+  {
+    new (p) T1(value);
+  }
+
+  template <class ForwardIterator> 
+  _RWSTD_TRICKY_INLINE void __destroy (ForwardIterator first, ForwardIterator last)
+  {
+    while (first != last)
+      ++first;
+  }
+#if defined(_RWSTD_NO_DESTROY_BUILTIN) || defined(_RWSTD_NO_DESTROY_NONBUILTIN)
+//
+// Some specializations of STL destroy for builtin types.f
+//
+  inline void __destroy (void*)             {;}
+  inline void __destroy (char*)             {;}
+  inline void __destroy (unsigned char*)    {;}
+  inline void __destroy (short*)            {;}
+  inline void __destroy (unsigned short*)   {;}
+  inline void __destroy (int*)              {;}
+  inline void __destroy (unsigned int*)     {;}
+  inline void __destroy (long*)             {;}
+  inline void __destroy (unsigned long*)    {;}
+  inline void __destroy (float*)            {;}
+  inline void __destroy (double*)           {;}
+  inline void __destroy (void**)            {;}
+  inline void __destroy (char**)            {;}
+  inline void __destroy (unsigned char**)   {;}
+  inline void __destroy (short**)           {;}
+  inline void __destroy (unsigned short**)  {;}
+  inline void __destroy (int**)             {;}
+  inline void __destroy (unsigned int**)    {;}
+  inline void __destroy (long**)            {;}
+  inline void __destroy (unsigned long**)   {;}
+  inline void __destroy (float**)           {;}
+  inline void __destroy (double**)          {;}
+  inline void __destroy (void***)           {;}
+  inline void __destroy (char***)           {;}
+  inline void __destroy (unsigned char***)  {;}
+  inline void __destroy (short***)          {;}
+  inline void __destroy (unsigned short***) {;}
+  inline void __destroy (int***)            {;}
+  inline void __destroy (unsigned int***)   {;}
+  inline void __destroy (long***)           {;}
+  inline void __destroy (unsigned long***)  {;}
+  inline void __destroy (float***)          {;}
+  inline void __destroy (double***)         {;}
+#ifndef _RWSTD_NO_BOOL
+  inline void __destroy (bool*)             {;}
+  inline void __destroy (bool**)            {;}
+  inline void __destroy (bool***)           {;}
+#endif
+#ifndef _RWSTD_NO_LONGDOUBLE
+  inline void __destroy (long double*)      {;}
+  inline void __destroy (long double**)     {;}
+  inline void __destroy (long double***)    {;}
+#endif 
+#ifndef _RWSTD_NO_OVERLOAD_WCHAR
+  inline void __destroy (wchar_t*)          {;}
+  inline void __destroy (wchar_t**)         {;}
+  inline void __destroy (wchar_t***)        {;}
+#endif
+#endif /*_RWSTD_NO_DESTROY_BUILTIN || _RWSTD_NO_DESTROY_NONBUILTIN*/
+
+#ifdef _RWSTD_LOCALIZED_ERRORS
+  extern const unsigned int _RWSTDExport rwse_OutOfRange;
+#else
+  extern const char _RWSTDExportFunc(*) rwse_OutOfRange;
+#endif // _RWSTD_LOCALIZED_ERRORS
+
+#ifndef _RWSTD_NO_NAMESPACE
+} // __rwstd namespace
+
+namespace std {
+#endif
+
+//
+// The default allocator.
+//
+#ifdef _RWSTD_ALLOCATOR
+
+  template <class T> class allocator;
+
+//
+// void specialization of allocator
+//
+  _RWSTD_TEMPLATE
+  class allocator<void> {  
+  public:
+    typedef void*       pointer;
+    typedef const void* const_pointer;
+    typedef void        value_type;
+   
+    template <class U> 
+    struct rebind { typedef allocator<U> other; };
+    
+  };
+  template <class T>
+  class allocator
+  {
+  public:
+    typedef size_t     size_type;
+    typedef ptrdiff_t  difference_type;
+    typedef T*         pointer;
+    typedef const T*   const_pointer;
+    typedef T&         reference;
+    typedef const T&   const_reference;
+    typedef T          value_type;
+
+    template <class U> struct rebind
+    { typedef allocator<U> other; };
+
+    allocator()  _RWSTD_THROW_SPEC_NULL
+    { ; }
+
+    allocator(const allocator&)  _RWSTD_THROW_SPEC_NULL
+    { ; }
+
+    template <class U>
+    allocator(const allocator<U>&)  _RWSTD_THROW_SPEC_NULL
+    { ; }
+
+    template <class U>
+    allocator<T>& operator=(const allocator<U>& a)  _RWSTD_THROW_SPEC_NULL
+    { return *this; }
+    
+    pointer address(reference x) const
+    { 
+      return _RWSTD_STATIC_CAST(pointer,&x); 
+    }
+    const_pointer address(const_reference x) const
+    { 
+      return _RWSTD_STATIC_CAST(const_pointer,&x); 
+    }
+    pointer allocate(size_type n, allocator<void>::const_pointer = 0)
+    { 
+      pointer tmp =
+      _RWSTD_STATIC_CAST(pointer,(::operator 
+                                  new(_RWSTD_STATIC_CAST(size_t,(n * sizeof(value_type))))));
+      _RWSTD_THROW_NO_MSG(tmp == 0, bad_alloc);
+      return tmp;
+    }
+
+    void deallocate(pointer p, size_type) 
+    { 
+      ::operator delete(p);
+    }
+    size_type max_size() const  _RWSTD_THROW_SPEC_NULL
+    { 
+      return 1 > UINT_MAX/sizeof(T) ? size_type(1) : size_type(UINT_MAX/sizeof(T));
+    }
+    inline void construct(pointer p, const T& val);
+
+    inline void destroy(T* p);
+
+  };
+
+  template <class T>
+  void allocator<T>::construct(pointer p, const T& val)
+  {
+    __RWSTD::__construct(p,val);
+  }
+
+  template <class T>
+  void allocator<T>::destroy(T* p)
+  {
+     __RWSTD::__destroy(p);
+  }
+
+#else
+
+//
+// Alternate allocator uses an interface class (allocator_interface)
+// to get type safety.
+//
+  template <class T>
+  class allocator
+  { 
+  public:
+   
+    typedef size_t    size_type;
+    typedef ptrdiff_t difference_type;
+    typedef T*         pointer;
+    typedef const T*   const_pointer;
+    typedef T&         reference;
+    typedef const T&   const_reference;
+    typedef T          value_type;
+
+    allocator()  _RWSTD_THROW_SPEC_NULL { ; }
+    allocator(const allocator<T>&)  _RWSTD_THROW_SPEC_NULL
+    { ; }
+    allocator<T>& operator=(const allocator<T>&)  _RWSTD_THROW_SPEC_NULL
+    { return *this; }
+
+    void * allocate (size_type n, void *  = 0)
+    { 
+      void * tmp = _RWSTD_STATIC_CAST(void*,(::operator new(_RWSTD_STATIC_CAST(size_t,(n)))));
+      _RWSTD_THROW_NO_MSG(tmp == 0, bad_alloc);
+      return tmp;
+    }
+    
+    void deallocate (void* p, size_type) 
+    { 
+      ::operator delete(p);
+    }
+    size_type max_size (size_type size) const
+    { 
+      return 1 > UINT_MAX/size ? size_type(1) : size_type(UINT_MAX/size);
+    }
+  };
+
+  _RWSTD_TEMPLATE
+  class allocator<void>
+  { 
+  public:
+   
+    typedef size_t    size_type;
+    typedef ptrdiff_t difference_type;
+    typedef void*         pointer;
+    typedef const void*   const_pointer;
+    typedef void          value_type;
+
+    allocator() _RWSTD_THROW_SPEC_NULL { ; }
+    allocator(const allocator<void>&)  _RWSTD_THROW_SPEC_NULL
+    { ; }
+    allocator<void>& operator=(const allocator<void>&)  _RWSTD_THROW_SPEC_NULL
+    { return *this; }
+
+    void * allocate (size_type n, void *  = 0)
+    { 
+      void * tmp = _RWSTD_STATIC_CAST(void*,(::operator new(_RWSTD_STATIC_CAST(size_t,(n)))));
+      _RWSTD_THROW_NO_MSG(tmp == 0, bad_alloc);
+      return tmp;
+    }
+    
+    void deallocate (void* p, size_type) 
+    { 
+      ::operator delete(p);
+    }
+    size_type max_size (size_type size) const
+    { 
+      return 1 > UINT_MAX/size ? size_type(1) : size_type(UINT_MAX/size);
+    }
+  };
+
+//
+// allocator_interface provides all types and typed functions.  Memory
+// allocated as raw bytes using the class provided by the Allocator
+// template parameter.  allocator_interface casts appropriately.
+//
+// Multiple allocator_interface objects can attach to a single 
+// allocator, thus allowing one allocator to allocate all storage
+// for a container, regardless of how many types are involved.
+//
+// The only real restriction is that pointer and reference are
+// hard coded as T* and T&.  Partial specialization would 
+// get around this.
+//
+  template <class Allocator,class T>
+  class allocator_interface 
+  {
+  public:
+    typedef Allocator allocator_type;
+    typedef T*         pointer;
+    typedef const T*   const_pointer;      
+    typedef T&         reference;
+    typedef const T&   const_reference;
+    typedef T          value_type;
+    typedef _TYPENAME _RWSTD_ALLOC_SIZE_TYPE             size_type;
+    typedef _TYPENAME _RWSTD_ALLOC_DIFF_TYPE             difference_type;
+    typedef void*      void_pointer;
+    typedef const void* const_void_pointer;
+
+  protected:
+    allocator_type         alloc_;
+
+  public:
+    allocator_interface()  _RWSTD_THROW_SPEC_NULL  { ; }
+    allocator_interface(const Allocator& a)  _RWSTD_THROW_SPEC_NULL
+    : alloc_(a) { ; }
+
+    pointer address (T& x) 
+    { 
+      return _RWSTD_STATIC_CAST(pointer,&x); 
+    }
+  
+    size_type max_size ()  const
+    { 
+      return alloc_.max_size(sizeof(T));
+    }
+
+    pointer allocate(size_type n, pointer p  = 0)
+    {
+      return _RWSTD_STATIC_CAST(pointer,alloc_.allocate(n*sizeof(T),p));
+    }
+
+    void deallocate(pointer p, size_type n)
+    {
+      alloc_.deallocate(p,n);
+    }
+
+    inline void construct(pointer p, const T& val);
+
+    inline void destroy(T* p);
+
+  };
+  template <class Allocator, class T>
+  inline void 
+  allocator_interface<Allocator,T>::construct(pointer p, const T& val)
+  {
+     __RWSTD::__construct(p,val);
+  }
+
+  template <class Allocator, class T>
+  inline void allocator_interface<Allocator,T>::destroy(T* p)
+  {
+     __RWSTD::__destroy(p);
+  }
+
+  _RWSTD_TEMPLATE
+  class allocator_interface<allocator<void>,void> 
+  {
+  public:
+    typedef allocator<void> allocator_type;
+    typedef void*         pointer;
+    typedef const void*   const_pointer;      
+    typedef void          value_type;
+    typedef allocator<void>::size_type       size_type;
+    typedef allocator<void>::difference_type difference_type;
+
+  protected:
+    allocator_type         alloc_;
+
+  public:
+    allocator_interface()  _RWSTD_THROW_SPEC_NULL { ; }
+    allocator_interface(const allocator<void>& a) _RWSTD_THROW_SPEC_NULL
+    : alloc_(a) { ; }
+
+    size_type max_size ()  const
+    { 
+      return alloc_.max_size(1);
+    }
+
+    pointer allocate(size_type n, pointer  = 0)
+    {
+      return _RWSTD_STATIC_CAST(pointer,alloc_.allocate(n));
+    }
+
+    void deallocate(pointer p, size_type n)
+    {
+      alloc_.deallocate(p,n);
+    }      
+  };
+
+#endif  // _RWSTD_ALLOCATOR
+
+// 
+// Allocator globals
+//
+  template <class T, class U>
+  inline bool operator==(const allocator<T>&, const allocator<U>&)  _RWSTD_THROW_SPEC_NULL
+  {
+    return true;
+  }
+
+#ifndef _RWSTD_NO_NAMESPACE
+  template <class T, class U>
+  inline bool operator!=(const allocator<T>&, const allocator<U>&)  _RWSTD_THROW_SPEC_NULL
+  {
+    return false;
+  }
+#endif
+
+//
+// Raw storage iterator.
+//
+
+  template <class OutputIterator, class T>
+  class raw_storage_iterator
+    : public iterator<output_iterator_tag,T,ptrdiff_t,T*,T&>
+  {
+  protected:
+    OutputIterator iter;
+
+  public:
+    typedef OutputIterator iterator_type;
+    typedef T element_type;
+
+    _EXPLICIT raw_storage_iterator (OutputIterator x) : iter(x) {}
+    raw_storage_iterator<OutputIterator, T>& operator* () { return *this; }
+    raw_storage_iterator<OutputIterator, T>& operator= (const T& element)
+    {
+      ::new(&(*iter)) T(element);
+      return *this;
+    }
+    raw_storage_iterator<OutputIterator, T>& operator++ ()
+    {
+      ++iter; return *this;
+    }
+    raw_storage_iterator<OutputIterator, T> operator++ (int)
+    {
+      raw_storage_iterator<OutputIterator, T> tmp = *this;
+      ++iter;
+      return tmp;
+    }
+  };
+//
+// Temporary buffers
+//
+
+#ifdef _RWSTD_FAST_TEMP_BUF
+
+#if defined(_RWSTD_SHARED_LIB) && !defined (_RWSTD_MULTI_THREAD)
+#error Cannot use fast temporary buffer in this configuration
+#endif
+#if defined(_RWSTDDLL) && defined (__WIN16__)
+#error Cannot use fast temporary buffer in this configuration
+#endif
+
+#ifndef __stl_buffer_size
+#define __stl_buffer_size 16384  /* 16k */
+#endif
+
+#ifndef _RWSTD_NO_NAMESPACE
+}
+
+namespace __rwstd {
+#endif
+
+  extern char _RWSTDExport stl_temp_buffer[__stl_buffer_size];
+
+#ifdef _RWSTD_MULTI_THREAD
+  extern _RWSTDMutex _RWSTDExport stl_temp_buffer_mutex;
+  extern bool       _RWSTDExport stl_temp_buffer_being_used;
+#endif
+
+#ifndef _RWSTD_NO_NAMESPACE
+} // End of __rwstd namespace
+
+namespace std {
+#endif
+
+  template <class T>
+#ifndef _RWSTD_NO_TEMPLATE_ON_RETURN_TYPE
+  inline pair<T*, ptrdiff_t> get_temporary_buffer (ptrdiff_t len)
+#else
+  inline pair<T*, ptrdiff_t> get_temporary_buffer (ptrdiff_t len, T*)
+#endif
+  {
+    while (len > __stl_buffer_size / sizeof(T))
+    {
+      T* tmp = _RWSTD_STATIC_CAST(T*,( ::operator new(_RWSTD_STATIC_CAST(unsigned int,len) * sizeof(T))));
+      if (tmp)
+      {
+        pair<T*, ptrdiff_t> result(tmp, len);
+        return result;
+      }
+      len = len / 2;
+    }
+    
+#ifdef _RWSTD_MULTI_THREAD
+    _RWSTDGuard guard(__RWSTD::stl_temp_buffer_mutex);
+
+    if (__RWSTD::stl_temp_buffer_being_used)
+    {
+      T* tmp = _RWSTD_STATIC_CAST(T*,(   ::operator new(_RWSTD_STATIC_CAST(unsigned int,len) * sizeof(T))));
+      pair<T*,ptrdiff_t> result(tmp, len);
+      return result;
+    }
+    else
+    {
+      __RWSTD::stl_temp_buffer_being_used = true;
+      pair<T*, ptrdiff_t> result(_RWSTD_STATIC_CAST(T*,
+                                 _RWSTD_STATIC_CAST(void*,__RWSTD::stl_temp_buffer)), 
+                                 _RWSTD_STATIC_CAST(ptrdiff_t,(__stl_buffer_size / sizeof(T))));
+      return result;
+    }
+#else
+    pair<T*, ptrdiff_t> result(_RWSTD_STATIC_CAST(T*,
+                               _RWSTD_STATIC_CAST(void*,__RWSTD::stl_temp_buffer)), 
+                               _RWSTD_STATIC_CAST(ptrdiff_t,(__stl_buffer_size / sizeof(T))));
+    return result;
+#endif /*_RWSTD_MULTI_THREAD*/
+  }
+
+  template <class T>
+  inline void return_temporary_buffer (T* p)
+  {
+#ifdef _RWSTD_MULTI_THREAD
+    _RWSTDGuard guard(__RWSTD::stl_temp_buffer_mutex);
+
+    if (_RWSTD_STATIC_CAST(char*,
+                           _RWSTD_STATIC_CAST(void*,p)) != __RWSTD::stl_temp_buffer) 
+      ::operator delete(p);
+    else
+      __RWSTD::stl_temp_buffer_being_used = false;
+#else
+    if (_RWSTD_STATIC_CAST(char*,
+                           _RWSTD_STATIC_CAST(void*,p)) != __RWSTD::stl_temp_buffer) 
+      ::operator delete(p);
+#endif /*_RWSTD_MULTI_THREAD*/
+  }
+
+#else
+
+  template <class T>
+#ifndef _RWSTD_NO_TEMPLATE_ON_RETURN_TYPE
+  inline pair<T*, ptrdiff_t> get_temporary_buffer (ptrdiff_t len)
+#else
+  inline pair<T*, ptrdiff_t> get_temporary_buffer (ptrdiff_t len, T*)
+#endif
+  {
+    T* tmp = _RWSTD_STATIC_CAST(T*,(   ::operator new(len * sizeof(T))));
+    pair<T*,ptrdiff_t> result(tmp, len);
+    return result;
+  }
+
+  template <class T>
+  inline void return_temporary_buffer (T* p)
+  {
+    ::operator delete(p);
+  }
+
+#endif /*_RWSTD_FAST_TEMP_BUF*/
+//
+// Specialized algorithms.
+//
+
+  template <class InputIterator, class ForwardIterator>
+  _RWSTD_TRICKY_INLINE ForwardIterator uninitialized_copy (InputIterator first, InputIterator last,
+                                                           ForwardIterator result)
+  {
+    ForwardIterator start = result;
+#ifndef _RWSTD_NO_EXCEPTIONS
+    try {
+      while (first != last) 
+         __RWSTD::__construct(result++, *first++);
+    } catch(...) {
+       __RWSTD::__destroy(start,result);
+      throw;
+    }
+#else
+    while (first != last) 
+       __RWSTD::__construct(result++, *first++);
+#endif // _RWSTD_NO_EXCEPTIONS
+
+    return result;
+  }
+
+  template <class ForwardIterator, class T>
+  _RWSTD_TRICKY_INLINE void uninitialized_fill (ForwardIterator first, ForwardIterator last,
+                                                const T& x)
+  {
+    ForwardIterator start = first;
+#ifndef _RWSTD_NO_EXCEPTIONS
+    try {
+      while (first != last) 
+         __RWSTD::__construct(first++, x);
+    } catch(...) {
+       __RWSTD::__destroy(start,first);
+      throw;
+    }
+#else
+    while (first != last) 
+       __RWSTD::__construct(first++, x);
+#endif // _RWSTD_NO_EXCEPTIONS
+  }
+
+  template <class ForwardIterator, class Size, class T>
+  _RWSTD_TRICKY_INLINE void uninitialized_fill_n (ForwardIterator first, Size n, const T& x)
+  {
+    ForwardIterator start = first;
+#ifndef _RWSTD_NO_EXCEPTIONS
+    try {
+      while (n--) 
+         __RWSTD::__construct(first++, x);
+    } catch(...) {
+       __RWSTD::__destroy(start,first);
+      throw;
+    }
+#else
+    while (n--) 
+       __RWSTD::__construct(first++, x);
+#endif // _RWSTD_NO_EXCEPTIONS
+  }
+//
+// Template auto_ptr holds onto a pointer obtained via new and deletes that
+// object when it itself is destroyed (such as when leaving block scope).
+//
+// It can be used to make calls to new() exception safe.
+//
+
+  template<class X> class auto_ptr
+  {
+#ifndef _RWSTD_NO_MEM_CLASS_TEMPLATES
+    template <class Y> class auto_ptr_ref 
+    {
+    public:
+      auto_ptr<Y>& p;
+      auto_ptr_ref(auto_ptr<Y>& a) : p(a) {}
+    };
+#endif    
+
+  public:
+    typedef X element_type;
+
+    //
+    // construct/copy/destroy
+    //
+    _EXPLICIT auto_ptr (X* p = 0)  _RWSTD_THROW_SPEC_NULL
+     : the_p(p)
+    { ; }
+
+    auto_ptr (auto_ptr<X>& a)  _RWSTD_THROW_SPEC_NULL
+     :  the_p((_RWSTD_CONST_CAST(auto_ptr<X>&,a)).release()) 
+    { ; }
+
+    auto_ptr<X>& operator= (auto_ptr<X>& rhs)  _RWSTD_THROW_SPEC_NULL
+    { 
+      reset(rhs.release());
+      return *this;
+    }
+#ifndef _RWSTD_NO_MEMBER_TEMPLATES
+    template <class Y>
+    auto_ptr (auto_ptr<Y>& a)  _RWSTD_THROW_SPEC_NULL
+     : the_p((_RWSTD_CONST_CAST(auto_ptr<Y>&,a)).release()) 
+    { ; }
+
+    template <class Y>
+    auto_ptr<X>& operator= (auto_ptr<Y>& rhs)  _RWSTD_THROW_SPEC_NULL
+    { 
+      reset(rhs.release());
+      return *this;
+    }
+#endif
+
+    ~auto_ptr () _RWSTD_THROW_SPEC_NULL { delete the_p; }
+    //
+    // members
+    //
+    X& operator*  ()  const _RWSTD_THROW_SPEC_NULL { return *the_p;   }
+    X* operator-> ()  const _RWSTD_THROW_SPEC_NULL { return the_p;    }
+    X* get        ()  const _RWSTD_THROW_SPEC_NULL { return the_p;    }
+
+    X* release    ()  _RWSTD_THROW_SPEC_NULL
+    { 
+      X* tmp = the_p;
+      the_p = 0; 
+      return tmp; 
+    }
+
+    void reset (X* p = 0) _RWSTD_THROW_SPEC_NULL
+    { 
+      if (the_p != p)
+      {
+        delete the_p;
+        the_p = p;
+      }
+    }
+
+#ifndef _RWSTD_NO_MEM_CLASS_TEMPLATES
+    auto_ptr(auto_ptr_ref<X> r) _RWSTD_THROW_SPEC_NULL
+    {
+      reset(r.p.release());
+    }
+#ifndef _RWSTD_NO_MEMBER_TEMPLATES
+    template <class Y> operator auto_ptr_ref<Y>() _RWSTD_THROW_SPEC_NULL
+    {
+      return auto_ptr_ref<Y>(*this);
+    }
+    template <class Y> operator auto_ptr<Y>() _RWSTD_THROW_SPEC_NULL
+    {  
+      auto_ptr<Y> tmp;
+      tmp.reset(release());
+      return tmp;
+    }
+#endif // _RWSTD_NO_MEMBER_TEMPLATES
+#endif // _RWSTD_NO_MEM_CLASS_TEMPLATES
+
+  private:
+    X* the_p;
+  };
+#ifndef _RWSTD_NO_NAMESPACE
+}
+#endif
+
+#pragma option pop
+
+#endif /*__STD_MEMORY*/

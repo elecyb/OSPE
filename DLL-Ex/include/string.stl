@@ -1,0 +1,1746 @@
+#ifndef __STRING_STL
+#define __STRING_STL
+#pragma option push -b -a8 -pc -Vx- -Ve- -w-inl -w-aus -w-sig
+// -*- C++ -*-
+/***************************************************************************
+ *
+ * string - Declarations for the Standard Library string classes
+ *
+ ***************************************************************************
+ *
+ * Copyright (c) 1994-1999 Rogue Wave Software, Inc.  All Rights Reserved.
+ *
+ * This computer software is owned by Rogue Wave Software, Inc. and is
+ * protected by U.S. copyright laws and other laws and by international
+ * treaties.  This computer software is furnished by Rogue Wave Software,
+ * Inc. pursuant to a written license agreement and may be used, copied,
+ * transmitted, and stored only in accordance with the terms of such
+ * license and with the inclusion of the above copyright notice.  This
+ * computer software or any other copies thereof may not be provided or
+ * otherwise made available to any other person.
+ *
+ * U.S. Government Restricted Rights.  This computer software is provided
+ * with Restricted Rights.  Use, duplication, or disclosure by the
+ * Government is subject to restrictions as set forth in subparagraph (c)
+ * (1) (ii) of The Rights in Technical Data and Computer Software clause
+ * at DFARS 252.227-7013 or subparagraphs (c) (1) and (2) of the
+ * Commercial Computer Software – Restricted Rights at 48 CFR 52.227-19,
+ * as applicable.  Manufacturer is Rogue Wave Software, Inc., 5500
+ * Flatiron Parkway, Boulder, Colorado 80301 USA.
+ *
+ **************************************************************************/
+
+#ifndef __STD_STRING
+#define __STD_STRING
+
+#include <stdcomp.h>
+#include <rw/rwstderr.h>
+
+#ifndef _RWSTD_NO_NEW_HEADER
+#include <cstring>
+#include <cctype>
+#else
+#include <string.h>
+#include <ctype.h>
+#endif
+
+#ifdef _HPACC_
+#include <wchar.h>
+#else
+#ifndef _RWSTD_NO_WIDE_CHAR
+#ifndef _RWSTD_NO_NEW_HEADER
+#include <cwchar>
+#include <cwctype>
+#else
+#ifndef _RWSTD_NO_WCHAR_H
+#include <wchar.h>
+#endif
+#ifndef _RWSTD_NO_WCTYPE_H
+# include <wctype.h>
+#endif
+#endif
+#endif
+#endif
+
+#ifndef _RW_STD_IOSTREAM
+#include <iostream.h>
+#endif
+
+#include <rw/string_ref>
+
+#ifndef _RWSTD_NO_NAMESPACE
+namespace __rwstd {
+#endif
+//
+// Global error message declarations
+//
+#ifdef _RWSTD_LOCALIZED_ERRORS
+  extern const unsigned int _RWSTDExport __rwse_InvalidSizeParam;
+  extern const unsigned int _RWSTDExport __rwse_PosBeyondEndOfString;
+  extern const unsigned int _RWSTDExport __rwse_ResultLenInvalid;
+  extern const unsigned int _RWSTDExport __rwse_StringIndexOutOfRange;
+  extern const unsigned int _RWSTDExport __rwse_UnexpectedNullPtr;
+#else
+  extern const char _RWSTDExportFunc(*) __rwse_InvalidSizeParam;
+  extern const char _RWSTDExportFunc(*) __rwse_PosBeyondEndOfString;
+  extern const char _RWSTDExportFunc(*) __rwse_ResultLenInvalid;
+  extern const char _RWSTDExportFunc(*) __rwse_StringIndexOutOfRange;
+  extern const char _RWSTDExportFunc(*) __rwse_UnexpectedNullPtr;
+#endif
+#ifdef _RWSTD_NO_STATIC_DEF3
+  extern unsigned long _RWSTDExport __nullref[];
+  extern bool _RWSTDExport __nullref_initialized;
+#endif
+
+#ifndef _RWSTD_NO_NAMESPACE
+} namespace std {
+#endif
+
+  template <class charT, class traits , class Allocator >
+  class _RWSTDExportTemplate basic_string
+  {
+  public:
+
+    //
+    //  Implementation types (see rw/string_ref)
+    //
+    // __string_ref_type is the type of the string reference that holds
+    // the data for a basic_string. Defining _RWSTD_NO_STRING_REF_COUNT
+    // gets you a basic_string that does not use reference counting at all.
+    //
+#ifndef _RWSTD_NO_STRING_REF_COUNT
+    typedef __RWSTD::__string_ref<charT,traits,Allocator> __string_ref_type;
+#else
+    typedef __RWSTD::__string_noref<charT,traits,Allocator> __string_ref_type;
+#endif
+    //
+    // __rep_type is the base class of __string_ref_type.  This type 
+    // defines the representation of the reference class.
+    //
+    typedef _TYPENAME __string_ref_type::__string_ref_rep_type __rep_type;
+    //
+    // __null_ref_type is the type of the null reference.  Every empty 
+    // string holds a reference to the same null reference object in order
+    // to keep the size of an empty string at sizeof(char*) -- assuming
+    // your compiler can handle the empty base optimization.
+    //
+    typedef __RWSTD::__null_string_ref_rep<charT,traits,Allocator,__rep_type>  __null_ref_type;
+
+    //
+    // types
+    //
+    typedef traits                               traits_type;
+    typedef _TYPENAME traits::char_type          value_type;
+    typedef Allocator                            allocator_type;
+
+  private:
+
+#ifdef _RWSTD_ALLOCATOR
+    typedef Allocator  __value_alloc_type;
+    typedef _TYPENAME Allocator::template rebind<__string_ref_type>::other  __ref_alloc_type;
+#else
+    typedef allocator_interface<Allocator,charT>       __value_alloc_type;
+    typedef allocator_interface<Allocator,__string_ref_type>  __ref_alloc_type;
+#endif
+
+  
+  public:
+
+#ifndef _RWSTD_NO_COMPLICATED_TYPEDEF
+    typedef _TYPENAME _RWSTD_ALLOC_SIZE_TYPE              size_type;
+    typedef _TYPENAME _RWSTD_ALLOC_DIFF_TYPE              difference_type;
+    typedef _TYPENAME __value_alloc_type::reference       reference;
+    typedef _TYPENAME __value_alloc_type::const_reference const_reference;
+    typedef _TYPENAME __value_alloc_type::pointer         pointer;
+    typedef _TYPENAME __value_alloc_type::const_pointer   const_pointer;
+    typedef _TYPENAME __value_alloc_type::pointer         iterator;
+    typedef _TYPENAME __value_alloc_type::const_pointer   const_iterator;
+#else
+    typedef size_t                            size_type;
+    typedef ptrdiff_t                         difference_type;
+    typedef charT&                            reference;
+    typedef const charT&                      const_reference;
+    typedef charT*                            pointer;
+    typedef const charT*                      const_pointer;
+    typedef charT*                            iterator;
+    typedef const charT*                      const_iterator;
+#endif  //_RWSTD_NO_COMPLICATED_TYPEDEF
+
+#ifndef _RWSTD_NO_CLASS_PARTIAL_SPEC 
+    typedef _RW_STD::reverse_iterator<const_iterator> const_reverse_iterator;
+    typedef _RW_STD::reverse_iterator<iterator>  reverse_iterator;
+#else
+    typedef _RW_STD::reverse_iterator<const_iterator, 
+      random_access_iterator_tag, value_type, 
+      const_reference, const_pointer, difference_type>
+      const_reverse_iterator;
+    typedef _RW_STD::reverse_iterator<iterator, 
+      random_access_iterator_tag, value_type,
+      reference, pointer, difference_type>
+      reverse_iterator;
+#endif
+
+#ifdef _RWSTD_MSC22_STATIC_INIT_BUG
+#define npos (size_type)-1
+#else
+    static const size_type npos;
+#endif
+
+    inline _EXPLICIT basic_string (const Allocator& _RWSTD_DEFAULT_ARG(Allocator()));
+
+#ifdef _RWSTD_NO_DEFAULT_TEMPLATE_ARGS 
+    inline basic_string (void);
+#endif
+
+    inline basic_string (const basic_string<charT, traits, Allocator>&);
+    basic_string (const basic_string<charT, traits, Allocator>&, 
+                  size_type, size_type _RWSTD_DEFAULT_ARG(npos), 
+                  const Allocator&  _RWSTD_DEFAULT_ARG(Allocator()));
+    basic_string (const charT*, size_type, 
+                  const Allocator& _RWSTD_DEFAULT_ARG(Allocator()));
+    basic_string (const charT*, const Allocator& _RWSTD_DEFAULT_ARG(Allocator()));
+
+#ifdef _RWSTD_NO_DEFAULT_TEMPLATE_ARGS
+    basic_string (const charT*, size_type); 
+    basic_string (const charT*); 
+    basic_string (size_type n, charT c) : __data_((charT*)0,Allocator())
+    { __initn(n,c); }
+#endif
+
+#ifndef _RWSTD_NO_MEMBER_TEMPLATES
+    template <class InputIterator>
+    basic_string (InputIterator, InputIterator, const Allocator& _RWSTD_DEFAULT_ARG(Allocator()));
+    basic_string (int n, charT c, const Allocator& alloc _RWSTD_DEFAULT_ARG(Allocator()))
+      : __data_((charT*)0,alloc)
+    { __initn(n,c); }
+    basic_string (unsigned int n, charT c, const Allocator& alloc _RWSTD_DEFAULT_ARG(Allocator()))
+      : __data_((charT*)0,alloc)
+    { __initn(n,c); }
+    basic_string (long n, charT c, const Allocator& alloc _RWSTD_DEFAULT_ARG(Allocator()))
+      : __data_((charT*)0,alloc)
+    { __initn(n,c); }
+    basic_string (unsigned long n, charT c, const Allocator& alloc _RWSTD_DEFAULT_ARG(Allocator()))
+      : __data_((charT*)0,alloc)
+    { __initn(n,c); }
+    basic_string (short n, charT c, const Allocator& alloc _RWSTD_DEFAULT_ARG(Allocator()))
+      : __data_((charT*)0,alloc)
+    { __initn(n,c); }
+    basic_string (unsigned short n, charT c, const Allocator& alloc _RWSTD_DEFAULT_ARG(Allocator()))
+      : __data_((charT*)0,alloc)
+    { __initn(n,c); }
+    basic_string (char n, charT c, const Allocator& alloc _RWSTD_DEFAULT_ARG(Allocator()))
+      : __data_((charT*)0,alloc)
+    { __initn(n,c); }
+    basic_string (unsigned char n, charT c, const Allocator& alloc _RWSTD_DEFAULT_ARG(Allocator()))
+      : __data_((charT*)0,alloc)
+    { __initn(n,c); }
+#ifndef _RWSTD_NO_OVERLOAD_WCHAR
+    basic_string (wchar_t n, charT c, const Allocator& alloc _RWSTD_DEFAULT_ARG(Allocator()))
+      : __data_((charT*)0,alloc)
+    { __initn(n,c); }
+#endif
+#ifndef _RWSTD_NO_BOOL
+    basic_string (bool n, charT c, const Allocator& alloc _RWSTD_DEFAULT_ARG(Allocator()))
+      : __data_((charT*)0,alloc)
+    { __initn(n,c); }
+#endif
+#else
+    basic_string (size_type n, charT c, const Allocator& alloc _RWSTD_DEFAULT_ARG(Allocator()))
+      : __data_((charT*)0,alloc)
+    { __initn(n,c); }
+#endif // _RWSTD_NO_MEMBER_TEMPLATES
+
+    basic_string (const charT*, const charT*, const Allocator& _RWSTD_DEFAULT_ARG(Allocator()));
+#ifdef _RWSTD_NO_DEFAULT_TEMPLATE_ARGS
+    basic_string (const charT*, const charT*);
+#endif
+
+    ~basic_string ()
+    {
+      __unLink();
+    }
+
+    basic_string<charT, traits, Allocator>& operator= (const basic_string<charT, traits, Allocator>&);
+    basic_string<charT, traits, Allocator>& operator= (const charT*);
+    inline basic_string<charT, traits, Allocator>& operator= (charT);
+
+    //
+    // iterators
+    //
+    iterator begin () 
+    { __cow(); __pref()->__setRefCount(0); return __data_.data(); }
+    const_iterator begin () const  
+    { return __data_.data(); }
+    iterator end () 
+    { __cow(); __pref()->__setRefCount(0); return __data_.data()+length(); }
+    const_iterator end   () const  
+    { return __data_.data()+length(); }
+
+    reverse_iterator rbegin () 
+    { reverse_iterator tmp(end()); return tmp; }
+    const_reverse_iterator rbegin () const 
+    { const_reverse_iterator tmp(end()); return tmp; }
+    reverse_iterator rend ()
+    { reverse_iterator tmp(begin()); return tmp; }
+    const_reverse_iterator rend () const 
+    { const_reverse_iterator tmp(begin()); return tmp; }
+
+    //
+    // capacity
+    //
+    size_type size () const   { return length(); }
+    inline size_type length () const;
+    size_type max_size () const
+    {
+      return npos - sizeof(__rep_type)-2;
+    }
+    inline void resize (size_type, charT);
+    void resize (size_type n)
+    {
+      resize(n,__eos()); 
+    }
+    inline size_type capacity () const;
+    inline void reserve (size_type=0);
+    void clear () { erase(); }
+    bool empty () const  { return length() == 0; }
+
+    //
+    // element access
+    //
+    inline const_reference operator[] (size_type) const;
+    inline reference       operator[] (size_type);
+    inline const_reference at (size_type) const;
+    inline reference       at (size_type);
+
+    //
+    // modifiers
+    //
+    inline basic_string<charT, traits, Allocator>& operator+= (const basic_string<charT, traits, Allocator>&);
+    inline basic_string<charT, traits, Allocator>& operator+= (const charT*);
+    inline basic_string<charT, traits, Allocator>& operator+= (charT);
+
+    basic_string<charT, traits, Allocator>& append (
+        const  basic_string<charT, traits, Allocator>&);
+    basic_string<charT, traits, Allocator>& append (
+        const basic_string<charT, traits, Allocator>&,
+        size_type, 
+        size_type);
+    inline basic_string<charT, traits, Allocator>& append (const charT*, size_type);
+    inline basic_string<charT, traits, Allocator>& append (const charT*);
+
+#ifndef _RWSTD_NO_MEMBER_TEMPLATES
+    template<class InputIterator>
+    inline basic_string<charT, traits, Allocator>& append (InputIterator,
+                                                    InputIterator);
+    basic_string<charT, traits, Allocator>& append (int n, charT c)
+    { return replace(length(),0,n,c); }
+    basic_string<charT, traits, Allocator>& append (unsigned int n, charT c)
+    { return replace(length(),0,n,c); }
+    basic_string<charT, traits, Allocator>& append (long n, charT c)
+    { return replace(length(),0,n,c); }
+    basic_string<charT, traits, Allocator>& append (unsigned long n, charT c)
+    { return replace(length(),0,n,c); }
+    basic_string<charT, traits, Allocator>& append (short n, charT c)
+    { return replace(length(),0,n,c); }
+    basic_string<charT, traits, Allocator>& append (unsigned short n, charT c)
+    { return replace(length(),0,n,c); }
+    basic_string<charT, traits, Allocator>& append (char n, charT c)
+    { return replace(length(),0,n,c); }
+    basic_string<charT, traits, Allocator>& append (unsigned char n, charT c)
+    { return replace(length(),0,n,c); }
+#ifndef _RWSTD_NO_OVERLOAD_WCHAR
+    basic_string<charT, traits, Allocator>& append (wchar_t n, charT c)
+    { return replace(length(),0,n,c); }
+#endif
+#ifndef _RWSTD_NO_BOOL
+    basic_string<charT, traits, Allocator>& append (bool n, charT c)
+    { return replace(length(),0,n,c); }
+#endif
+#else
+    inline basic_string<charT, traits, Allocator>& append (const charT*,
+                                                    const charT*);
+    inline basic_string<charT, traits, Allocator>& append (size_type, charT);
+#endif // _RWSTD_NO_MEMBER_TEMPLATES
+
+    inline void push_back(const charT);
+
+    basic_string<charT, traits, Allocator>& assign (
+        const basic_string<charT, traits, Allocator>&);
+    basic_string<charT, traits, Allocator>& assign (
+        const basic_string<charT, traits, Allocator>&,
+        size_type, 
+        size_type);
+    inline basic_string<charT, traits, Allocator>& assign (const charT*, size_type);
+    inline basic_string<charT, traits, Allocator>& assign (const charT*);
+#ifndef _RWSTD_NO_MEMBER_TEMPLATES
+    template<class InputIterator>
+    inline basic_string<charT, traits, Allocator>& assign (InputIterator,
+                                                    InputIterator);
+    basic_string<charT, traits, Allocator>& assign (int n, charT c)
+    { return replace(0,length(),n,c); }
+    basic_string<charT, traits, Allocator>& assign (unsigned int n, charT c)
+    { return replace(0,length(),n,c); }
+    basic_string<charT, traits, Allocator>& assign (long n, charT c)
+    { return replace(0,length(),n,c); }
+    basic_string<charT, traits, Allocator>& assign (unsigned long n, charT c)
+    { return replace(0,length(),n,c); }
+    basic_string<charT, traits, Allocator>& assign (short n, charT c)
+    { return replace(0,length(),n,c); }
+    basic_string<charT, traits, Allocator>& assign (unsigned short n, charT c)
+    { return replace(0,length(),n,c); }
+    basic_string<charT, traits, Allocator>& assign (char n, charT c)
+    { return replace(0,length(),n,c); }
+    basic_string<charT, traits, Allocator>& assign (unsigned char n, charT c)
+    { return replace(0,length(),n,c); }
+#ifndef _RWSTD_NO_OVERLOAD_WCHAR
+    basic_string<charT, traits, Allocator>& assign (wchar_t n, charT c)
+    { return replace(0,length(),n,c); }
+#endif
+#ifndef _RWSTD_NO_BOOL
+    basic_string<charT, traits, Allocator>& assign (bool n, charT c)
+    { return replace(0,length(),n,c); }
+#endif
+#else
+    inline basic_string<charT, traits, Allocator>& assign (const charT*,
+                                                    const charT*);   
+    inline basic_string<charT, traits, Allocator>& assign (size_type, charT);
+#endif  // _RWSTD_NO_MEMBER_TEMPLATES
+  
+    basic_string<charT, traits, Allocator>& insert (size_type,
+                                                    const basic_string<charT, traits, Allocator>&);
+    basic_string<charT, traits, Allocator>& insert (
+        size_type,
+        const basic_string<charT, traits, Allocator>&,
+        size_type, 
+        size_type);
+    inline basic_string<charT, traits, Allocator>& insert (
+        size_type,
+        const charT*, 
+        size_type);
+    inline basic_string<charT, traits, Allocator>& insert (size_type, const charT*);
+    iterator insert (iterator pos, charT c)
+    { 
+      iterator tmp = __replace_aux(pos-begin(), 0, basic_string<charT, traits, Allocator>(1,c)); 
+      __pref()->__setRefCount(0);
+      return tmp;
+    }
+
+#ifndef _RWSTD_NO_MEMBER_TEMPLATES
+    template<class InputIterator>
+    inline void insert (iterator, InputIterator, InputIterator);
+    void insert (iterator p, int n, charT c)
+    { replace(p-begin(),0,n,c); }
+    void insert (iterator p, unsigned int n, charT c)
+    { replace(p-begin(),0,n,c); }
+    void insert (iterator p, long n, charT c)
+    { replace(p-begin(),0,n,c); }
+    void insert (iterator p, unsigned long n, charT c)
+    { replace(p-begin(),0,n,c); }
+    void insert (iterator p, short n, charT c)
+    { replace(p-begin(),0,n,c); }
+    void insert (iterator p, unsigned short n, charT c)
+    { replace(p-begin(),0,n,c); }
+    void insert (iterator p, char n, charT c)
+    { replace(p-begin(),0,n,c); }
+    void insert (iterator p, unsigned char n, charT c)
+    { replace(p-begin(),0,n,c); }
+    basic_string<charT, traits, Allocator>& insert (size_type pos,int n,charT c)
+    { return replace(pos,0,n,c); }
+    basic_string<charT, traits, Allocator>& insert (size_type pos,unsigned int n,charT c)
+    { return replace(pos,0,n,c); }
+    basic_string<charT, traits, Allocator>& insert (size_type pos,long n,charT c)
+    { return replace(pos,0,n,c); }
+    basic_string<charT, traits, Allocator>& insert (size_type pos,unsigned long n,charT c)
+    { return replace(pos,0,n,c); }
+    basic_string<charT, traits, Allocator>& insert (size_type pos,short n,charT c)
+    { return replace(pos,0,n,c); }
+    basic_string<charT, traits, Allocator>& insert (size_type pos,unsigned short n,charT c)
+    { return replace(pos,0,n,c); }
+    basic_string<charT, traits, Allocator>& insert (size_type pos,char n,charT c)
+    { return replace(pos,0,n,c); }
+    basic_string<charT, traits, Allocator>& insert (size_type pos,unsigned char n,charT c)
+    { return replace(pos,0,n,c); }
+#ifndef _RWSTD_NO_OVERLOAD_WCHAR
+    void insert (iterator p, wchar_t n, charT c)
+    { replace(p-begin(),0,n,c); }
+    basic_string<charT, traits, Allocator>& insert (size_type pos,wchar_t n,charT c)
+    { return replace(pos,0,n,c); }
+#endif
+#ifndef _RWSTD_NO_BOOL
+    void insert (iterator p, bool n, charT c)
+    { replace(p-begin(),0,n,c);} 
+    basic_string<charT, traits, Allocator>& insert (size_type pos,bool n,charT c)
+    { return replace(pos,0,n,c); }
+#endif
+
+#else
+    inline void insert (iterator, const charT*, const charT*);
+    inline basic_string<charT, traits, Allocator>& insert (size_type,size_type,charT);
+    inline void insert (iterator, size_type, charT);
+#endif  // _RWSTD_NO_MEMBER_TEMPLATES
+    
+    inline basic_string<charT, traits, Allocator>& erase (size_type = 0,
+                                                   size_type = npos);
+
+    iterator erase (iterator it) 
+    { 
+      iterator ret = replace(it - begin(),1,(const charT *)NULL,0,0,0);
+      __pref()->__setRefCount(0);
+      return ret;
+    }
+    iterator erase (iterator first, iterator last) 
+    {  
+      iterator ret =  replace(first - begin(),last-first,(const charT *)NULL,0,0,0);
+      __pref()->__setRefCount(0);
+      return ret;
+    }
+  private:  
+    //
+    // Used for effiency
+    //
+    _TYPENAME 
+    basic_string<charT, traits, Allocator>::iterator replace (size_type, 
+                                                              size_type, 
+                                                              const charT*,
+                                                              size_type,
+                                                              size_type,
+                                                              size_type);
+
+    _TYPENAME 
+    basic_string<charT, traits, Allocator>::iterator __replace_aux (
+        size_type, 
+        size_type,
+        const basic_string<charT, traits, Allocator>&,
+        size_type =0,
+        size_type =npos);
+
+#ifndef _RWSTD_NO_MEMBER_TEMPLATES
+    template<class InputIterator>
+    basic_string<charT, traits, Allocator>& __replace_aux (
+        iterator first1, 
+        iterator last1,
+        InputIterator first2,
+        InputIterator last2);
+#endif
+
+  public:
+    inline basic_string<charT, traits, Allocator>& replace (size_type, 
+                                                     size_type,
+                                                     const basic_string<charT, traits, Allocator>&);
+    inline basic_string<charT, traits, Allocator>& replace (size_type, 
+                                                     size_type,
+                                                     const basic_string<charT, traits, Allocator>&,
+                                                     size_type, 
+                                                     size_type);
+    inline basic_string<charT, traits, Allocator>& replace (size_type, 
+                                                     size_type, 
+                                                     const charT*, 
+                                                     size_type);
+    inline basic_string<charT, traits, Allocator>& replace (size_type,
+                                                     size_type, 
+                                                     const charT*);
+    basic_string<charT, traits, Allocator>& replace (size_type,
+                                                     size_type,
+                                                     size_type,
+                                                     charT);
+    inline basic_string<charT, traits, Allocator>& replace (iterator,
+                                                     iterator,
+                                                     const basic_string<charT, traits, Allocator>&);
+    inline basic_string<charT, traits, Allocator>& replace (iterator,
+                                                     iterator,
+                                                     const charT*,
+                                                     size_type);
+    inline basic_string<charT, traits, Allocator>& replace (iterator,
+                                                     iterator,
+                                                     const charT*);
+
+#ifndef _RWSTD_NO_MEMBER_TEMPLATES
+    template<class InputIterator>
+    basic_string<charT, traits, Allocator>& replace (iterator, iterator, 
+                                                     InputIterator,
+                                                     InputIterator);
+    basic_string<charT, traits, Allocator>& replace (iterator first,
+                                                     iterator last,
+                                                     int n,
+                                                     charT c)
+    { return replace(first-begin(),last-first,n,c); }
+    basic_string<charT, traits, Allocator>& replace (iterator first,
+                                                     iterator last,
+                                                     unsigned int n,
+                                                     charT c)
+    { return replace(first-begin(),last-first,n,c); }
+    basic_string<charT, traits, Allocator>& replace (iterator first,
+                                                     iterator last,
+                                                     long n,
+                                                     charT c)
+    { return replace(first-begin(),last-first,n,c); }
+    basic_string<charT, traits, Allocator>& replace (iterator first,
+                                                     iterator last,
+                                                     unsigned long n,
+                                                     charT c)
+    { return replace(first-begin(),last-first,n,c); }
+    basic_string<charT, traits, Allocator>& replace (iterator first,
+                                                     iterator last,
+                                                     short n,
+                                                     charT c)
+    { return replace(first-begin(),last-first,n,c); }
+    basic_string<charT, traits, Allocator>& replace (iterator first,
+                                                     iterator last,
+                                                     unsigned short n,
+                                                     charT c)
+    { return replace(first-begin(),last-first,n,c); }
+    basic_string<charT, traits, Allocator>& replace (iterator first,
+                                                     iterator last,
+                                                     char n,
+                                                     charT c)
+    { return replace(first-begin(),last-first,n,c); }
+    basic_string<charT, traits, Allocator>& replace (iterator first,
+                                                     iterator last,
+                                                     unsigned char n,
+                                                     charT c)
+    { return replace(first-begin(),last-first,n,c); }
+#ifndef _RWSTD_NO_OVERLOAD_WCHAR
+    basic_string<charT, traits, Allocator>& replace (iterator first,
+                                                     iterator last,
+                                                     wchar_t n,
+                                                     charT c)
+    { return replace(first-begin(),last-first,n,c); }
+#endif
+#ifndef _RWSTD_NO_BOOL
+    basic_string<charT, traits, Allocator>& replace (iterator first,
+                                                     iterator last,
+                                                     bool n,
+                                                     charT c)
+    { return replace(first-begin(),last-first,n,c); }
+#endif
+#else
+    inline basic_string<charT, traits, Allocator>& replace (iterator, iterator, 
+                                                     const charT*,
+                                                     const charT*);
+    inline basic_string<charT, traits, Allocator>& replace (iterator,
+                                                     iterator,
+                                                     size_type,
+                                                     charT);
+#endif  // _RWSTD_NO_MEMBER_TEMPLATES
+
+    size_type copy (charT*, size_type, size_type = 0) const;
+    basic_string<charT, traits, Allocator> copy () const; // Returns deep copy
+    void swap(basic_string<charT, traits, Allocator>& s)
+    {
+      charT * temp = __data_.data(); __data_ = s.__data_.data(); s.__data_ = temp;
+    }
+
+    //
+    // string operations
+    //
+    inline const charT* c_str () const;
+    inline const charT* data  () const;
+    allocator_type get_allocator() const
+    {
+      return (allocator_type)__data_;
+    }
+
+    inline size_type find (const basic_string<charT, traits, Allocator>&,
+                    size_type = 0) const;
+    size_type find (const charT*, size_type, size_type) const;
+    inline size_type find (const charT*, size_type = 0) const;
+    inline size_type find (charT, size_type = 0) const;
+
+    inline size_type rfind (const basic_string<charT, traits, Allocator>&,
+                     size_type = npos) const;
+    size_type rfind (const charT*, size_type, size_type) const;
+    inline size_type rfind (const charT*, size_type = npos) const;
+    inline size_type rfind (charT, size_type = npos) const;
+
+    inline size_type find_first_of (const basic_string<charT, traits, Allocator>&,
+                             size_type = 0) const;
+    size_type find_first_of (const charT*, size_type, size_type) const;
+    inline size_type find_first_of (const charT*, size_type = 0) const;
+    inline size_type find_first_of (charT, size_type = 0) const;
+    inline size_type find_last_of (const basic_string<charT, traits, Allocator>&,
+                            size_type = npos) const;
+    size_type find_last_of (const charT*, size_type, size_type) const;
+    inline size_type find_last_of (const charT*, size_type = npos) const;
+    inline size_type find_last_of (charT, size_type = npos) const;
+
+    inline size_type find_first_not_of (const basic_string<charT, traits, Allocator>&,
+                                 size_type = 0) const;
+    size_type find_first_not_of (const charT*, size_type ,
+                                 size_type) const;
+    inline size_type find_first_not_of (const charT*, size_type = 0) const;
+    inline size_type find_first_not_of (charT, size_type = 0) const;
+
+    inline size_type find_last_not_of (const basic_string<charT, traits, Allocator>&,
+                                size_type = npos) const;
+    size_type find_last_not_of (const charT*, size_type, size_type) const;
+    inline size_type find_last_not_of (const charT*, size_type = npos) const;
+    inline size_type find_last_not_of (charT, size_type = npos) const;
+  
+    basic_string<charT, traits, Allocator> substr (size_type = 0,
+                                                   size_type = npos) const;
+  
+    inline int compare(const basic_string<charT, traits, Allocator>&) const;
+    int compare(size_type, size_type,
+                const basic_string<charT, traits, Allocator>&) const;
+    int compare(size_type, size_type,
+                const basic_string<charT, traits, Allocator>&,
+                size_type, size_type) const;
+    inline int compare (const charT*) const;
+    int compare (size_type, size_type, const charT*, size_type) const;
+    inline int compare (size_type, size_type, const charT*) const;
+
+  protected:
+
+    size_type __getCapac () const { return __pref()->__getCapac(); }
+
+    void __clobber (size_type); // Remove old contents
+    void __cow ()               // Do copy on write as necessary
+    { 
+      if (__pref()->__references() > 1) 
+        __clone(); 
+    }
+    void __cow (size_type nc)     // Do copy on write w/ new capacity
+    { 
+      if (__pref()->__references() > 1 || __getCapac() < nc)
+        __clone(nc);
+    }
+
+  private:
+
+    void __initn(size_type, charT);
+
+    static charT __eos () { return (charT)0; }
+  
+    //
+    // Make a distinct copy of self
+    //
+    void __clone (); 
+    //
+    // Make a distinct copy w/ new capacity nc
+    //
+    void __clone (size_type nc);
+
+    __string_ref_type *  __pref () const
+    { 
+#ifdef _RWSTD_SUNPRO_ANACHRONISM
+      return (__string_ref_type*)__data_.data() - 1;
+#else
+      return _RWSTD_STATIC_CAST(__string_ref_type*,
+                                ((_RWSTD_REINTERPRET_CAST(__string_ref_type*,__data_.data())) - 1)); 
+#endif
+    }
+
+    //
+    // Disconnect from ref, maybe delete it.
+    //
+    inline void      __unLink          ();   
+
+#ifndef _RWSTD_NO_NAMESPACE
+    friend class __RWSTD::__string_ref<charT,traits,Allocator>;
+#else
+    friend class __string_ref<charT,traits,Allocator>;
+#endif
+
+    //
+    // Null string ref
+    //
+#ifndef _RWSTD_NO_STATIC_DEF3
+    static const __null_ref_type __nullref;
+#endif
+
+    static __string_ref_type * __getNullRep ()
+    {
+#ifndef _RWSTD_NO_STATIC_DEF3
+#  ifdef _RWSTD_NO_STATIC_CAST
+      return (__string_ref_type *)&__nullref;
+#  else
+      return reinterpret_cast<__string_ref_type *>
+             (const_cast<__null_ref_type *>(&__nullref));
+#  endif // _RWSTD_NO_STATIC_CAST
+#else
+      if (!__RWSTD::__nullref_initialized)
+      {
+        new (&__RWSTD::__nullref) __null_ref_type();
+        __RWSTD::__nullref_initialized = 1;
+      }
+      return (__string_ref_type *) &__RWSTD::__nullref[0]; 
+#endif // _RWSTD_NO_STATIC_DEF3
+    }
+    __string_ref_type * __getRep (size_type capac, size_type nchar);
+
+    __RWSTD::__rw_basis<charT*,allocator_type>    __data_;                   
+  };
+//
+// Standard Type Definitions
+//
+  typedef basic_string<char, char_traits<char>, allocator<char> >
+  string;
+
+#ifndef _RWSTD_NO_WIDE_CHAR
+  typedef basic_string<wchar_t, char_traits<wchar_t>, allocator<wchar_t> >
+  wstring;
+#endif
+
+//
+// The following has to go after the declaration of the string
+// classes because of cross references.
+//
+
+#ifndef _RWSTD_NO_NAMESPACE
+}
+#endif
+
+#ifdef _RW_STD_EXCEPT
+#include <stdexcept>
+#endif
+
+#if defined(_RWSTD_NO_DESTROY_BUILTIN) || defined(_RWSTD_NO_DESTROY_NONBUILTIN)
+
+#ifndef _RWSTD_NO_NAMESPACE
+namespace __rwstd {
+#endif
+//
+// Specializations for STL destroy
+//
+  inline void __destroy (string**)    {;}
+  inline void __destroy (string***)   {;}
+  inline void __destroy (string****)  {;}
+#ifndef _RWSTD_NO_WIDE_CHAR
+  inline void __destroy (wstring**)   {;}
+  inline void __destroy (wstring***)  {;}
+  inline void __destroy (wstring****) {;}
+#endif
+
+#ifndef _RWSTD_NO_NAMESPACE
+}
+#endif
+#endif // _RWSTD_NO_DESTROY_BUILTIN || _RWSTD_NO_DESTROY_NONBUILTIN
+
+#ifndef _RWSTD_NO_NAMESPACE
+namespace std {
+#endif
+
+//
+// Inline member functions for class basic_string
+//
+
+  template <class charT, class traits , class Allocator  >
+  inline void basic_string<charT, traits, Allocator>::__unLink()
+  {
+    if (!__data_.data())
+      return;
+    if (__pref()->__references() == 0 || __pref()->__removeReference() == 0) 
+    {
+      __ref_alloc_type(__data_).destroy(__pref());
+      __value_alloc_type(__data_).
+        deallocate(_RWSTD_REINTERPRET_CAST(charT*,__pref()),length());
+      __data_ = (charT*)0;
+    }
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline basic_string<charT, traits, Allocator>
+  ::basic_string (const Allocator& alloc) : __data_((charT*)0,alloc)
+  {
+    __data_ = __getNullRep()->data();
+    __getNullRep()->__addReference();
+  }
+
+#ifdef _RWSTD_NO_DEFAULT_TEMPLATE_ARGS
+  template <class charT, class traits , class Allocator  >
+  inline basic_string<charT, traits, Allocator>
+  ::basic_string (void) : __data_((charT*)0,Allocator())
+  {
+    __data_ = __getNullRep()->data();
+    __getNullRep()->__addReference();
+  }
+#endif
+
+  template <class charT, class traits , class Allocator  >
+  inline
+  basic_string<charT, traits, Allocator>
+  ::basic_string (const basic_string<charT, traits, Allocator> & s)
+   : __data_((charT*)0,Allocator())
+  {                     
+    if ( s.__pref()->__references() > 0 )
+    {                                    
+      __data_ = s.__data_.data();
+      __pref()->__addReference();
+    }
+    else
+    {
+      size_type n = s.length();
+      __data_  = __getRep(n, n)->data();
+      traits::copy(__data_.data(), s.c_str(), n);
+    }
+  }
+  template <class charT, class traits , class Allocator  >
+  inline basic_string<charT, traits, Allocator> &
+  basic_string<charT, traits, Allocator>::operator= (charT c)
+  {
+    replace(0,length(),1,c);
+    return *this;
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline basic_string<charT, traits, Allocator> &
+  basic_string<charT, traits, Allocator>::operator+= (const basic_string<charT, traits, Allocator>& s)
+  {
+    return append(s);
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline basic_string<charT, traits, Allocator> &
+  basic_string<charT, traits, Allocator>::operator+= (const charT* s)
+  {
+    return append(s);
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline basic_string<charT, traits, Allocator> &
+  basic_string<charT, traits, Allocator>::operator+= (charT c)
+  {
+    return append((size_type) 1, c);
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline basic_string<charT, traits, Allocator> &
+  basic_string<charT, traits, Allocator>::append (const charT* s, size_type n)
+  {
+    replace(size(),0,s,n,0,n);
+    return *this;
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline basic_string<charT, traits, Allocator> &
+  basic_string<charT, traits, Allocator>::append (const charT* s)
+  {
+    replace(size(),0,s);
+    return *this;
+  }
+
+#ifndef _RWSTD_NO_MEMBER_TEMPLATES
+  template<class charT, class traits , class Allocator >
+  template<class InputIterator>
+  inline basic_string<charT, traits, Allocator>& 
+  basic_string<charT, traits, Allocator>::append (InputIterator first, 
+                                                  InputIterator last )
+  {
+    replace(end(),end(),first,last);
+    return *this;
+  }
+#else
+  template <class charT, class traits , class Allocator  >
+  inline basic_string<charT, traits, Allocator>& 
+  basic_string<charT, traits, Allocator>::append (const charT* first, 
+                                                  const charT* last)
+  {
+    replace(size(),0,first,last-first,0,last-first);
+    return *this;
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline basic_string<charT, traits, Allocator> &
+  basic_string<charT, traits, Allocator>::append (size_type n, charT c)
+  {
+    replace(length(),0,n,c);
+    return *this;
+  }
+#endif // _RWSTD_NO_MEMBER_TEMPLATES 
+
+  template <class charT, class traits , class Allocator  >
+  void basic_string<charT, traits, Allocator>::push_back(const charT c)
+  {
+    replace(size(),0,1,c);
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline basic_string<charT, traits, Allocator> &
+  basic_string<charT, traits, Allocator>::assign (const charT* s, size_type n)
+  {
+    replace(0, length(), s, n, 0, n);
+    return *this;
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline basic_string<charT, traits, Allocator> &
+  basic_string<charT, traits, Allocator>::assign (const charT* s)
+  {
+    size_type len = traits::length(s);
+    replace(0, length(), s, len, 0, len);
+    return *this;
+  }
+
+#ifndef _RWSTD_NO_MEMBER_TEMPLATES 
+  template<class charT, class traits , class Allocator >
+  template<class InputIterator>
+  inline basic_string<charT, traits, Allocator>& 
+  basic_string<charT, traits, Allocator>::assign (InputIterator first, 
+                                                  InputIterator last)
+  {
+    replace(begin(),end(),first,last);
+    return *this;
+  }
+#else
+  template <class charT, class traits , class Allocator  >
+  inline basic_string<charT, traits, Allocator>& 
+  basic_string<charT, traits, Allocator>::assign (const charT* first, 
+                                                  const charT* last)
+  {
+    replace(0,length(),first,last-first,0,last-first);
+    return *this;
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline basic_string<charT, traits, Allocator> &
+  basic_string<charT, traits, Allocator>::assign (size_type n, charT c)
+  {
+    return replace(0,length(),n,c);
+  }
+#endif // _RWSTD_NO_MEMBER_TEMPLATES 
+
+  template <class charT, class traits , class Allocator  >
+  inline basic_string<charT, traits, Allocator> &
+  basic_string<charT, traits, Allocator>::insert (size_type pos,
+                                                  const charT* s,
+                                                  size_type n)
+  {
+    replace(pos, 0, s, n, 0, n);
+    return *this;
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline basic_string<charT, traits, Allocator> &
+  basic_string<charT, traits, Allocator>::insert (size_type pos, const charT* s)
+  {
+    size_type len = traits::length(s);
+    replace(pos, 0, s, len, 0, len);
+    return *this;
+  }
+
+#ifndef _RWSTD_NO_MEMBER_TEMPLATES
+  template<class charT, class traits , class Allocator >
+  template<class InputIterator>
+  inline void 
+  basic_string<charT, traits, Allocator>::insert (
+      iterator p, 
+      InputIterator first,
+      InputIterator last)
+  {
+    replace(p,p,first,last);
+  }
+#else
+  template <class charT, class traits , class Allocator  >
+  inline void 
+  basic_string<charT, traits, Allocator>::insert (
+      iterator p, 
+      const charT* first,
+      const charT* last)
+  {
+    replace(p-begin(),0,first,last-first,0,last-first);
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline void 
+  basic_string<charT, traits, Allocator>::insert (
+      iterator p,
+      size_type n,
+      charT c)
+  {
+      replace(p-begin(),0,n,c);
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline basic_string<charT, traits, Allocator> &
+  basic_string<charT, traits, Allocator>::insert(size_type pos,
+                                                 size_type n,
+                                                 charT c)
+  {
+    return replace(pos,0,n,c);
+  }
+#endif // _RWSTD_NO_MEMBER_TEMPLATES
+
+  template <class charT, class traits , class Allocator  >
+  inline basic_string<charT, traits, Allocator> &
+  basic_string<charT, traits, Allocator>::erase (size_type pos, size_type n)
+  {
+    _RWSTD_THROW(pos > length(), out_of_range,
+     __RWSTD::except_msg_string(__RWSTD::__rwse_StringIndexOutOfRange,
+         "basic_string::erase(size_t,size_t)", pos,length()).msgstr());
+
+    size_type len = length() - pos;
+    charT tmp[1];
+    *tmp = 0;
+    return replace(pos,n < len ? n : len, tmp,0);
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline basic_string<charT, traits, Allocator> &
+  basic_string<charT, traits, Allocator>::replace (size_type pos1,
+                                                   size_type n1,
+                                                   const basic_string<charT, traits, Allocator> & str, 
+                                                   size_type pos2,
+                                                   size_type n2)
+  {
+    replace(pos1, n1, str.data(), str.length(), pos2, n2);
+    return *this;
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline basic_string<charT, traits, Allocator> &
+  basic_string<charT, traits, Allocator>::replace (
+      size_type pos1,
+      size_type n1,
+      const basic_string<charT, traits, Allocator> & str)
+  {
+    replace(pos1, n1, str.data(), str.length(),0,str.length());
+    return *this;
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline _TYPENAME basic_string<charT, traits, Allocator>::iterator
+  basic_string<charT, traits, Allocator>::__replace_aux (size_type pos1,
+                                                       size_type n1,
+                                                       const basic_string<charT, traits, Allocator> & str, 
+                                                       size_type pos2,
+                                                       size_type n2)
+  {
+    return replace(pos1, n1, str.data(), str.length(), pos2, n2);
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline basic_string<charT, traits, Allocator> &
+  basic_string<charT, traits, Allocator>::replace (size_type pos,
+                                                   size_type n1,
+                                                   const charT* s,
+                                                   size_type n2)
+  {
+    replace(pos, n1, s, n2, 0, n2);
+    return *this;
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline basic_string<charT, traits, Allocator> &
+  basic_string<charT, traits, Allocator>::replace (size_type pos,
+                                                   size_type n1,
+                                                   const charT* s)
+  {
+    size_type len = traits::length(s);
+    replace(pos, n1, s, len, 0, len);
+    return *this;
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline basic_string<charT, traits, Allocator>& 
+  basic_string<charT, traits, Allocator>::replace (
+      iterator first,
+      iterator last,
+      const basic_string<charT, traits, Allocator>& str)
+  {
+    return replace(first - begin(), last - first, str);
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline basic_string<charT, traits, Allocator>& 
+  basic_string<charT, traits, Allocator>::replace (
+      iterator first, 
+      iterator last,
+      const charT* s,
+      size_type n)
+  {
+    replace(first-begin(),last-first,s,n,0,n);
+    return *this;
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline basic_string<charT, traits, Allocator>& 
+  basic_string<charT, traits, Allocator>::replace (
+      iterator first, 
+      iterator last,
+      const charT* s)
+  {
+    size_type len = traits::length(s);
+    replace(first-begin(),last-first,s,len,0,len);
+    return *this;
+  }
+#ifdef _RWSTD_NO_MEMBER_TEMPLATES
+  template <class charT, class traits , class Allocator  >
+  inline basic_string<charT, traits, Allocator>& 
+  basic_string<charT, traits, Allocator>::replace (
+      iterator first1, 
+      iterator last1,
+      const charT* first2,
+      const charT* last2)
+  {
+    replace(first1-begin(),last1-first1,first2,last2-first2,0,last2-first2);
+    return *this;
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline basic_string<charT, traits, Allocator>& 
+  basic_string<charT, traits, Allocator>::replace (
+      iterator first, 
+      iterator last,
+      size_type n,
+      charT c)
+  {
+    return replace(first-begin(),last-first,n,c);
+  }
+#endif
+
+  template <class charT, class traits , class Allocator  >
+  inline _TYPENAME basic_string<charT, traits,Allocator>::const_reference 
+  basic_string<charT, traits, Allocator>::operator[] (size_type pos) const
+  {
+#ifdef _RWSTD_BOUNDS_CHECKING
+    _RWSTD_THROW(pos > size(), out_of_range,
+     __RWSTD::except_msg_string(__RWSTD::__rwse_PosBeyondEndOfString,
+        "basic_string::operator[](size_t) const", pos,size()).msgstr());
+#endif
+    return __data_.data()[pos];
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline _TYPENAME basic_string<charT, traits, Allocator>::reference
+  basic_string<charT, traits, Allocator>::operator[] (size_type pos)
+  {
+#ifdef _RWSTD_BOUNDS_CHECKING
+    _RWSTD_THROW(pos >= size(), out_of_range,
+     __RWSTD::except_msg_string(__RWSTD::__rwse_PosBeyondEndOfString,
+        "basic_string::operator[](size_t)", pos,size()).msgstr());
+#endif
+    __cow();
+    __pref()->__setRefCount(0);
+    return __data_.data()[pos];
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline _TYPENAME basic_string<charT, traits, Allocator>::const_reference
+  basic_string<charT, traits, Allocator>::at (size_type pos) const
+  {
+    _RWSTD_THROW(pos >= size(), out_of_range,
+     __RWSTD::except_msg_string(__RWSTD::__rwse_PosBeyondEndOfString,
+        "basic_string::at(size_t) const", pos,size()).msgstr());
+
+    return __data_.data()[pos];
+  }
+  template <class charT, class traits , class Allocator  >
+  inline _TYPENAME basic_string<charT, traits, Allocator>::reference
+  basic_string<charT, traits, Allocator>::at (size_type pos)
+  {
+    _RWSTD_THROW(pos >= size(), out_of_range,
+     __RWSTD::except_msg_string(__RWSTD::__rwse_PosBeyondEndOfString,
+          "basic_string::at(size_t)", pos,size()).msgstr());
+
+    __cow();
+    __pref()->__setRefCount(0);
+    return __data_.data()[pos];
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline const charT* basic_string<charT, traits, Allocator>::c_str () const
+  {
+    return __data_.data();
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline const charT* basic_string<charT, traits, Allocator>::data () const
+  {
+    return __data_.data();
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline _TYPENAME basic_string<charT, traits, Allocator>::size_type
+  basic_string<charT, traits, Allocator>::length () const
+  {
+    return __pref()->__nchars_;
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline void
+  basic_string<charT, traits, Allocator>::resize (size_type n, charT c)
+  {
+    _RWSTD_THROW(n > max_size(), length_error,
+     __RWSTD::except_msg_string(__RWSTD::__rwse_InvalidSizeParam,
+        "basic_string( const charT*,size_type,const Allocator&)",n,npos).msgstr());
+    if (n < length())
+      erase(n,length()-n);
+    else
+      replace(length(),0,n-length(),c);
+    __pref()->__setRefCount(1);
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline _TYPENAME basic_string<charT, traits, Allocator>::size_type
+  basic_string<charT, traits, Allocator>::capacity () const
+  {
+    return __getCapac();
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline void basic_string<charT, traits, Allocator>::reserve(size_type res_arg)
+  {
+     _RWSTD_THROW(res_arg > max_size(), length_error,
+        __RWSTD::except_msg_string(__RWSTD::__rwse_InvalidSizeParam,
+          "basic_string::reserve(size_t)",res_arg,max_size()).msgstr());
+
+    if (res_arg > __getCapac()) __clone(res_arg);
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline basic_string<charT, traits, Allocator>
+  basic_string<charT, traits, Allocator>::copy () const
+  {
+    basic_string<charT, traits, Allocator> temp(*this); // Make referenced copy
+    temp.__clone();   // Make a distinct copy
+    return temp;
+  }
+
+  template <class charT, class traits, class Allocator >
+  inline _TYPENAME basic_string<charT, traits, Allocator>::size_type
+  basic_string<charT, traits, Allocator>::find (
+      const basic_string<charT, traits, Allocator>& str,
+      size_type                                     pos) const
+  {
+    return find(str.c_str(),pos,str.length());
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline _TYPENAME basic_string<charT, traits, Allocator>::size_type
+  basic_string<charT, traits, Allocator>::find (const charT* s,
+                                                size_type pos) const
+  {
+    _RWSTD_THROW(s == 0, logic_error,
+     __RWSTD::except_msg_string(__RWSTD::__rwse_UnexpectedNullPtr,
+       "basic_string::find(const char*,size_t) const").msgstr());
+
+    if (pos > length())
+      return npos;
+    const charT* p = __RWSTD::rw_traits<charT,traits>::find(__data_.data()+pos,s);
+    return p ? p - __data_.data() : npos;
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline _TYPENAME basic_string<charT, traits, Allocator>::size_type
+  basic_string<charT, traits, Allocator>::find (charT c, size_type pos) const
+  {
+    if (pos > length())
+      return npos;
+    const charT* p =  traits::find(__data_.data()+pos,length()-pos,c);
+    return p ? p - __data_.data() : npos;
+  }
+
+  template <class charT, class traits, class Allocator >
+  inline _TYPENAME basic_string<charT, traits, Allocator>::size_type
+  basic_string<charT, traits, Allocator>::rfind (
+      const basic_string<charT, traits, Allocator>& str,
+      size_type                                     pos) const
+  {
+    return rfind(str.c_str(), pos, str.length());
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline _TYPENAME basic_string<charT, traits, Allocator>::size_type
+  basic_string<charT, traits, Allocator>::rfind (const charT* s, size_type pos)
+  const
+  {  
+    size_type len = traits::length(s);
+    return rfind(s, pos,len);
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline _TYPENAME basic_string<charT, traits, Allocator>::size_type
+  basic_string<charT, traits, Allocator>::rfind (charT c, size_type pos) const
+  {
+    if (pos > length())
+      pos = length();
+    const charT* p = __RWSTD::rw_traits<charT,traits>::rfind(__data_.data(),c,pos);
+    return p ? p - __data_.data() : npos;
+  }
+
+  template <class charT, class traits, class Allocator >
+  inline _TYPENAME basic_string<charT, traits, Allocator>::size_type
+  basic_string<charT, traits, Allocator>::find_first_of (
+      const basic_string<charT, traits, Allocator>& str,
+      size_type                                     pos) const
+  {
+    return find_first_of(str.c_str(),pos,str.length());
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline _TYPENAME basic_string<charT, traits, Allocator>::size_type
+  basic_string<charT, traits, Allocator>::find_first_of (const charT* s,
+                                                         size_type pos) const
+  {
+    _RWSTD_THROW(s == 0, logic_error,
+     __RWSTD::except_msg_string(__RWSTD::__rwse_UnexpectedNullPtr,
+        "basic_string::find_first_of(char*,size_t) const").msgstr());
+
+    if (pos > length())
+      return npos;
+    size_type i = __RWSTD::rw_traits<charT,traits>::find_first_of(__data_.data()+pos,s) + pos;
+    return i >= length() ? npos : i;
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline _TYPENAME basic_string<charT, traits, Allocator>::size_type
+  basic_string<charT, traits, Allocator>::find_first_of (charT c, size_type pos) const
+  {
+    return find(c, pos);
+  }
+
+  template <class charT, class traits, class Allocator >
+  inline _TYPENAME basic_string<charT, traits, Allocator>::size_type
+  basic_string<charT, traits, Allocator>::find_last_of (
+      const basic_string<charT, traits, Allocator>& str,
+      size_type                                     pos) const
+  {
+    return find_last_of(str.c_str(), pos,str.length());
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline _TYPENAME basic_string<charT, traits, Allocator>::size_type
+  basic_string<charT, traits, Allocator>::find_last_of (const charT* s,
+                                                        size_type pos) const
+  {
+    size_type len = traits::length(s);
+    return find_last_of(s, pos,len);
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline _TYPENAME basic_string<charT, traits, Allocator>::size_type
+  basic_string<charT, traits, Allocator>::find_last_of (charT c, size_type pos)
+  const
+  {
+    return rfind(c,pos);
+  }
+
+  template <class charT, class traits, class Allocator >
+  inline _TYPENAME basic_string<charT, traits, Allocator>::size_type
+  basic_string<charT, traits, Allocator>::find_first_not_of (
+      const basic_string<charT, traits, Allocator>& str,
+      size_type                                     pos) const
+  {
+    return find_first_not_of(str.c_str(), pos, str.length());
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline _TYPENAME basic_string<charT, traits, Allocator>::size_type
+  basic_string<charT, traits, Allocator>::find_first_not_of (const charT* s,
+                                                             size_type pos) const
+  {
+    _RWSTD_THROW(s == 0, logic_error,
+     __RWSTD::except_msg_string(__RWSTD::__rwse_UnexpectedNullPtr,
+       "basic_string::find_first_not_of(char*,size_t) const").msgstr());
+
+    if (pos > length())
+      return npos;
+    size_type i = __RWSTD::rw_traits<charT,traits>::find_first_not_of(__data_.data()+pos,s) + pos;
+    return i >= length() ? npos : i;
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline _TYPENAME basic_string<charT, traits, Allocator>::size_type
+  basic_string<charT, traits, Allocator>::find_first_not_of (charT c,
+                                                             size_type pos) const
+  {
+    charT tmp[2];
+    *tmp = c;
+    tmp[1] = 0;
+    return find_first_not_of(tmp, pos);
+  }
+
+  template <class charT, class traits, class Allocator >
+  inline _TYPENAME basic_string<charT, traits, Allocator>::size_type
+  basic_string<charT, traits, Allocator>::find_last_not_of (
+      const basic_string<charT, traits, Allocator>& str,
+      size_type                                     pos) const
+  {
+    return find_last_not_of(str.c_str(), pos, str.length());
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline _TYPENAME basic_string<charT, traits, Allocator>::size_type
+  basic_string<charT, traits, Allocator>::find_last_not_of (const charT* s,
+                                                            size_type pos) const
+  {
+    size_type len = traits::length(s);
+    return find_last_not_of(s, pos, len);
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline _TYPENAME basic_string<charT, traits, Allocator>::size_type
+  basic_string<charT, traits, Allocator>::find_last_not_of (charT c,
+                                                            size_type pos) const
+  {
+    charT tmp[2];
+    *tmp = c;
+    tmp[1] = 0;
+    return find_last_not_of(tmp, pos);
+  }
+
+  template <class charT, class traits, class Allocator >
+  inline int
+  basic_string<charT, traits, Allocator>::compare (
+      const basic_string<charT, traits, Allocator>& str) const
+  {
+    return compare(0,length(),str.c_str(),str.length());
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline int
+  basic_string<charT, traits, Allocator>::compare (size_type pos,
+                                                   size_type n1,
+                                                   const charT* s) const
+  {
+    size_type len = traits::length(s);
+    return compare(pos,n1,s,len);
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline int
+  basic_string<charT, traits, Allocator>::compare (const charT* s) const
+  {
+    size_type len = traits::length(s);
+    return compare(0,length(),s,len);
+  }
+
+//
+// Inlined non-member operators
+//
+
+  template <class charT, class traits , class Allocator  >
+  inline basic_string<charT, traits, Allocator> operator+(
+      const basic_string<charT, traits, Allocator>& lhs,
+      const basic_string<charT, traits, Allocator>& rhs)
+  {
+    return basic_string<charT, traits, Allocator>(lhs).append(rhs);
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline basic_string<charT, traits, Allocator> operator+(
+      const charT*                                  lhs,
+      const basic_string<charT, traits, Allocator>& rhs)
+  {
+    return basic_string<charT, traits, Allocator>(lhs).append(rhs);
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline basic_string<charT, traits, Allocator> operator+(
+      charT lhs, const basic_string<charT, traits, Allocator>& rhs)
+  {
+    return basic_string<charT, traits, Allocator>(1,lhs).append(rhs);
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline basic_string<charT, traits, Allocator> operator+(
+      const basic_string<charT, traits, Allocator>& lhs,
+      const charT*                                  rhs)
+  {
+    return basic_string<charT,traits,Allocator>(lhs).append(basic_string<charT, traits, Allocator>(rhs));
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline basic_string<charT, traits, Allocator> operator+(
+      const basic_string<charT, traits, Allocator>& lhs,
+      charT                                         rhs)
+  {
+    return basic_string<charT,traits,Allocator>(lhs).append(basic_string<charT, traits, Allocator>(1,rhs));
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline bool operator==(
+      const basic_string<charT, traits, Allocator>& lhs,
+      const basic_string<charT, traits, Allocator>& rhs)
+  {
+    return lhs.compare(rhs) == 0 ? true : false ;
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline bool operator==(
+      const charT*                                  lhs,
+      const basic_string<charT, traits, Allocator>& rhs)
+  {
+    return basic_string<charT,traits,Allocator>(lhs).compare(rhs)==0?true:false;
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline bool operator==(
+      const basic_string<charT, traits, Allocator>& lhs,
+      const charT*                                  rhs)
+  {
+    return lhs.compare(basic_string<charT,traits,Allocator>(rhs))==0?true:false;
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline bool operator<(
+      const basic_string<charT, traits, Allocator>& lhs,
+      const basic_string<charT, traits, Allocator>& rhs)
+  {
+    return lhs.compare(rhs) < 0 ? true:false ;
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline bool operator<(
+      const charT*                                  lhs,
+      const basic_string<charT, traits, Allocator>& rhs)
+  {
+    return basic_string<charT,traits,Allocator>(lhs).compare(rhs)<0?true:false;
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline bool operator<(
+      const basic_string<charT, traits, Allocator>& lhs,
+      const charT*                                  rhs)
+  {
+    return lhs.compare(basic_string<charT,traits,Allocator>(rhs))<0?true:false;
+  }
+
+#if !defined(_RWSTD_NO_NAMESPACE) || !defined(_RWSTD_NO_PART_SPEC_OVERLOAD)
+  template <class charT, class traits , class Allocator  >
+  inline bool operator!=(
+      const basic_string<charT, traits, Allocator>& lhs,
+      const basic_string<charT, traits, Allocator>& rhs)
+  {
+    return lhs.compare(rhs) != 0 ? true : false;
+  }
+#endif
+
+  template <class charT, class traits , class Allocator  >
+  inline bool operator!=(
+      const charT*                                  lhs,
+      const basic_string<charT, traits, Allocator>& rhs)
+  {
+    return basic_string<charT,traits,Allocator>(lhs).compare(rhs)!=0?true:false;
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline bool operator!=(
+      const basic_string<charT, traits, Allocator>& lhs,
+      const charT*                                  rhs)
+  {
+    return lhs.compare(basic_string<charT,traits,Allocator>(rhs))!=0?true:false;
+  }
+
+#if !defined(_RWSTD_NO_NAMESPACE) || !defined(_RWSTD_NO_PART_SPEC_OVERLOAD)
+  template <class charT, class traits , class Allocator  >
+  inline bool operator>(
+      const basic_string<charT, traits, Allocator>& lhs,
+      const basic_string<charT, traits, Allocator>& rhs)
+  {
+    return lhs.compare(rhs) > 0 ? true : false;
+  }
+#endif
+
+  template <class charT, class traits , class Allocator  >
+  inline bool operator>(
+      const charT*                                  lhs,
+      const basic_string<charT, traits, Allocator>& rhs)
+  {
+    return basic_string<charT,traits,Allocator>(lhs).compare(rhs)>0?true:false;
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline bool operator>(
+      const basic_string<charT, traits, Allocator>& lhs,
+      const charT*                                  rhs)
+  {
+    return lhs.compare(basic_string<charT,traits,Allocator>(rhs))>0?true:false;
+  }
+
+#if !defined(_RWSTD_NO_NAMESPACE) || !defined(_RWSTD_NO_PART_SPEC_OVERLOAD)
+  template <class charT, class traits , class Allocator  >
+  inline bool operator<=(
+      const basic_string<charT, traits, Allocator>& lhs,
+      const basic_string<charT, traits, Allocator>& rhs)
+  {
+    return lhs.compare(rhs) <= 0 ? true : false;
+  }
+#endif
+
+  template <class charT, class traits , class Allocator  >
+  inline bool operator<=(
+      const charT*                                  lhs,
+      const basic_string<charT, traits, Allocator>& rhs)
+  {
+    return basic_string<charT,traits,Allocator>(lhs).compare(rhs)<=0?true:false;
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline bool operator<=(
+      const basic_string<charT, traits, Allocator>& lhs,
+      const charT*                                  rhs)
+  {
+    return lhs.compare(basic_string<charT,traits,Allocator>(rhs))<=0?true:false;
+  }
+
+#if !defined(_RWSTD_NO_NAMESPACE) || !defined(_RWSTD_NO_PART_SPEC_OVERLOAD)
+  template <class charT, class traits , class Allocator  >
+  inline bool operator>=(
+      const basic_string<charT, traits, Allocator>& lhs,
+      const basic_string<charT, traits, Allocator>& rhs)
+  {
+    return lhs.compare(rhs) >= 0 ? true:false;
+  }
+#endif
+
+  template <class charT, class traits , class Allocator  >
+  inline bool operator>=(
+      const charT*                                  lhs,
+      const basic_string<charT, traits, Allocator>& rhs)
+  {
+    return basic_string<charT,traits,Allocator>(lhs).compare(rhs)>=0?true:false;
+  }
+
+  template <class charT, class traits , class Allocator  >
+  inline bool operator>=(
+      const basic_string<charT, traits, Allocator>& lhs,
+      const charT*                                  rhs)
+  {
+    return lhs.compare(basic_string<charT,traits,Allocator>(rhs))>=0?true:false;
+  }
+
+#if !defined(_RWSTD_NO_NAMESPACE) || !defined(_RWSTD_NO_PART_SPEC_OVERLOAD)
+  template <class charT, class traits, class Allocator>
+  inline void swap(basic_string<charT,traits,Allocator>& a, 
+                   basic_string<charT,traits,Allocator>& b)
+  {
+    a.swap(b);
+  }
+#endif
+
+#ifndef _RW_STD_IOSTREAM
+
+  template<class charT, class traits , class Allocator >
+  istream & _RWSTDExportTemplate operator >> (
+      istream & is, basic_string<charT, traits, Allocator > & str);
+
+  template<class charT, class traits , class Allocator >
+  ostream& _RWSTDExportTemplate operator << (
+      ostream & os, const basic_string<charT, traits, Allocator > & str);
+
+  template<class Stream, class charT, class traits , class Allocator >
+  Stream& _RWSTDExportTemplate getline(Stream& is, 
+                                       basic_string<charT, traits,Allocator>& str, charT delim);
+
+  template<class Stream, class charT, class traits , class Allocator >
+  Stream& _RWSTDExportTemplate getline(Stream& is, 
+                                       basic_string<charT, traits,Allocator>& str)
+  { return getline(is,str,'\n'); }
+
+#endif /*_RW_STD_IOSTREAM*/
+
+#ifdef _RWSTD_MSC22_STATIC_INIT_BUG
+#undef npos
+#endif
+
+#ifndef _RWSTD_NO_NAMESPACE
+}
+#endif
+
+#ifdef _RWSTD_COMPILE_INSTANTIATE
+#include <string.cc>
+#endif
+#endif /*defined __STD_STRING*/
+#pragma option pop
+#endif /* __STRING_STL */
