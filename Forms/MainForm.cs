@@ -633,6 +633,12 @@ namespace OSPE
                 PacketManager.LoadCapture(cr);
             }
         }
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Forms.AboutBox aboutForm = new Forms.AboutBox();
+            aboutForm.StartPosition = FormStartPosition.CenterScreen;
+            aboutForm.Show();
+        }
 
         #endregion
 
