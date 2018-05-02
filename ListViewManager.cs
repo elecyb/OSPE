@@ -286,6 +286,18 @@ namespace OSPE
             showPacketForm.Show();
         }
 
+        private void OnMouseClick(object sender, MouseEventArgs e)
+        {
+            var list = (ListView)sender;
+            if (e.Button == MouseButtons.Right)
+            {
+                if (list.FocusedItem.Bounds.Contains(e.Location) == true)
+                {
+                    cmsPacketOptions.Show(Cursor.Position);
+                }
+            }
+        }
+
         private void OnResize(object sender, EventArgs e)
         {
             colBothData.Width = -2;
@@ -466,9 +478,13 @@ namespace OSPE
             lvwWatch.ColumnWidthChanged += OnColumnWidthChanged;
 
             lvwReceived.MouseDoubleClick += OnMouseDoubleClick;
+            lvwReceived.MouseClick += OnMouseClick;
             lvwSent.MouseDoubleClick += OnMouseDoubleClick;
+            lvwSent.MouseClick += OnMouseClick;
             lvwBoth.MouseDoubleClick += OnMouseDoubleClick;
+            lvwBoth.MouseClick += OnMouseClick;
             lvwWatch.MouseDoubleClick += OnMouseDoubleClick;
+            lvwWatch.MouseClick += OnMouseClick;
 
             _tableIcons = new ImageList {ColorDepth = ColorDepth.Depth32Bit};
             _tableIcons.Images.Add(Resources.Faq24);
@@ -482,7 +498,30 @@ namespace OSPE
             lvwWatch.SmallImageList = _tableIcons;
         }
 
- 
 
+        private void tsmiOpenPacket_Click(object sender, EventArgs e)
+        {
+            ListView list = (ListView) tabControlMain.TabPages[tabControlMain.SelectedIndex].Controls[0];
+            var index = list.SelectedIndices[0];
+            var id = GetPacketIdFromTableItemIndex(list, index);
+            var packet = PacketManager.PacketList[id];
+            Form showPacketForm = new ShowPacketForm(id, packet);
+            showPacketForm.Show();
+        }
+
+        private void tsmiSendPacket_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tsmiAddToSendList_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tsmiGenerateFilter_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

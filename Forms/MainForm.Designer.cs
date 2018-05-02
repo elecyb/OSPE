@@ -58,6 +58,7 @@
             this.saveAsToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.clearToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.scriptsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiPacketInjector = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiScriptEditor = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
             this.tsmiActiveCustomFilters = new System.Windows.Forms.ToolStripMenuItem();
@@ -80,7 +81,6 @@
             this.tslTesting = new System.Windows.Forms.ToolStripStatusLabel();
             this.tslTesting2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.backgroundWorker = new System.ComponentModel.BackgroundWorker();
             this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.trayMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.trayTsmiOpen = new System.Windows.Forms.ToolStripMenuItem();
@@ -139,6 +139,9 @@
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.clearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tabSendList = new System.Windows.Forms.TabPage();
+            this.lvSendList = new System.Windows.Forms.ListView();
+            this.colSendList = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.groupConversions = new System.Windows.Forms.GroupBox();
             this.panel2 = new System.Windows.Forms.Panel();
             this.txtConverDouble = new System.Windows.Forms.TextBox();
@@ -199,6 +202,11 @@
             this.colWatchSize = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colWatchData = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hexBox = new Be.Windows.Forms.HexBox();
+            this.cmsPacketOptions = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.tsmiOpenPacket = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiSendPacket = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiAddToSendList = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiGenerateFilter = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStripMain.SuspendLayout();
             this.statusStripMain.SuspendLayout();
             this.trayMenuStrip.SuspendLayout();
@@ -216,6 +224,7 @@
             this.cmsCaptures.SuspendLayout();
             this.tabFilters.SuspendLayout();
             this.cmsListOnlyOptions.SuspendLayout();
+            this.tabSendList.SuspendLayout();
             this.groupConversions.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -228,6 +237,7 @@
             this.tabReceived.SuspendLayout();
             this.tabSent.SuspendLayout();
             this.tabWatch.SuspendLayout();
+            this.cmsPacketOptions.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStripMain
@@ -455,13 +465,21 @@
             // scriptsToolStripMenuItem
             // 
             this.scriptsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsmiPacketInjector,
             this.tsmiScriptEditor,
             this.toolStripSeparator12,
             this.tsmiActiveCustomFilters});
             this.scriptsToolStripMenuItem.ForeColor = System.Drawing.Color.Black;
             this.scriptsToolStripMenuItem.Name = "scriptsToolStripMenuItem";
-            this.scriptsToolStripMenuItem.Size = new System.Drawing.Size(54, 22);
-            this.scriptsToolStripMenuItem.Text = "Scripts";
+            this.scriptsToolStripMenuItem.Size = new System.Drawing.Size(72, 22);
+            this.scriptsToolStripMenuItem.Text = "Advanced";
+            // 
+            // tsmiPacketInjector
+            // 
+            this.tsmiPacketInjector.Name = "tsmiPacketInjector";
+            this.tsmiPacketInjector.Size = new System.Drawing.Size(185, 22);
+            this.tsmiPacketInjector.Text = "Packet Injector";
+            this.tsmiPacketInjector.Click += new System.EventHandler(this.tsmiPacketInjector_Click);
             // 
             // tsmiScriptEditor
             // 
@@ -623,10 +641,6 @@
             // openFileDialog
             // 
             this.openFileDialog.FileName = "openFileDialog1";
-            // 
-            // backgroundWorker
-            // 
-            this.backgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
             // 
             // notifyIcon
             // 
@@ -929,6 +943,7 @@
             // 
             this.tabControlCapturesAndFilters.Controls.Add(this.tabCaptures);
             this.tabControlCapturesAndFilters.Controls.Add(this.tabFilters);
+            this.tabControlCapturesAndFilters.Controls.Add(this.tabSendList);
             this.tabControlCapturesAndFilters.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControlCapturesAndFilters.Location = new System.Drawing.Point(0, 0);
             this.tabControlCapturesAndFilters.Name = "tabControlCapturesAndFilters";
@@ -1177,6 +1192,39 @@
             this.clearToolStripMenuItem.Size = new System.Drawing.Size(111, 22);
             this.clearToolStripMenuItem.Text = "Clear";
             this.clearToolStripMenuItem.Click += new System.EventHandler(this.tsmiFilterListClear_Click);
+            // 
+            // tabSendList
+            // 
+            this.tabSendList.Controls.Add(this.lvSendList);
+            this.tabSendList.Location = new System.Drawing.Point(4, 22);
+            this.tabSendList.Name = "tabSendList";
+            this.tabSendList.Padding = new System.Windows.Forms.Padding(3);
+            this.tabSendList.Size = new System.Drawing.Size(142, 334);
+            this.tabSendList.TabIndex = 2;
+            this.tabSendList.Text = "Send";
+            this.tabSendList.UseVisualStyleBackColor = true;
+            // 
+            // lvSendList
+            // 
+            this.lvSendList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.colSendList});
+            this.lvSendList.ContextMenuStrip = this.cmsCaptures;
+            this.lvSendList.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lvSendList.GridLines = true;
+            this.lvSendList.Location = new System.Drawing.Point(3, 3);
+            this.lvSendList.MultiSelect = false;
+            this.lvSendList.Name = "lvSendList";
+            this.lvSendList.Scrollable = false;
+            this.lvSendList.ShowItemToolTips = true;
+            this.lvSendList.Size = new System.Drawing.Size(136, 328);
+            this.lvSendList.TabIndex = 1;
+            this.lvSendList.UseCompatibleStateImageBehavior = false;
+            this.lvSendList.View = System.Windows.Forms.View.Details;
+            // 
+            // colSendList
+            // 
+            this.colSendList.Text = "Send List";
+            this.colSendList.Width = 150;
             // 
             // groupConversions
             // 
@@ -1746,6 +1794,44 @@
             this.hexBox.SelectionStartChanged += new System.EventHandler(this.hexBox_SelectionStartChanged);
             this.hexBox.SelectionLengthChanged += new System.EventHandler(this.hexBox_SelectionLengthChanged);
             // 
+            // cmsPacketOptions
+            // 
+            this.cmsPacketOptions.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsmiOpenPacket,
+            this.tsmiSendPacket,
+            this.tsmiAddToSendList,
+            this.tsmiGenerateFilter});
+            this.cmsPacketOptions.Name = "cmsPacketOptions";
+            this.cmsPacketOptions.Size = new System.Drawing.Size(157, 92);
+            // 
+            // tsmiOpenPacket
+            // 
+            this.tsmiOpenPacket.Name = "tsmiOpenPacket";
+            this.tsmiOpenPacket.Size = new System.Drawing.Size(156, 22);
+            this.tsmiOpenPacket.Text = "Open";
+            this.tsmiOpenPacket.Click += new System.EventHandler(this.tsmiOpenPacket_Click);
+            // 
+            // tsmiSendPacket
+            // 
+            this.tsmiSendPacket.Name = "tsmiSendPacket";
+            this.tsmiSendPacket.Size = new System.Drawing.Size(156, 22);
+            this.tsmiSendPacket.Text = "Send";
+            this.tsmiSendPacket.Click += new System.EventHandler(this.tsmiSendPacket_Click);
+            // 
+            // tsmiAddToSendList
+            // 
+            this.tsmiAddToSendList.Name = "tsmiAddToSendList";
+            this.tsmiAddToSendList.Size = new System.Drawing.Size(156, 22);
+            this.tsmiAddToSendList.Text = "Add to send list";
+            this.tsmiAddToSendList.Click += new System.EventHandler(this.tsmiAddToSendList_Click);
+            // 
+            // tsmiGenerateFilter
+            // 
+            this.tsmiGenerateFilter.Name = "tsmiGenerateFilter";
+            this.tsmiGenerateFilter.Size = new System.Drawing.Size(156, 22);
+            this.tsmiGenerateFilter.Text = "Generate filter";
+            this.tsmiGenerateFilter.Click += new System.EventHandler(this.tsmiGenerateFilter_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1782,6 +1868,7 @@
             this.cmsCaptures.ResumeLayout(false);
             this.tabFilters.ResumeLayout(false);
             this.cmsListOnlyOptions.ResumeLayout(false);
+            this.tabSendList.ResumeLayout(false);
             this.groupConversions.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
@@ -1796,6 +1883,7 @@
             this.tabReceived.ResumeLayout(false);
             this.tabSent.ResumeLayout(false);
             this.tabWatch.ResumeLayout(false);
+            this.cmsPacketOptions.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1814,7 +1902,6 @@
         private System.Windows.Forms.ToolStripMenuItem tsmiMenuExit;
         private System.Windows.Forms.StatusStrip statusStripMain;
         private System.Windows.Forms.OpenFileDialog openFileDialog;
-        private System.ComponentModel.BackgroundWorker backgroundWorker;
         private System.Windows.Forms.ToolStripStatusLabel tslNumPackets;
         private System.Windows.Forms.ToolStripMenuItem tsmiMenuConfigure;
         private System.Windows.Forms.ToolStripStatusLabel tslNumPacketsLabel;
@@ -1972,6 +2059,15 @@
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItemCapture;
         private System.Windows.Forms.ToolStripMenuItem loadToolStripMenuItemCapture;
         private System.Windows.Forms.ToolStripMenuItem clearToolStripMenuItem2Capture;
+        private System.Windows.Forms.ToolStripMenuItem tsmiPacketInjector;
+        private System.Windows.Forms.TabPage tabSendList;
+        private System.Windows.Forms.ListView lvSendList;
+        private System.Windows.Forms.ColumnHeader colSendList;
+        private System.Windows.Forms.ContextMenuStrip cmsPacketOptions;
+        private System.Windows.Forms.ToolStripMenuItem tsmiOpenPacket;
+        private System.Windows.Forms.ToolStripMenuItem tsmiSendPacket;
+        private System.Windows.Forms.ToolStripMenuItem tsmiAddToSendList;
+        private System.Windows.Forms.ToolStripMenuItem tsmiGenerateFilter;
     }
 }
 

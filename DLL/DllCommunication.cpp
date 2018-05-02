@@ -136,6 +136,15 @@ void ProcessPacket(Functions functionId, char* &buffer, int &length, SOCKET sock
 	free(pBuff);
 }
 
+void InjectPacket() 
+{
+	SOCKET s = (readData[1] + 8);
+	const char * buf = &readData[3];
+	int len = readData[2];
+	int flags = MSG_DONTROUTE;
+	send(s, buf, len, flags);
+}
+
 // Command reader thread worker
 DWORD WINAPI Command_Reader(LPVOID context)
 {
@@ -146,6 +155,9 @@ DWORD WINAPI Command_Reader(LPVOID context)
 		ServerCodes sc = (ServerCodes)readData[0];
 		switch (sc)
 		{
+			case SCODE_INJECTPACKET:
+				InjectPacket();
+				break;
 			case SCODE_SETPACKET:
 				ResumeThread(hMainThread);
 				break;

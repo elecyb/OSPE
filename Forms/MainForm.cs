@@ -37,6 +37,7 @@ namespace OSPE
         private bool cancelCheckBoxCheck = false; // para evitar que se cambie el checkbox al hacer doble click en el filtro
         private bool cancelOpenFilterDetail = true; // para evitar que se abra el form al hacer doble click en el checkbox
         private List<CaptureRecord> _captures; // lista de capturas, inicialmente vacia
+        private SendList _sendList;
         private bool _isCapturing = false;
         private bool _isFiltering = false;
         private bool _isScriptActive = false;
@@ -50,6 +51,7 @@ namespace OSPE
         {
             InitializeComponent();
             _captures = new List<CaptureRecord>();
+            _sendList = new SendList();
             notifyIcon.ContextMenuStrip = trayMenuStrip;
             
             if( ! Settings.FormSize.IsEmpty)
@@ -640,6 +642,12 @@ namespace OSPE
             aboutForm.Show();
         }
 
+        private void tsmiPacketInjector_Click(object sender, EventArgs e)
+        {
+            Form injectForm = new Forms.InjectForm();
+            injectForm.Show();
+        }
+
         #endregion
 
         #region Funciones relacionadas con los filtros
@@ -877,14 +885,6 @@ namespace OSPE
         }
 
         #endregion
-
-
-
-        // ???????????
-        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
-        {
-
-        }
 
         public void UpdateLabels(int packetsCount, int totalSizeReceived, int totalSizeSent)
         {

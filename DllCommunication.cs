@@ -36,7 +36,7 @@ namespace OSPE
     public enum ServerCodes : uint
     {
         SCODE_NOP,
-        SCODE_SETCLIENTHWND,
+        SCODE_INJECTPACKET,
         SCODE_SETPACKET,
         SCODE_STARTFILTERING,
         SCODE_STOPFILTERING,
@@ -164,6 +164,10 @@ namespace OSPE
             // Escribe en el 1er byte el comando
             writtenData[0] = (byte) sc;
 
+            if (sc == ServerCodes.SCODE_INJECTPACKET)
+            {
+                Array.Copy(data, 0, writtenData, 1, newLength);                
+            }
             if (sc == ServerCodes.SCODE_STARTFILTERING)
             {
                 writtenData[1] = (byte)FilterManager.GetActiveFilterCount();
