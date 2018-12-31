@@ -57,6 +57,7 @@ enum ServerCodes
 typedef struct
 {
     Functions functionId;
+	UINT16 socketId;
 	UINT32 localIp;
 	UINT32 remoteIp;
 	UINT16 localPort;

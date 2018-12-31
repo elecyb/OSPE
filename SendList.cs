@@ -28,13 +28,15 @@ namespace OSPE
         public ushort socketId = 0;
         public ushort length = 0;
         public byte[] data;
+        public string text;
 
 
-        public SendListItem(ushort sid, ushort len, byte[] dat)
+        public SendListItem(ushort sid, ushort len, byte[] dat, string txt)
         {
             socketId = sid;
             length = len;
             data = dat;
+            text = txt;
         }
     }
 
@@ -48,10 +50,10 @@ namespace OSPE
             return listItems;
         }
 
-        public void AddToList(ushort sid, ushort len, byte[] data)
+        public void AddToList(ushort sid, ushort len, byte[] data, string text)
         {
-            SendListItem si = new SendListItem(sid, len, data);
-            listItems.Add(si);
+            SendListItem sli = new SendListItem(sid, len, data, text);
+            listItems.Add(sli);
         }
 
 

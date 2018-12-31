@@ -54,6 +54,7 @@ namespace OSPE
     public struct PacketInfo
     {
         public Functions FunctionID;
+        public UInt16 SocketId;
         public UInt32 LocalIp;
         public UInt32 RemoteIp;
         public UInt16 LocalPort;
@@ -78,6 +79,7 @@ namespace OSPE
         }
 
         public Functions FunctionID;
+        public UInt16 SocketId;
         public IPAddress LocalIp { get; private set; }
         public UInt16 LocalPort { get; private set; }
         public IPAddress RemoteIp { get; private set; }
@@ -86,9 +88,10 @@ namespace OSPE
         public byte[] Data { get; private set; }
         public Directions Direction;
         
-        public Packet(Functions functionId, UInt32 localIp, UInt16 localPort, UInt32 remoteIp, UInt16 remotePort, byte[] data, Directions direction)
+        public Packet(Functions functionId, UInt16 socketId, UInt32 localIp, UInt16 localPort, UInt32 remoteIp, UInt16 remotePort, byte[] data, Directions direction)
         {
             FunctionID = functionId;
+            SocketId = socketId;
             LocalIp = new IPAddress((UInt32)IPAddress.NetworkToHostOrder((Int32)localIp));
             LocalPort = localPort;
             RemoteIp = new IPAddress((UInt32)IPAddress.NetworkToHostOrder((Int32)remoteIp));

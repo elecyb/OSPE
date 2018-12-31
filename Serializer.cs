@@ -94,5 +94,27 @@ namespace OSPE
             return captureList;
         }
 
+        /// <summary>
+        /// Guarda la lista Send en el directorio especificado
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="sendList"></param>
+        public static void SerializeOspeSendList(string filename, List<SendListItem> sendList)
+        {
+            Stream stream = File.Open(filename, FileMode.Create);
+            var bFormatter = new BinaryFormatter();
+            bFormatter.Serialize(stream, sendList);
+            stream.Close();
+        }
+
+        public static List<SendListItem> DeSerializeOspeSendList(string filename)
+        {
+            Stream stream = File.Open(filename, FileMode.Open);
+            var bFormatter = new BinaryFormatter();
+            var sendList = (List<SendListItem>)bFormatter.Deserialize(stream);
+            stream.Close();
+            return sendList;
+        }
+
     }
 }

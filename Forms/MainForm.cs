@@ -37,7 +37,7 @@ namespace OSPE
         private bool cancelCheckBoxCheck = false; // para evitar que se cambie el checkbox al hacer doble click en el filtro
         private bool cancelOpenFilterDetail = true; // para evitar que se abra el form al hacer doble click en el checkbox
         private List<CaptureRecord> _captures; // lista de capturas, inicialmente vacia
-        private SendList _sendList;
+        private List<SendListItem> _sendList;
         private bool _isCapturing = false;
         private bool _isFiltering = false;
         private bool _isScriptActive = false;
@@ -51,7 +51,7 @@ namespace OSPE
         {
             InitializeComponent();
             _captures = new List<CaptureRecord>();
-            _sendList = new SendList();
+            _sendList = new List<SendListItem>();
             notifyIcon.ContextMenuStrip = trayMenuStrip;
             
             if( ! Settings.FormSize.IsEmpty)

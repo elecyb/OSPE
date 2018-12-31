@@ -16,6 +16,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Be.Windows.Forms;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -34,6 +35,18 @@ namespace OSPE.Forms
         public InjectForm()
         {
             InitializeComponent();
+            hexBox1.ByteProvider = new DynamicByteProvider(new byte[0]);
+        }
+        public InjectForm(Packet p)
+        {
+            InitializeComponent();
+
+            txtItemName.Text = "Send ";
+            txtData.Text = p.GetBufferAsText();
+            numPacketSize.Value = p.Size;
+            hexBox1.ByteProvider = new DynamicByteProvider(p.Data);
+
+            
         }
 
         private void btnStart_Click(object sender, EventArgs e)
@@ -61,6 +74,8 @@ namespace OSPE.Forms
 
         private void btnSave_Click(object sender, EventArgs e)
         {
+            SendListItem si = new SendListItem(UInt16.Parse(txtOpenedSocketId.Text), (UInt16)numPacketSize.Value, Encoding.ASCII.GetBytes(txtData.Text), txtItemName.Text);
+            //Program.mainForm._send
 
         }
 
@@ -72,6 +87,31 @@ namespace OSPE.Forms
         private void timerSender_Tick(object sender, EventArgs e)
         {
             DllCommunication.WriteCommandToCmdMMF(ServerCodes.SCODE_INJECTPACKET, buf, (ushort) numPacketSize.Value);
+        }
+
+        private void rad_CheckedChanged(object sender, EventArgs e)
+        {
+            txtOpenedSocketId.Enabled = !radNewSocket.Checked;
+            txtNewSocketIp.Enabled = radNewSocket.Checked;
+            txtNewSocketPort.Enabled = radNewSocket.Checked;
+        }
+
+        private void txtData_TextChanged(object sender, EventArgs e)
+        {
+            hexBox1.ByteProvider = new DynamicByteProvider(Encoding.ASCII.GetBytes(txtData.Text));
+        }
+
+        private void hexBox1_Paint(object sender, PaintEventArgs e)
+        {
+            var bp = hexBox1.ByteProvider;
+            System.Text.StringBuilder strBuilder = new System.Text.StringBuilder((int)bp.Length);
+            for (int i = 0; i < bp.Length; i++)
+            {
+                strBuilder.Insert(i, (char)bp.ReadByte(i));
+            }
+            txtData.TextChanged -= txtData_TextChanged;
+            txtData.Text = strBuilder.ToString();
+            txtData.TextChanged += txtData_TextChanged;
         }
     }
 }

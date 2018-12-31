@@ -23,6 +23,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using Be.Windows.Forms;
+using OSPE.Forms;
 using OSPE.Properties;
 using Table = OSPE.MainForm.Tab;
 
@@ -511,12 +512,19 @@ namespace OSPE
 
         private void tsmiSendPacket_Click(object sender, EventArgs e)
         {
+            ListView list = (ListView)tabControlMain.TabPages[tabControlMain.SelectedIndex].Controls[0];
+            var index = list.SelectedIndices[0];
+            var id = GetPacketIdFromTableItemIndex(list, index);
+            var packet = PacketManager.PacketList[id];
+            Form injectForm = new InjectForm(packet);
+            injectForm.Show();
 
         }
 
         private void tsmiAddToSendList_Click(object sender, EventArgs e)
         {
-
+            SendListItem si = new SendListItem(0, 0, null, "Send ");
+            _sendList.Add(si);
         }
 
         private void tsmiGenerateFilter_Click(object sender, EventArgs e)

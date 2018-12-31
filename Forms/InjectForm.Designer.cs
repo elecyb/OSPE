@@ -87,6 +87,7 @@
             this.hexBox1.TabIndex = 3;
             this.hexBox1.UseFixedBytesPerLine = true;
             this.hexBox1.VScrollBarVisible = true;
+            this.hexBox1.Paint += new System.Windows.Forms.PaintEventHandler(this.hexBox1_Paint);
             // 
             // tableLayoutPanel1
             // 
@@ -114,6 +115,7 @@
             this.txtData.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.txtData.Size = new System.Drawing.Size(642, 181);
             this.txtData.TabIndex = 2;
+            this.txtData.TextChanged += new System.EventHandler(this.txtData_TextChanged);
             // 
             // panelAceptCancel
             // 
@@ -354,6 +356,7 @@
             // 
             // txtNewSocketPort
             // 
+            this.txtNewSocketPort.Enabled = false;
             this.txtNewSocketPort.Location = new System.Drawing.Point(138, 38);
             this.txtNewSocketPort.Name = "txtNewSocketPort";
             this.txtNewSocketPort.Size = new System.Drawing.Size(60, 20);
@@ -361,6 +364,7 @@
             // 
             // txtNewSocketIp
             // 
+            this.txtNewSocketIp.Enabled = false;
             this.txtNewSocketIp.Location = new System.Drawing.Point(138, 17);
             this.txtNewSocketIp.Name = "txtNewSocketIp";
             this.txtNewSocketIp.Size = new System.Drawing.Size(103, 20);
@@ -387,24 +391,26 @@
             // radOpenedSocketId
             // 
             this.radOpenedSocketId.AutoSize = true;
+            this.radOpenedSocketId.Checked = true;
             this.radOpenedSocketId.Location = new System.Drawing.Point(13, 68);
             this.radOpenedSocketId.Name = "radOpenedSocketId";
             this.radOpenedSocketId.Size = new System.Drawing.Size(117, 17);
             this.radOpenedSocketId.TabIndex = 1;
+            this.radOpenedSocketId.TabStop = true;
             this.radOpenedSocketId.Text = "Opened Socket ID:";
             this.radOpenedSocketId.UseVisualStyleBackColor = true;
+            this.radOpenedSocketId.CheckedChanged += new System.EventHandler(this.rad_CheckedChanged);
             // 
             // radNewSocket
             // 
             this.radNewSocket.AutoSize = true;
-            this.radNewSocket.Checked = true;
             this.radNewSocket.Location = new System.Drawing.Point(13, 19);
             this.radNewSocket.Name = "radNewSocket";
             this.radNewSocket.Size = new System.Drawing.Size(84, 17);
             this.radNewSocket.TabIndex = 0;
-            this.radNewSocket.TabStop = true;
             this.radNewSocket.Text = "New Socket";
             this.radNewSocket.UseVisualStyleBackColor = true;
+            this.radNewSocket.CheckedChanged += new System.EventHandler(this.rad_CheckedChanged);
             // 
             // btnStop
             // 

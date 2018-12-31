@@ -108,7 +108,7 @@ namespace OSPE
 
             if (IsFilteringActived && FilterManager.CheckPacketBreak(data, packetInfo.Size, functionFlag))
             {
-                var pckt = new Packet(packetInfo.FunctionID, packetInfo.LocalIp, packetInfo.LocalPort, packetInfo.RemoteIp, packetInfo.RemotePort, data, direction);
+                var pckt = new Packet(packetInfo.FunctionID, packetInfo.SocketId, packetInfo.LocalIp, packetInfo.LocalPort, packetInfo.RemoteIp, packetInfo.RemotePort, data, direction);
                 var showPacketForm = new ShowPacketForm(0, pckt, true);
                 showPacketForm.ShowDialog();
                 if (showPacketForm.DialogResult == System.Windows.Forms.DialogResult.OK)
@@ -135,7 +135,7 @@ namespace OSPE
 
 
             IsModifiedList = true;
-            var packet = new Packet(packetInfo.FunctionID, packetInfo.LocalIp, packetInfo.LocalPort, packetInfo.RemoteIp, packetInfo.RemotePort, data, direction);
+            var packet = new Packet(packetInfo.FunctionID, packetInfo.SocketId, packetInfo.LocalIp, packetInfo.LocalPort, packetInfo.RemoteIp, packetInfo.RemotePort, data, direction);
             
             lock(LockingVar)
             {

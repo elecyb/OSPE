@@ -68,6 +68,7 @@ void SetInfo(SOCKET socket, Functions functionId, int length, PacketInfo* info)
 
 	//Envía la versión del protocolo a través del campo functionId
 	info->functionId = (Functions)(functionId | ipver);
+	info->socketId = socket;
 	info->size = length;
 }
 
