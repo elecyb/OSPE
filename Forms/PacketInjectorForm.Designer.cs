@@ -1,6 +1,6 @@
 ﻿namespace OSPE.Forms
 {
-    partial class InjectForm
+    partial class PacketInjectorForm
     {
         /// <summary>
         /// Required designer variable.

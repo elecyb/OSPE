@@ -24,7 +24,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using OSPE;
 
-namespace OSPE_Filters
+namespace OSPE
 {
     public enum FilterModes : uint
     {

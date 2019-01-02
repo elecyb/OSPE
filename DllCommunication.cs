@@ -28,7 +28,6 @@ using System.IO.MemoryMappedFiles;
 using System.Security.AccessControl;
 using SharedMemory;
 using System.Threading;
-using OSPE_Filters;
 using Buffer = System.Buffer;
 
 namespace OSPE
@@ -149,40 +148,73 @@ namespace OSPE
 
 
         // Memory Mapped File - Command MMF data
-        /*
-            |   ServerCode   |  FilterCount/newPacketLen   |             Filter/Packet Data                     |
-            |    1-byte      |   1-byte   / 2-bytes        |-----------------Data-------------------------------|
-            |-------------------------------------_cmdMmfBufferSize---------------------------------------------|
-        */
+
         private static string _cmdMmfName;
         private static SharedMemory.CircularBuffer cmdMMF;
 
-        public static void WriteCommandToCmdMMF(ServerCodes sc, byte[] data = null, UInt16 newLength = 0)
+        public static void WriteCommandToCmdMMF(ServerCodes sc, byte[] data = null, UInt16 newLength = 0, ushort socketId = 0)
         {
             int mmfWriteTimeout = 1000;
-            byte[] writtenData = new byte[FilterManager.FILTERINBYTESSIZE * FilterManager.GetActiveFilterCount() + 2]; // Minimo:  SizeOf(Filter) * cantActivos + 2 
-            // Escribe en el 1er byte el comando
-            writtenData[0] = (byte) sc;
+            byte[] writtenData;
 
             if (sc == ServerCodes.SCODE_INJECTPACKET)
             {
-                Array.Copy(data, 0, writtenData, 1, newLength);                
+                /*
+                    |   ServerCode   |  SocketID   |   newLength     |                   Packet                  |
+                    |    1-byte      |   2-bytes   |    2-bytes      |---------------     data      -------------|
+                    |------------------------------------    writtenData   --------------------------------------|
+                */
+                writtenData = new byte[1 + 2 + 2 + newLength];
+                writtenData[0] = (byte)sc;
+                Array.Copy(FilterManager.StructToBytes(socketId), 0, writtenData, 1, 2);
+                Array.Copy(FilterManager.StructToBytes(newLength), 0, writtenData, 3, 2);
+                Array.Copy(data, 0, writtenData, 5, newLength);
             }
-            if (sc == ServerCodes.SCODE_STARTFILTERING)
+            else if (sc == ServerCodes.SCODE_STARTFILTERING)
             {
+                /*
+                    |   ServerCode   |  FilterCount   |             Filter Data                     |
+                    |    1-byte      |   1-byte       |-----------------Data------------------------|
+                    |------------------------   writtenData  ---------------------------------------|
+                */
+                writtenData = new byte[FilterManager.FILTERINBYTESSIZE * FilterManager.GetActiveFilterCount() + 2]; // Minimo:  SizeOf(Filter) * cantActivos + 2 
+                writtenData[0] = (byte)sc;
                 writtenData[1] = (byte)FilterManager.GetActiveFilterCount();
                 byte[] bytes = FilterManager.ConvertFilterListToBytes();
                 Array.Copy(bytes, 0, writtenData, 2, FilterManager.FILTERINBYTESSIZE * FilterManager.GetActiveFilterCount());
             }
-            if (sc == ServerCodes.SCODE_SETPACKET)
+            else if (sc == ServerCodes.SCODE_SETPACKET)
             {
+                /*
+                    |   ServerCode   |  newLength    |             Packet Data                          |
+                    |    1-byte      |   2-bytes     |-----------------Data-----------------------------|
+                    |-------------------------------------   writtenData    ----------------------------|
+                */
+                writtenData = new byte[1 + 2 + newLength];
+                writtenData[0] = (byte)sc;
                 Array.Copy(FilterManager.StructToBytes(newLength), 0, writtenData, 1, 2);
                 Array.Copy(data, 0, writtenData, 3, newLength);
             }
-            if (sc == ServerCodes.SCODE_LOADDLLEX)
+            else if (sc == ServerCodes.SCODE_LOADDLLEX)
             {
-                Array.Copy(Encoding.ASCII.GetBytes(Settings.DLLEx), 0, writtenData, 1, Settings.DLLEx.Length);  
+                /*
+                    |   ServerCode   |           fileName string        |
+                    |    1-byte      |----------  string.Length --------|
+                    |-------------------   writtenData    --------------|
+                */
+                writtenData = new byte[1 + Settings.DLLEx.Length];
+                writtenData[0] = (byte)sc;
+                Array.Copy(Encoding.ASCII.GetBytes(Settings.DLLEx), 0, writtenData, 1, Settings.DLLEx.Length);
             }
+            else if (sc == ServerCodes.SCODE_STARTCAPTURE || 
+                sc == ServerCodes.SCODE_STOPCAPTURE || 
+                sc == ServerCodes.SCODE_STOPFILTERING || 
+                sc == ServerCodes.SCODE_UNLOADDLLEX)
+            {
+                writtenData = new byte[1];
+                writtenData[0] = (byte)sc;
+            }
+            else throw new NotImplementedException("ServerCode " + (int)sc + " NOT IMPLEMENTED");
 
             // Spawneamos un thread que puede esperar el mmfWriteTimeout para escribir el comando
             //int threadCount = 0;

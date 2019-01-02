@@ -20,7 +20,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
-using OSPE_Filters;
 
 namespace OSPE
 {
@@ -99,7 +98,7 @@ namespace OSPE
         /// </summary>
         /// <param name="filename"></param>
         /// <param name="sendList"></param>
-        public static void SerializeOspeSendList(string filename, List<SendListItem> sendList)
+        public static void SerializeOspeSendList(string filename, List<SendInfo> sendList)
         {
             Stream stream = File.Open(filename, FileMode.Create);
             var bFormatter = new BinaryFormatter();
@@ -107,11 +106,11 @@ namespace OSPE
             stream.Close();
         }
 
-        public static List<SendListItem> DeSerializeOspeSendList(string filename)
+        public static List<SendInfo> DeSerializeOspeSendList(string filename)
         {
             Stream stream = File.Open(filename, FileMode.Open);
             var bFormatter = new BinaryFormatter();
-            var sendList = (List<SendListItem>)bFormatter.Deserialize(stream);
+            var sendList = (List<SendInfo>)bFormatter.Deserialize(stream);
             stream.Close();
             return sendList;
         }

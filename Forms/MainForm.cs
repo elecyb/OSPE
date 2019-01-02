@@ -24,7 +24,6 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using OSPE.Properties;
-using OSPE_Filters;
 using OPSE_HotKeys;
 
 namespace OSPE
@@ -34,10 +33,7 @@ namespace OSPE
         public int processInyectedId = 0;
         private delegate void VoidDelegate();
         private DateTime lastClickTime = new DateTime();
-        private bool cancelCheckBoxCheck = false; // para evitar que se cambie el checkbox al hacer doble click en el filtro
-        private bool cancelOpenFilterDetail = true; // para evitar que se abra el form al hacer doble click en el checkbox
         private List<CaptureRecord> _captures; // lista de capturas, inicialmente vacia
-        private List<SendListItem> _sendList;
         private bool _isCapturing = false;
         private bool _isFiltering = false;
         private bool _isScriptActive = false;
@@ -51,7 +47,6 @@ namespace OSPE
         {
             InitializeComponent();
             _captures = new List<CaptureRecord>();
-            _sendList = new List<SendListItem>();
             notifyIcon.ContextMenuStrip = trayMenuStrip;
             
             if( ! Settings.FormSize.IsEmpty)
@@ -83,7 +78,7 @@ namespace OSPE
                         
             FilterManager.LoadTempFilterList();
             LoadFilterItems();
-
+            LoadSendListItems();
             LoadHotKeys();
             UpdateControls();
         }
@@ -127,7 +122,7 @@ namespace OSPE
             tsmiActiveFilters.Checked = _isFiltering;
             trayTsmiActiveFilters.Checked = _isFiltering;
             ((Control)this.tabFilters).Enabled = !_isFiltering;
-            lvwFilters.Columns[0].Text = "Filters " + (_isFiltering ? "(Active)" : "(Inactive)");
+            lvFilters.Columns[0].Text = "Filters " + (_isFiltering ? "(Active)" : "(Inactive)");
             // Script DLL
             chkActiveCustomScript.CheckedChanged -= chkActiveCustomScript_CheckedChanged;
             chkActiveCustomScript.Checked = _isScriptActive;
@@ -178,14 +173,7 @@ namespace OSPE
                 Hide(); // Minimize to tray
         }
 
-        private bool CheckIfProcessIsInyected()
-        {
-            if (processInyectedId == 0)
-                ActionSelectProcess();
-            return processInyectedId != 0;
-        }
-
-        #region funciones de acciones Ospe - cambios de variable de estado y chequeos internos
+        #region Ospe internal private functions - state variables & checks
 
         private void AddToCaptureList()
         {
@@ -278,7 +266,6 @@ namespace OSPE
             }
             return true;
         }
-
         /// <summary>
         /// Injecta el ultimo proceso creado (mayor StartTime) que tenga el nombre del proceso ultimo injectado (usando Select Process)
         /// Por ejemplo al abrir el iexplorer se crean 2 procesos iexplorer.exe, el que hay q injectar es el ultimo creado.
@@ -311,7 +298,6 @@ namespace OSPE
             }
               
         }
-
         private void InjectDllEx()
         {
             if (!CheckDllFile(true)) return;
@@ -323,10 +309,17 @@ namespace OSPE
             else  {
             }
         }
+        private bool CheckIfProcessIsInyected()
+        {
+            if (processInyectedId == 0)
+                ActionSelectProcess();
+            return processInyectedId != 0;
+        }
 
         #endregion
 
         #region acciones de la interface
+
         public void ActionExitProgram()
         {
             Close();
@@ -433,10 +426,58 @@ namespace OSPE
                 trayTsmiInjectLastProc.Text = "Inject " + Settings.LastProcessInjected + ".exe";
             }
         }
+        public void ActionSearchNext()
+        {
+            int itemCount;
+            ListView lv;
 
+            if (txtSearch.Text == "" || txtSearch.Text == "Search...")
+                return;
+
+            switch ((Tab)tabControlMain.SelectedIndex)
+            {
+                case Tab.Both:
+                    itemCount = lvwBoth.VirtualListSize; // Usamos el virtualSize para trabajar sobre indices 
+                    lv = lvwBoth;                        // de lista existentes (refrescados en la view) 
+                    break;
+                case Tab.Received:
+                    itemCount = lvwReceived.VirtualListSize;
+                    lv = lvwReceived;
+                    break;
+                case Tab.Sent:
+                    itemCount = lvwSent.VirtualListSize;
+                    lv = lvwSent;
+                    break;
+                case Tab.Watch:
+                    itemCount = lvwWatch.VirtualListSize;
+                    lv = lvwWatch;
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
+
+            for (int i = _searchLastFound + 1; i < itemCount; i++)
+            {
+                var id = GetPacketIdFromTableItemIndex(lv, i);
+                Packet pkt = PacketManager.PacketList[id];
+                string buffer = radioSearchHex.Checked ? pkt.GetBufferAsHex().Replace(" ", string.Empty) : pkt.GetBufferAsText();
+                string search = radioSearchHex.Checked ? txtSearch.Text.Replace(" ", string.Empty).ToUpper() : txtSearch.Text;
+                if (buffer.Contains(search))
+                {
+                    lv.Items[i].Selected = true;
+                    lv.Select();
+                    lv.Items[i].EnsureVisible();
+                    _searchLastFound = i;
+                    return;
+                }
+            }
+            MessageBox.Show("End of search. Cannot find \"" + txtSearch.Text + "\"");
+            _searchLastFound = -1; // No hubo coincidencias
+        }
+        
         #endregion
 
-        #region Controles de la barra de acceso rapido
+        #region Quick access bar controls
 
         private void btnStartPauseCapture_Click(object sender, EventArgs e)
         {
@@ -469,6 +510,26 @@ namespace OSPE
         {
             ActionSetAutoScrollToBottom(chkAutoScroll.Checked);
         }
+        private void btnSearch_Click(object sender, EventArgs e)
+        {
+            ActionSearchNext();
+        }
+        private void txtSearch_Enter(object sender, EventArgs e)
+        {
+            if (txtSearch.Text == "Search...")
+                txtSearch.Text = "";
+        }
+        private void radioSearchString_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioSearchString.Checked)
+                radioSearchHex.Checked = false;
+        }
+        private void radioSearchHex_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioSearchHex.Checked)
+                radioSearchString.Checked = false;
+        }
+        
         #endregion
 
         #region ToolStripMenu Items
@@ -538,9 +599,19 @@ namespace OSPE
         {
             ActionStartStopScript(!_isScriptActive);
         }
-
-        // Tray icon Methods --------------------------
-        private void notifyIcon1_Click(object sender, EventArgs  e)
+        private void tsmiPacketInjector_Click(object sender, EventArgs e)
+        {
+            Form injectForm = new Forms.PacketInjectorForm();
+            injectForm.Show();
+        }
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Forms.AboutBox aboutForm = new Forms.AboutBox();
+            aboutForm.StartPosition = FormStartPosition.CenterScreen;
+            aboutForm.Show();
+        }
+        // Tray menu  --------------------------
+        private void trayIcon_Click(object sender, EventArgs  e)
         {
             ActionMainOrTrayMenuOpen();
             if (MouseButtons.Left == ((MouseEventArgs)e).Button)
@@ -551,27 +622,55 @@ namespace OSPE
             }
 
         }
-        private void tsmItemExit_Click(object sender, EventArgs e)
+        private void trayMenuExit_Click(object sender, EventArgs e)
         {
             ActionExitProgram();
         }
-        private void tsmItemOpen_Click(object sender, EventArgs e)
+        private void trayMenuOpen_Click(object sender, EventArgs e)
         {
             Show();
             WindowState = FormWindowState.Normal;
             BringToFront();
         }
-        private void tsmItemInjectLastProc_Click(object sender, EventArgs e)
-        {
-            ActionInjectLastProcess();
-        }
 
-        // Funciones de la list view Capture y menu Methods -------------------------------
-        private void tsmiCaptureOpen_Click(object sender, EventArgs e)
+        #endregion
+
+        #region Capture ListView methods 
+
+        private void cmsCaptureList_Opening(object sender, CancelEventArgs e)
+        {
+            // Si hay un item seleccionado se habilitan las opciones para ese item
+            if (lvCaptures.SelectedItems.Count > 0)
+            {
+                cmsCaptures.Items[0].Enabled = true;
+                cmsCaptures.Items[1].Enabled = true;
+            }
+            else
+            {
+                cmsCaptures.Items[0].Enabled = false;
+                cmsCaptures.Items[1].Enabled = false;
+            }
+        }
+        private void lvCaptures_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (lvCaptures.SelectedItems.Count == 1)
+            {
+                ActionStopCapture(); // Paramos la captura antes
+                                     // var recordId = int.Parse(lvCaptures.SelectedItems[0].SubItems[1].Text);
+                var recordId = lvCaptures.Items.IndexOf(lvCaptures.SelectedItems[0]);
+                var cr = _captures[recordId];
+                foreach (Packet p in cr.GetPacketList())
+                {
+                    AddPacket(p);
+                }
+                PacketManager.LoadCapture(cr);
+            }
+        }
+        private void tsmiCaptureListOpen_Click(object sender, EventArgs e)
         {
             lvCaptures_MouseDoubleClick(null, null);
         }
-        private void tsmiCaptureDelete_Click(object sender, EventArgs e)
+        private void tsmiCaptureListDelete_Click(object sender, EventArgs e)
         {
             if (lvCaptures.SelectedItems.Count == 1)
             {
@@ -620,120 +719,64 @@ namespace OSPE
             lvCaptures.Items.Clear();
             _captureCount = 0;
         }
-        private void lvCaptures_MouseDoubleClick(object sender, MouseEventArgs e)
-        {
-            if (lvCaptures.SelectedItems.Count == 1)
-            {
-                ActionStopCapture(); // Paramos la captura antes
-                                     // var recordId = int.Parse(lvCaptures.SelectedItems[0].SubItems[1].Text);
-                var recordId = lvCaptures.Items.IndexOf(lvCaptures.SelectedItems[0]);
-                var cr = _captures[recordId];
-                foreach (Packet p in cr.GetPacketList())
-                {
-                    AddPacket(p);
-                }
-                PacketManager.LoadCapture(cr);
-            }
-        }
-        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Forms.AboutBox aboutForm = new Forms.AboutBox();
-            aboutForm.StartPosition = FormStartPosition.CenterScreen;
-            aboutForm.Show();
-        }
-
-        private void tsmiPacketInjector_Click(object sender, EventArgs e)
-        {
-            Form injectForm = new Forms.InjectForm();
-            injectForm.Show();
-        }
-
+        
         #endregion
 
-        #region Funciones relacionadas con los filtros
+        #region Filters ListView methods
 
         public void LoadFilterItems()
         {
-            lvwFilters.Items.Clear();
+            lvFilters.Items.Clear();
             var filterList = FilterManager.GetFilterList();
-            lvwFilters.ItemCheck -= lvwFilters_ItemCheck; // desactiva el handler
+            lvFilters.ItemCheck -= lvFilters_ItemCheck; // desactiva el handler
             foreach (var filter in filterList)
             {
-                var item = lvwFilters.Items.Add(filter.Name);
+                var item = lvFilters.Items.Add(filter.Name);
                 item.Checked = filter.Active;
 
             }
-            lvwFilters.ItemCheck += lvwFilters_ItemCheck; // activa nuevamente el handler
+            lvFilters.ItemCheck += lvFilters_ItemCheck; // activa nuevamente el handler
         }
-        // Si hay un item seleccionado se cancela el evento para que se muestre el menu para items
-        private void cmsListOnlyOptions_Opening(object sender, CancelEventArgs e)
+        private void cmsFilterList_Opening(object sender, CancelEventArgs e)
         {
-            if (lvwFilters.SelectedItems.Count > 0)
+            // Si hay un item seleccionado se habilitan las opciones para ese item
+            if (lvFilters.SelectedItems.Count > 0)
             {
-                cmsListOnlyOptions.Items[1].Visible = true;
-                cmsListOnlyOptions.Items[2].Visible = true;
+                cmsFilters.Items[1].Visible = true;
+                cmsFilters.Items[2].Visible = true;
             }
             else
             {
-                cmsListOnlyOptions.Items[1].Visible = false;
-                cmsListOnlyOptions.Items[2].Visible = false;
-            }
-
-
-        }
-        private void lvwFilters_DoubleClick(object sender, EventArgs e)
-        {
-            if (lvwFilters.SelectedItems.Count > 0 && !cancelOpenFilterDetail)
-            {
-                new FilterEditorForm(lvwFilters.SelectedIndices[0]);
-                cancelOpenFilterDetail = true;
+                cmsFilters.Items[1].Visible = false;
+                cmsFilters.Items[2].Visible = false;
             }
         }
-        private void lvwFilters_ItemCheck(object sender, ItemCheckEventArgs e)
+        private void lvFilters_ItemCheck(object sender, ItemCheckEventArgs e)
         {
-            if (cancelCheckBoxCheck)
-            {
-                e.NewValue = e.CurrentValue;
-                cancelCheckBoxCheck = false;
-            }
             lastClickTime = DateTime.MinValue;
             FilterManager.SetFilterActive(e.Index, e.NewValue == CheckState.Checked);
         }
-        private void lvwFilters_MouseDown(object sender, MouseEventArgs e)
+        private void lvFilters_Resize(object sender, EventArgs e)
         {
-            var tSpan = DateTime.Now - lastClickTime;
-            if (tSpan.TotalMilliseconds <= SystemInformation.DoubleClickTime)
-            {
-                cancelCheckBoxCheck = true;
-                cancelOpenFilterDetail = false;
-            }
-            lastClickTime = DateTime.Now;
+            ListViewResizeSizeLastColumn((ListView)sender);
         }
-        private void lvwFilters_Resize(object sender, EventArgs e)
-        {
-            SizeLastColumn((ListView)sender);
-        }
-        private void SizeLastColumn(ListView lv)
-        {
-            lv.Columns[lv.Columns.Count - 1].Width = -2;
-        }
-        private void tsmiAddNewFilter_Click(object sender, EventArgs e)
+        private void tsmiFilterListAddNew_Click(object sender, EventArgs e)
         {
             if (FilterManager.GetNumberOfFiltersInList() >= 40)
                 MessageBox.Show("Cannot create more than 40 filters.");
             else
                 new FilterEditorForm();
         }
-        private void tsmiEditFilter_Click(object sender, EventArgs e)
+        private void tsmiFilterListEdit_Click(object sender, EventArgs e)
         {
-            new FilterEditorForm(lvwFilters.SelectedIndices[0]);
+            new FilterEditorForm(lvFilters.SelectedIndices[0]);
         }
-        private void tsmiDeleteFilter_Click(object sender, EventArgs e)
+        private void tsmiFilterListDelete_Click(object sender, EventArgs e)
         {
-            FilterManager.DeleteFilter(lvwFilters.SelectedIndices[0]);
-            lvwFilters.Items.RemoveAt(lvwFilters.SelectedIndices[0]);
+            FilterManager.DeleteFilter(lvFilters.SelectedIndices[0]);
+            lvFilters.Items.RemoveAt(lvFilters.SelectedIndices[0]);
         }
-        private void tsmiFilterListOpen_Click(object sender, EventArgs e)
+        private void tsmiFilterListLoad_Click(object sender, EventArgs e)
         {
             FilterManager.LoadFilterList();
             LoadFilterItems();
@@ -750,7 +793,7 @@ namespace OSPE
         {
             ActionClearFilterList();
         }
-        private void tsmiShowHideList_Click(object sender, EventArgs e)
+        private void tsmiFilterListShowHide_Click(object sender, EventArgs e)
         {
             if (splitContainerFiltersAndBody.Panel1MinSize > 0)
             {
@@ -767,7 +810,65 @@ namespace OSPE
 
         #endregion
 
-        #region Funciones relacionadas con la HexBox
+        #region SendList ListView methods
+
+        public void LoadSendListItems()
+        {
+            lvSendList.Items.Clear();
+            var sendList = SendManager.GetSendList();
+            lvSendList.ItemCheck -= lvSendList_ItemCheck; // desactiva el handler
+            foreach (var sendItem in sendList)
+            {
+                var item = lvSendList.Items.Add(sendItem.Name);
+                item.Checked = sendItem.Active;
+
+            }
+            lvSendList.ItemCheck += lvSendList_ItemCheck; // activa nuevamente el handler
+        }
+        private void cmsSendList_Opening(object sender, CancelEventArgs e)
+        {
+            // Si hay un item seleccionado se habilitan las opciones para ese item
+            if (lvSendList.SelectedItems.Count > 0)
+            {
+                cmsSendList.Items[0].Enabled = true;
+                cmsSendList.Items[1].Enabled = true;
+            }
+            else
+            {
+                cmsSendList.Items[0].Enabled = false;
+                cmsSendList.Items[1].Enabled = false;
+            }
+        }
+        private void lvSendList_ItemCheck(object sender, ItemCheckEventArgs e)
+        {
+            SendManager.SetSendListItemActive(e.Index, e.NewValue == CheckState.Checked);
+        }
+        private void tsmiSendListEdit_Click(object sender, EventArgs e)
+        {
+            (new Forms.PacketInjectorForm(lvSendList.SelectedIndices[0])).Show();
+        }
+        private void tsmiSendListDelete_Click(object sender, EventArgs e)
+        {
+            SendManager.DeleteSendListItem(lvFilters.SelectedIndices[0]);
+            lvFilters.Items.RemoveAt(lvFilters.SelectedIndices[0]);
+        }
+        private void tsmiSendListLoad_Click(object sender, EventArgs e)
+        {
+            SendManager.LoadSendList();
+            LoadSendListItems();
+        }
+        private void tsmiSendListSave_Click(object sender, EventArgs e)
+        {
+            SendManager.SaveSendList();
+        }
+        private void tsmiSendListClear_Click(object sender, EventArgs e)
+        {
+            SendManager.ClearSendList();
+            LoadSendListItems();
+        }
+        
+        #endregion
+
 
         private void hexBox_SelectionLengthChanged(object sender, EventArgs e)
         {
@@ -813,79 +914,10 @@ namespace OSPE
 
         }
 
-#endregion
-
-        #region Funciones relacionadas con el Search
-        public void SearchNext()
+        private void ListViewResizeSizeLastColumn(ListView lv)
         {
-            btnSearch_Click(null, null);
+            lv.Columns[lv.Columns.Count - 1].Width = -2;
         }
-        private void btnSearch_Click(object sender, EventArgs e)
-        {
-            int itemCount;
-            ListView lv;
-
-            if (txtSearch.Text == "" || txtSearch.Text == "Search...")
-                return;
-
-            switch ((Tab)tabControlMain.SelectedIndex)
-            {
-                case Tab.Both:
-                    itemCount = lvwBoth.VirtualListSize; // Usamos el virtualSize para trabajar sobre indices 
-                    lv = lvwBoth;                        // de lista existentes (refrescados en la view) 
-                    break;
-                case Tab.Received:
-                    itemCount = lvwReceived.VirtualListSize;
-                    lv = lvwReceived;
-                    break;
-                case Tab.Sent:
-                    itemCount = lvwSent.VirtualListSize;
-                    lv = lvwSent;
-                    break;
-                case Tab.Watch:
-                    itemCount = lvwWatch.VirtualListSize;
-                    lv = lvwWatch;
-                    break;
-                default:
-                    throw new NotImplementedException();
-            }
-
-            for (int i = _searchLastFound + 1; i < itemCount; i++)
-            {
-                var id = GetPacketIdFromTableItemIndex(lv, i);
-                Packet pkt = PacketManager.PacketList[id];
-                string buffer = radioSearchHex.Checked ? pkt.GetBufferAsHex().Replace(" ", string.Empty) : pkt.GetBufferAsText();
-                string search = radioSearchHex.Checked ? txtSearch.Text.Replace(" ", string.Empty).ToUpper() : txtSearch.Text;
-                if (buffer.Contains(search))
-                {
-                    lv.Items[i].Selected = true;
-                    lv.Select();
-                    lv.Items[i].EnsureVisible();
-                    _searchLastFound = i;
-                    return;
-                }
-            }
-            MessageBox.Show("End of search. Cannot find \"" + txtSearch.Text + "\"");
-            _searchLastFound = -1; // No hubo coincidencias
-        }
-        private void txtSearch_Enter(object sender, EventArgs e)
-        {
-            if (txtSearch.Text == "Search...")
-                txtSearch.Text = "";
-        }
-        private void radioSearchString_CheckedChanged(object sender, EventArgs e)
-        {
-            if (radioSearchString.Checked)
-                radioSearchHex.Checked = false;
-        }
-        private void radioSearchHex_CheckedChanged(object sender, EventArgs e)
-        {
-            if (radioSearchHex.Checked)
-                radioSearchString.Checked = false;
-        }
-
-        #endregion
-
         public void UpdateLabels(int packetsCount, int totalSizeReceived, int totalSizeSent)
         {
             if (InvokeRequired)
@@ -924,7 +956,6 @@ namespace OSPE
             if (Settings.HotKeyInjectLast != 0)
                 SetKeyboardHook(ref HotKeys.injectLastKeyboardHook, HotKeys.hook_InjectLast, Settings.HotKeyInjectLast);
         }
-
         private static void SetKeyboardHook(ref KeyboardHook hook, EventHandler<KeyPressedEventArgs> func, int keyData)
         {
             // Get Key and Modifiers from KeyData
@@ -945,6 +976,7 @@ namespace OSPE
                 MessageBox.Show(ex.Message);
             }
         }
+
 
     }
 }

@@ -18,7 +18,6 @@
 
 using System;
 using System.Collections.Generic;
-using OSPE_Filters;
 using Timer = System.Timers.Timer;
 
 namespace OSPE

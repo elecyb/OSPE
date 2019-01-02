@@ -28,41 +28,46 @@ using System.Windows.Forms;
 
 namespace OSPE.Forms
 {
-    public partial class InjectForm : Form
+    public partial class PacketInjectorForm : Form
     {
         byte[] buf = new byte[65539];
+        ushort socketId = 0;
 
-        public InjectForm()
+        public PacketInjectorForm(int editIndex = -1)
         {
             InitializeComponent();
             hexBox1.ByteProvider = new DynamicByteProvider(new byte[0]);
+            if (editIndex != -1)
+            {
+                SendInfo si = SendManager.GetSendInfoAtListIndex(editIndex);
+                LoadFormData(si.Name, si.Active, si.Packet);
+            }
+
         }
-        public InjectForm(Packet p)
+        public PacketInjectorForm(string name, bool active, Packet p)
         {
             InitializeComponent();
+            LoadFormData(name, active, p);
+        }
 
-            txtItemName.Text = "Send ";
+        private void LoadFormData(string name, bool active, Packet p)
+        {
+            txtItemName.Text = name;
+            chkEnabled.Enabled = active;
             txtData.Text = p.GetBufferAsText();
             numPacketSize.Value = p.Size;
+            txtOpenedSocketId.Text = p.SocketId.ToString();
+            txtNewSocketIp.Text = p.RemoteIp.ToString();
+            txtNewSocketPort.Text = p.RemotePort.ToString();
             hexBox1.ByteProvider = new DynamicByteProvider(p.Data);
-
-            
+            buf = p.Data;
         }
+
 
         private void btnStart_Click(object sender, EventArgs e)
         {
-
-            // Buffer data representation
-            /*
-                |   SocketId    |   PacketSize  |             Packet Data                     |
-                |    2-bytes    |   2-bytes     |-----------------Data------------------------|
-            */
-            
-            Array.Copy(BitConverter.GetBytes(Int16.Parse(txtOpenedSocketId.Text)), buf, 2); // SocketId
-            Array.Copy(BitConverter.GetBytes((Int16)numPacketSize.Value), buf, 2); // PacketSize
             timerSender.Interval = (int) numDelay.Value;
             timerSender.Enabled = true;
-
         }
 
         private void btnStop_Click(object sender, EventArgs e)
@@ -74,9 +79,10 @@ namespace OSPE.Forms
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            SendListItem si = new SendListItem(UInt16.Parse(txtOpenedSocketId.Text), (UInt16)numPacketSize.Value, Encoding.ASCII.GetBytes(txtData.Text), txtItemName.Text);
-            //Program.mainForm._send
-
+            Packet packet = new Packet(Functions.CODE_NOP, UInt16.Parse(txtOpenedSocketId.Text), 0, 0, UInt16.Parse(txtNewSocketIp.Text), UInt16.Parse(txtNewSocketPort.Text), Encoding.ASCII.GetBytes(txtData.Text), Packet.Directions.None);
+            SendInfo si = new SendInfo(txtItemName.Text, chkEnabled.Enabled, packet);
+            SendManager.AddToList(si);
+            Program.mainForm.LoadSendListItems();
         }
 
         private void btnClose_Click(object sender, EventArgs e)
@@ -86,7 +92,7 @@ namespace OSPE.Forms
 
         private void timerSender_Tick(object sender, EventArgs e)
         {
-            DllCommunication.WriteCommandToCmdMMF(ServerCodes.SCODE_INJECTPACKET, buf, (ushort) numPacketSize.Value);
+            DllCommunication.WriteCommandToCmdMMF(ServerCodes.SCODE_INJECTPACKET, buf, (ushort) numPacketSize.Value, socketId);
         }
 
         private void rad_CheckedChanged(object sender, EventArgs e)

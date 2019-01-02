@@ -222,7 +222,7 @@ public sealed class KeyboardHook : IDisposable
 
         public static void hook_SearchNext(object sender, KeyPressedEventArgs e)
         {
-            Program.mainForm.SearchNext();
+            Program.mainForm.ActionSearchNext();
         }
     }
 }

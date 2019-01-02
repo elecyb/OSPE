@@ -516,15 +516,18 @@ namespace OSPE
             var index = list.SelectedIndices[0];
             var id = GetPacketIdFromTableItemIndex(list, index);
             var packet = PacketManager.PacketList[id];
-            Form injectForm = new InjectForm(packet);
+            Form injectForm = new PacketInjectorForm("Send " + id, true, packet);
             injectForm.Show();
 
         }
 
         private void tsmiAddToSendList_Click(object sender, EventArgs e)
         {
-            SendListItem si = new SendListItem(0, 0, null, "Send ");
-            _sendList.Add(si);
+            ListView list = (ListView)tabControlMain.TabPages[tabControlMain.SelectedIndex].Controls[0];
+            var index = list.SelectedIndices[0];
+            var id = GetPacketIdFromTableItemIndex(list, index);
+            var packet = PacketManager.PacketList[id];
+            SendManager.AddToList("Send " + id, false, packet);
         }
 
         private void tsmiGenerateFilter_Click(object sender, EventArgs e)
