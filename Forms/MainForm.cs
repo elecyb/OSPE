@@ -849,8 +849,7 @@ namespace OSPE
         }
         private void tsmiSendListDelete_Click(object sender, EventArgs e)
         {
-            SendManager.DeleteSendListItem(lvFilters.SelectedIndices[0]);
-            lvFilters.Items.RemoveAt(lvFilters.SelectedIndices[0]);
+            SendManager.DeleteSendListItem(lvSendList.SelectedIndices[0]);
         }
         private void tsmiSendListLoad_Click(object sender, EventArgs e)
         {

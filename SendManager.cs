@@ -64,14 +64,21 @@ namespace OSPE
             _sendList.Add(si);
             Program.mainForm.LoadSendListItems();
         }
+        public static void ReplaceFromList(int index, SendInfo si)
+        {
+            _sendList.RemoveAt(index);
+            AddToList(si);
+        }
 
         public static void SetSendListItemActive(int index, bool active)
         {
             _sendList.ElementAt(index).Active = active;
+            Program.mainForm.LoadSendListItems();
         }
         public static void DeleteSendListItem(int index)
         {
             _sendList.RemoveAt(index);
+            Program.mainForm.LoadSendListItems();
         }
         public static void SaveSendList()
         {

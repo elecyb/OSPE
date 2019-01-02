@@ -108,9 +108,9 @@ void ProcessPacket(Functions functionId, char* &buffer, int &length, SOCKET sock
 
 	bool breakpoint = false;
 	if (isFiltering)
-		// Solo filtramos si no fue blockeado, no tiene sentido filtrar un packet blockeado
+		// Only filter if it wasn't blocked, makes no sense filter a blocked packet
 		if (!CheckPacketBlock(pBuff + sizeof(info), info.size, (FilterCaptureFuncs)info.functionId))
-			// Si es un filtro tipo breakpoint no realizamos filtrado
+			// If filter is a Breakpoint filter then stop filtering
 			if (!CheckPacketBreak(pBuff + sizeof(info), info.size, (FilterCaptureFuncs)info.functionId)) {
 				if (DoFilteringForPacket(pBuff + sizeof(info), info.size, (FilterCaptureFuncs)info.functionId))
 					// Copy new filtered data
@@ -139,9 +139,9 @@ void ProcessPacket(Functions functionId, char* &buffer, int &length, SOCKET sock
 
 void InjectPacket() 
 {
-	SOCKET s = (readData[1] + 8);
-	const char * buf = &readData[3];
-	int len = readData[2];
+	SOCKET s = (((UINT8)readData[2] << 8) | (UINT8)readData[1]);
+	int len = (((UINT8)readData[4] << 8) | (UINT8)readData[3]);
+	const char * buf = &readData[5];
 	int flags = MSG_DONTROUTE;
 	send(s, buf, len, flags);
 }

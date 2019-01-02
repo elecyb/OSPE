@@ -23,6 +23,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Windows.Forms;
 
@@ -30,16 +31,18 @@ namespace OSPE.Forms
 {
     public partial class PacketInjectorForm : Form
     {
-        byte[] buf = new byte[65539];
-        ushort socketId = 0;
+        private ushort _socketId = 0;
+        private int _editingIndex;
+        private int _repeats;
 
-        public PacketInjectorForm(int editIndex = -1)
+        public PacketInjectorForm(int edit = -1)
         {
+            _editingIndex = edit;
             InitializeComponent();
             hexBox1.ByteProvider = new DynamicByteProvider(new byte[0]);
-            if (editIndex != -1)
+            if (_editingIndex != -1)
             {
-                SendInfo si = SendManager.GetSendInfoAtListIndex(editIndex);
+                SendInfo si = SendManager.GetSendInfoAtListIndex(_editingIndex);
                 LoadFormData(si.Name, si.Active, si.Packet);
             }
 
@@ -53,21 +56,32 @@ namespace OSPE.Forms
         private void LoadFormData(string name, bool active, Packet p)
         {
             txtItemName.Text = name;
-            chkEnabled.Enabled = active;
+            chkEnabled.Checked = active;
             txtData.Text = p.GetBufferAsText();
             numPacketSize.Value = p.Size;
-            txtOpenedSocketId.Text = p.SocketId.ToString();
+            numOpenedSocketId.Value = p.SocketId;
             txtNewSocketIp.Text = p.RemoteIp.ToString();
-            txtNewSocketPort.Text = p.RemotePort.ToString();
+            numNewSocketPort.Value = p.RemotePort;
             hexBox1.ByteProvider = new DynamicByteProvider(p.Data);
-            buf = p.Data;
         }
 
 
         private void btnStart_Click(object sender, EventArgs e)
         {
             timerSender.Interval = (int) numDelay.Value;
+            _repeats = 0;
             timerSender.Enabled = true;
+
+            if (radNewSocket.Checked)
+            {
+                Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                //_socketId = s.; // TODO
+            }
+            else
+                _socketId = (ushort)numOpenedSocketId.Value;
+
+            btnStart.Enabled = false;
+            btnStop.Enabled = true;
         }
 
         private void btnStop_Click(object sender, EventArgs e)
@@ -75,14 +89,23 @@ namespace OSPE.Forms
             timerSender.Enabled = false;
             btnStart.Enabled = true;
             btnStop.Enabled = false;
+            _repeats = 0;
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            Packet packet = new Packet(Functions.CODE_NOP, UInt16.Parse(txtOpenedSocketId.Text), 0, 0, UInt16.Parse(txtNewSocketIp.Text), UInt16.Parse(txtNewSocketPort.Text), Encoding.ASCII.GetBytes(txtData.Text), Packet.Directions.None);
+            Packet packet = new Packet(Functions.CODE_NOP, 
+                (ushort) numOpenedSocketId.Value, 0, 0, 
+                BitConverter.ToUInt16(System.Net.IPAddress.Parse(txtNewSocketIp.Text).GetAddressBytes(), 0), 
+                (ushort) numNewSocketPort.Value, 
+                Encoding.ASCII.GetBytes(txtData.Text), Packet.Directions.None);
             SendInfo si = new SendInfo(txtItemName.Text, chkEnabled.Enabled, packet);
-            SendManager.AddToList(si);
+            if (_editingIndex != -1)
+                SendManager.ReplaceFromList(_editingIndex, si);
+            else
+                SendManager.AddToList(si);
             Program.mainForm.LoadSendListItems();
+            Close();
         }
 
         private void btnClose_Click(object sender, EventArgs e)
@@ -92,25 +115,40 @@ namespace OSPE.Forms
 
         private void timerSender_Tick(object sender, EventArgs e)
         {
-            DllCommunication.WriteCommandToCmdMMF(ServerCodes.SCODE_INJECTPACKET, buf, (ushort) numPacketSize.Value, socketId);
+            if (!radContinously.Checked && _repeats >= (int)numSendTimes.Value)
+            {
+                btnStop_Click(null, null);
+                return;
+            }
+                
+            _repeats++;
+            var bp = hexBox1.ByteProvider;
+            byte[] bytes = new byte[bp.Length];
+            for (int i = 0; i < bp.Length; i++)
+            {
+                bytes[i] = bp.ReadByte(i);
+            }
+            DllCommunication.WriteCommandToCmdMMF(ServerCodes.SCODE_INJECTPACKET, bytes, (ushort) numPacketSize.Value, _socketId);
+            
         }
 
         private void rad_CheckedChanged(object sender, EventArgs e)
         {
-            txtOpenedSocketId.Enabled = !radNewSocket.Checked;
+            numOpenedSocketId.Enabled = !radNewSocket.Checked;
             txtNewSocketIp.Enabled = radNewSocket.Checked;
-            txtNewSocketPort.Enabled = radNewSocket.Checked;
+            numNewSocketPort.Enabled = radNewSocket.Checked;
         }
 
         private void txtData_TextChanged(object sender, EventArgs e)
         {
             hexBox1.ByteProvider = new DynamicByteProvider(Encoding.ASCII.GetBytes(txtData.Text));
+            numPacketSize.Value = txtData.Text.Length;
         }
 
         private void hexBox1_Paint(object sender, PaintEventArgs e)
         {
             var bp = hexBox1.ByteProvider;
-            System.Text.StringBuilder strBuilder = new System.Text.StringBuilder((int)bp.Length);
+            StringBuilder strBuilder = new System.Text.StringBuilder((int)bp.Length);
             for (int i = 0; i < bp.Length; i++)
             {
                 strBuilder.Insert(i, (char)bp.ReadByte(i));

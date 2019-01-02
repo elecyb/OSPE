@@ -528,11 +528,17 @@ namespace OSPE
             var id = GetPacketIdFromTableItemIndex(list, index);
             var packet = PacketManager.PacketList[id];
             SendManager.AddToList("Send " + id, false, packet);
+            tabControlCapturesAndFilters.SelectTab("tabSendList");
         }
 
         private void tsmiGenerateFilter_Click(object sender, EventArgs e)
         {
-
+            ListView list = (ListView)tabControlMain.TabPages[tabControlMain.SelectedIndex].Controls[0];
+            var index = list.SelectedIndices[0];
+            var id = GetPacketIdFromTableItemIndex(list, index);
+            var packet = PacketManager.PacketList[id];
+            var filterForm = new FilterEditorForm();
+            filterForm.LoadSearchData(packet.Data);
         }
     }
 }

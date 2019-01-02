@@ -50,13 +50,13 @@
             this.radSendTimes = new System.Windows.Forms.RadioButton();
             this.radContinously = new System.Windows.Forms.RadioButton();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.txtOpenedSocketId = new System.Windows.Forms.TextBox();
-            this.txtNewSocketPort = new System.Windows.Forms.TextBox();
+            this.numNewSocketPort = new System.Windows.Forms.NumericUpDown();
             this.txtNewSocketIp = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.radOpenedSocketId = new System.Windows.Forms.RadioButton();
             this.radNewSocket = new System.Windows.Forms.RadioButton();
+            this.numOpenedSocketId = new System.Windows.Forms.NumericUpDown();
             this.btnStop = new System.Windows.Forms.Button();
             this.btnClose = new System.Windows.Forms.Button();
             this.btnStart = new System.Windows.Forms.Button();
@@ -70,6 +70,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.numSendTimes)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numDelay)).BeginInit();
             this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numNewSocketPort)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numOpenedSocketId)).BeginInit();
             this.SuspendLayout();
             // 
             // hexBox1
@@ -210,19 +212,9 @@
             0,
             0,
             0});
-            this.numPacketSize.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
             this.numPacketSize.Name = "numPacketSize";
             this.numPacketSize.Size = new System.Drawing.Size(64, 20);
             this.numPacketSize.TabIndex = 1;
-            this.numPacketSize.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
             // 
             // label3
             // 
@@ -292,12 +284,12 @@
             0});
             this.numDelay.Location = new System.Drawing.Point(26, 65);
             this.numDelay.Maximum = new decimal(new int[] {
-            10000,
+            99999,
             0,
             0,
             0});
             this.numDelay.Minimum = new decimal(new int[] {
-            100,
+            1,
             0,
             0,
             0});
@@ -333,13 +325,13 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.txtOpenedSocketId);
-            this.groupBox1.Controls.Add(this.txtNewSocketPort);
+            this.groupBox1.Controls.Add(this.numNewSocketPort);
             this.groupBox1.Controls.Add(this.txtNewSocketIp);
             this.groupBox1.Controls.Add(this.label5);
             this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Controls.Add(this.radOpenedSocketId);
             this.groupBox1.Controls.Add(this.radNewSocket);
+            this.groupBox1.Controls.Add(this.numOpenedSocketId);
             this.groupBox1.Location = new System.Drawing.Point(274, 3);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(255, 100);
@@ -347,20 +339,18 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Socket";
             // 
-            // txtOpenedSocketId
+            // numNewSocketPort
             // 
-            this.txtOpenedSocketId.Location = new System.Drawing.Point(138, 67);
-            this.txtOpenedSocketId.Name = "txtOpenedSocketId";
-            this.txtOpenedSocketId.Size = new System.Drawing.Size(60, 20);
-            this.txtOpenedSocketId.TabIndex = 6;
-            // 
-            // txtNewSocketPort
-            // 
-            this.txtNewSocketPort.Enabled = false;
-            this.txtNewSocketPort.Location = new System.Drawing.Point(138, 38);
-            this.txtNewSocketPort.Name = "txtNewSocketPort";
-            this.txtNewSocketPort.Size = new System.Drawing.Size(60, 20);
-            this.txtNewSocketPort.TabIndex = 5;
+            this.numNewSocketPort.Enabled = false;
+            this.numNewSocketPort.Location = new System.Drawing.Point(138, 39);
+            this.numNewSocketPort.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+            this.numNewSocketPort.Name = "numNewSocketPort";
+            this.numNewSocketPort.Size = new System.Drawing.Size(60, 20);
+            this.numNewSocketPort.TabIndex = 8;
             // 
             // txtNewSocketIp
             // 
@@ -369,6 +359,7 @@
             this.txtNewSocketIp.Name = "txtNewSocketIp";
             this.txtNewSocketIp.Size = new System.Drawing.Size(103, 20);
             this.txtNewSocketIp.TabIndex = 4;
+            this.txtNewSocketIp.Text = "0.0.0.0";
             // 
             // label5
             // 
@@ -412,6 +403,18 @@
             this.radNewSocket.UseVisualStyleBackColor = true;
             this.radNewSocket.CheckedChanged += new System.EventHandler(this.rad_CheckedChanged);
             // 
+            // numOpenedSocketId
+            // 
+            this.numOpenedSocketId.Location = new System.Drawing.Point(138, 67);
+            this.numOpenedSocketId.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+            this.numOpenedSocketId.Name = "numOpenedSocketId";
+            this.numOpenedSocketId.Size = new System.Drawing.Size(60, 20);
+            this.numOpenedSocketId.TabIndex = 7;
+            // 
             // btnStop
             // 
             this.btnStop.Location = new System.Drawing.Point(162, 109);
@@ -446,13 +449,13 @@
             // 
             this.timerSender.Tick += new System.EventHandler(this.timerSender_Tick);
             // 
-            // InjectForm
+            // PacketInjectorForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(648, 502);
             this.Controls.Add(this.tableLayoutPanel1);
-            this.Name = "InjectForm";
+            this.Name = "PacketInjectorForm";
             this.Text = "InjectForm";
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
@@ -469,6 +472,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.numDelay)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numNewSocketPort)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numOpenedSocketId)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -494,8 +499,6 @@
         private System.Windows.Forms.RadioButton radSendTimes;
         private System.Windows.Forms.RadioButton radContinously;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.TextBox txtOpenedSocketId;
-        private System.Windows.Forms.TextBox txtNewSocketPort;
         private System.Windows.Forms.TextBox txtNewSocketIp;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label4;
@@ -507,5 +510,7 @@
         private System.Windows.Forms.TextBox txtItemName;
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.Timer timerSender;
+        private System.Windows.Forms.NumericUpDown numOpenedSocketId;
+        private System.Windows.Forms.NumericUpDown numNewSocketPort;
     }
 }
