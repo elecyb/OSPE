@@ -1,6 +1,6 @@
 /*
 * OSPE - Open Source Packet Editor
-* Copyright(C) 2018  Javier Pereda <https://github.com/elecyb>
+* Copyright(C) 2018-2019 Javier Pereda <https://github.com/elecyb>
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
