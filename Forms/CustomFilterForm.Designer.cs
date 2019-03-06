@@ -170,7 +170,7 @@
             this.messageBoxToolStripMenuItem,
             this.changeIfMatchToolStripMenuItem});
             this.ospeFunctionsToolStripMenuItem.Name = "ospeFunctionsToolStripMenuItem";
-            this.ospeFunctionsToolStripMenuItem.Size = new System.Drawing.Size(104, 20);
+            this.ospeFunctionsToolStripMenuItem.Size = new System.Drawing.Size(101, 20);
             this.ospeFunctionsToolStripMenuItem.Text = "Ospe Functions";
             // 
             // winshockToolStripMenuItem
@@ -183,7 +183,7 @@
             this.wS232WSARecvToolStripMenuItem,
             this.wS232WSASendToolStripMenuItem});
             this.winshockToolStripMenuItem.Name = "winshockToolStripMenuItem";
-            this.winshockToolStripMenuItem.Size = new System.Drawing.Size(159, 22);
+            this.winshockToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.winshockToolStripMenuItem.Text = "Winshock";
             // 
             // wsock32RecvToolStripMenuItem
@@ -231,28 +231,28 @@
             // getBufferAsHexToolStripMenuItem
             // 
             this.getBufferAsHexToolStripMenuItem.Name = "getBufferAsHexToolStripMenuItem";
-            this.getBufferAsHexToolStripMenuItem.Size = new System.Drawing.Size(159, 22);
+            this.getBufferAsHexToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.getBufferAsHexToolStripMenuItem.Text = "GetBufferAsHex";
             this.getBufferAsHexToolStripMenuItem.Click += new System.EventHandler(this.getBufferAsHexToolStripMenuItem_Click);
             // 
             // getBufferAsTextToolStripMenuItem
             // 
             this.getBufferAsTextToolStripMenuItem.Name = "getBufferAsTextToolStripMenuItem";
-            this.getBufferAsTextToolStripMenuItem.Size = new System.Drawing.Size(159, 22);
+            this.getBufferAsTextToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.getBufferAsTextToolStripMenuItem.Text = "GetBufferAsText";
             this.getBufferAsTextToolStripMenuItem.Click += new System.EventHandler(this.getBufferAsTextToolStripMenuItem_Click);
             // 
             // messageBoxToolStripMenuItem
             // 
             this.messageBoxToolStripMenuItem.Name = "messageBoxToolStripMenuItem";
-            this.messageBoxToolStripMenuItem.Size = new System.Drawing.Size(159, 22);
+            this.messageBoxToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.messageBoxToolStripMenuItem.Text = "MessageBox";
             this.messageBoxToolStripMenuItem.Click += new System.EventHandler(this.messageBoxToolStripMenuItem_Click);
             // 
             // changeIfMatchToolStripMenuItem
             // 
             this.changeIfMatchToolStripMenuItem.Name = "changeIfMatchToolStripMenuItem";
-            this.changeIfMatchToolStripMenuItem.Size = new System.Drawing.Size(159, 22);
+            this.changeIfMatchToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.changeIfMatchToolStripMenuItem.Text = "ChangeIfMatch";
             this.changeIfMatchToolStripMenuItem.Click += new System.EventHandler(this.changeIfMatchToolStripMenuItem_Click);
             // 
@@ -326,6 +326,7 @@
             this.ClientSize = new System.Drawing.Size(650, 507);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.menuStrip1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "CustomFilterForm";
             this.Text = "Custom Filter";

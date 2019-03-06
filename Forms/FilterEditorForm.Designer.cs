@@ -43,6 +43,7 @@
             this.radioButton2 = new System.Windows.Forms.RadioButton();
             this.radioButton1 = new System.Windows.Forms.RadioButton();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.chkBreak = new System.Windows.Forms.CheckBox();
             this.chkWatch = new System.Windows.Forms.CheckBox();
             this.chkIgnore = new System.Windows.Forms.CheckBox();
             this.chkBlock = new System.Windows.Forms.CheckBox();
@@ -70,7 +71,6 @@
             this.chkWSASend = new System.Windows.Forms.CheckBox();
             this.dataGridViewReplace = new System.Windows.Forms.DataGridView();
             this.dataGridViewReplace2 = new System.Windows.Forms.DataGridView();
-            this.chkBreak = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewSearch)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox5.SuspendLayout();
@@ -286,6 +286,16 @@
             this.groupBox2.TabIndex = 3;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Action";
+            // 
+            // chkBreak
+            // 
+            this.chkBreak.AutoSize = true;
+            this.chkBreak.Location = new System.Drawing.Point(20, 88);
+            this.chkBreak.Name = "chkBreak";
+            this.chkBreak.Size = new System.Drawing.Size(54, 17);
+            this.chkBreak.TabIndex = 3;
+            this.chkBreak.Text = "Break";
+            this.chkBreak.UseVisualStyleBackColor = true;
             // 
             // chkWatch
             // 
@@ -595,16 +605,6 @@
             this.dataGridViewReplace2.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.dataGridView_CellPainting);
             this.dataGridViewReplace2.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.dataGridView_EditingControlShowing);
             this.dataGridViewReplace2.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dataGridView_KeyDown);
-            // 
-            // chkBreak
-            // 
-            this.chkBreak.AutoSize = true;
-            this.chkBreak.Location = new System.Drawing.Point(20, 88);
-            this.chkBreak.Name = "chkBreak";
-            this.chkBreak.Size = new System.Drawing.Size(54, 17);
-            this.chkBreak.TabIndex = 3;
-            this.chkBreak.Text = "Break";
-            this.chkBreak.UseVisualStyleBackColor = true;
             // 
             // FilterEditorForm
             // 

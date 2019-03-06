@@ -31,6 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ShowPacketForm));
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panelHeader = new System.Windows.Forms.Panel();
+            this.btnGenerateFilter = new System.Windows.Forms.Button();
             this.lblFunc = new System.Windows.Forms.Label();
             this.picDirection = new System.Windows.Forms.PictureBox();
             this.txtSize = new System.Windows.Forms.TextBox();
@@ -46,7 +47,6 @@
             this.panelAceptCancel = new System.Windows.Forms.Panel();
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnAccept = new System.Windows.Forms.Button();
-            this.btnGenerateFilter = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.panelHeader.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picDirection)).BeginInit();
@@ -90,6 +90,16 @@
             this.panelHeader.Name = "panelHeader";
             this.panelHeader.Size = new System.Drawing.Size(646, 46);
             this.panelHeader.TabIndex = 1;
+            // 
+            // btnGenerateFilter
+            // 
+            this.btnGenerateFilter.Location = new System.Drawing.Point(412, 21);
+            this.btnGenerateFilter.Name = "btnGenerateFilter";
+            this.btnGenerateFilter.Size = new System.Drawing.Size(108, 23);
+            this.btnGenerateFilter.TabIndex = 5;
+            this.btnGenerateFilter.Text = "Generate Filter";
+            this.btnGenerateFilter.UseVisualStyleBackColor = true;
+            this.btnGenerateFilter.Click += new System.EventHandler(this.btnGenerateFilter_Click);
             // 
             // lblFunc
             // 
@@ -239,16 +249,6 @@
             this.btnAccept.Text = "Accept";
             this.btnAccept.UseVisualStyleBackColor = true;
             this.btnAccept.Click += new System.EventHandler(this.btnAccept_Click);
-            // 
-            // btnGenerateFilter
-            // 
-            this.btnGenerateFilter.Location = new System.Drawing.Point(412, 21);
-            this.btnGenerateFilter.Name = "btnGenerateFilter";
-            this.btnGenerateFilter.Size = new System.Drawing.Size(108, 23);
-            this.btnGenerateFilter.TabIndex = 5;
-            this.btnGenerateFilter.Text = "Generate Filter";
-            this.btnGenerateFilter.UseVisualStyleBackColor = true;
-            this.btnGenerateFilter.Click += new System.EventHandler(this.btnGenerateFilter_Click);
             // 
             // ShowPacketForm
             // 

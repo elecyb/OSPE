@@ -28,18 +28,19 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SelectProcessForm));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.lvwProcesses = new System.Windows.Forms.ListView();
             this.colName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colPid = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colPath = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.btnBringToFront = new System.Windows.Forms.Button();
             this.rdo32Icons = new System.Windows.Forms.RadioButton();
             this.rdo24Icons = new System.Windows.Forms.RadioButton();
             this.rdo16Icons = new System.Windows.Forms.RadioButton();
             this.txtSearch = new System.Windows.Forms.TextBox();
             this.btnInject = new System.Windows.Forms.Button();
             this.btnRefresh = new System.Windows.Forms.Button();
-            this.btnBringToFront = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -101,6 +102,16 @@
             // 
             this.colPath.Text = "Path";
             this.colPath.Width = 436;
+            // 
+            // btnBringToFront
+            // 
+            this.btnBringToFront.Location = new System.Drawing.Point(514, 6);
+            this.btnBringToFront.Name = "btnBringToFront";
+            this.btnBringToFront.Size = new System.Drawing.Size(74, 23);
+            this.btnBringToFront.TabIndex = 14;
+            this.btnBringToFront.Text = "Focus Proc";
+            this.btnBringToFront.UseVisualStyleBackColor = true;
+            this.btnBringToFront.Click += new System.EventHandler(this.btnBringToFront_Click);
             // 
             // rdo32Icons
             // 
@@ -172,22 +183,13 @@
             this.btnRefresh.UseVisualStyleBackColor = true;
             this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
             // 
-            // btnBringToFront
-            // 
-            this.btnBringToFront.Location = new System.Drawing.Point(514, 6);
-            this.btnBringToFront.Name = "btnBringToFront";
-            this.btnBringToFront.Size = new System.Drawing.Size(74, 23);
-            this.btnBringToFront.TabIndex = 14;
-            this.btnBringToFront.Text = "Focus Proc";
-            this.btnBringToFront.UseVisualStyleBackColor = true;
-            this.btnBringToFront.Click += new System.EventHandler(this.btnBringToFront_Click);
-            // 
             // SelectProcessForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(600, 482);
             this.Controls.Add(this.splitContainer1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(300, 300);
             this.Name = "SelectProcessForm";
             this.Text = "SelectProcessForm";

@@ -33,6 +33,15 @@
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tabControlSettings = new System.Windows.Forms.TabControl();
             this.tabGeneral = new System.Windows.Forms.TabPage();
+            this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.txtRemoteIp = new System.Windows.Forms.TextBox();
+            this.txtLocalIp = new System.Windows.Forms.TextBox();
+            this.numRemotePort = new System.Windows.Forms.NumericUpDown();
+            this.numLocalPort = new System.Windows.Forms.NumericUpDown();
+            this.chkLocalIp = new System.Windows.Forms.CheckBox();
+            this.chkRemotePort = new System.Windows.Forms.CheckBox();
+            this.chkLocalPort = new System.Windows.Forms.CheckBox();
+            this.chkRemoteIp = new System.Windows.Forms.CheckBox();
             this.btnSelectScript = new System.Windows.Forms.Button();
             this.label10 = new System.Windows.Forms.Label();
             this.txtScript = new System.Windows.Forms.TextBox();
@@ -74,26 +83,17 @@
             this.txtStartCaptureHotKey = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.chkLocalIp = new System.Windows.Forms.CheckBox();
-            this.chkLocalPort = new System.Windows.Forms.CheckBox();
-            this.chkRemoteIp = new System.Windows.Forms.CheckBox();
-            this.chkRemotePort = new System.Windows.Forms.CheckBox();
-            this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.numLocalPort = new System.Windows.Forms.NumericUpDown();
-            this.numRemotePort = new System.Windows.Forms.NumericUpDown();
-            this.txtLocalIp = new System.Windows.Forms.TextBox();
-            this.txtRemoteIp = new System.Windows.Forms.TextBox();
             this.tableLayoutPanel1.SuspendLayout();
             this.tabControlSettings.SuspendLayout();
             this.tabGeneral.SuspendLayout();
+            this.groupBox5.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numRemotePort)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numLocalPort)).BeginInit();
             this.groupBox4.SuspendLayout();
             this.tabHotkeys.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
-            this.groupBox5.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numLocalPort)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numRemotePort)).BeginInit();
             this.SuspendLayout();
             // 
             // btnOk
@@ -153,6 +153,101 @@
             this.tabGeneral.TabIndex = 1;
             this.tabGeneral.Text = "General";
             this.tabGeneral.UseVisualStyleBackColor = true;
+            // 
+            // groupBox5
+            // 
+            this.groupBox5.Controls.Add(this.txtRemoteIp);
+            this.groupBox5.Controls.Add(this.txtLocalIp);
+            this.groupBox5.Controls.Add(this.numRemotePort);
+            this.groupBox5.Controls.Add(this.numLocalPort);
+            this.groupBox5.Controls.Add(this.chkLocalIp);
+            this.groupBox5.Controls.Add(this.chkRemotePort);
+            this.groupBox5.Controls.Add(this.chkLocalPort);
+            this.groupBox5.Controls.Add(this.chkRemoteIp);
+            this.groupBox5.Location = new System.Drawing.Point(23, 172);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Size = new System.Drawing.Size(420, 71);
+            this.groupBox5.TabIndex = 16;
+            this.groupBox5.TabStop = false;
+            this.groupBox5.Text = "IP/Port Conditions (capture only)";
+            // 
+            // txtRemoteIp
+            // 
+            this.txtRemoteIp.Location = new System.Drawing.Point(316, 16);
+            this.txtRemoteIp.Name = "txtRemoteIp";
+            this.txtRemoteIp.Size = new System.Drawing.Size(96, 20);
+            this.txtRemoteIp.TabIndex = 19;
+            // 
+            // txtLocalIp
+            // 
+            this.txtLocalIp.Location = new System.Drawing.Point(105, 17);
+            this.txtLocalIp.Name = "txtLocalIp";
+            this.txtLocalIp.Size = new System.Drawing.Size(96, 20);
+            this.txtLocalIp.TabIndex = 18;
+            // 
+            // numRemotePort
+            // 
+            this.numRemotePort.Location = new System.Drawing.Point(316, 39);
+            this.numRemotePort.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+            this.numRemotePort.Name = "numRemotePort";
+            this.numRemotePort.Size = new System.Drawing.Size(96, 20);
+            this.numRemotePort.TabIndex = 17;
+            // 
+            // numLocalPort
+            // 
+            this.numLocalPort.Location = new System.Drawing.Point(105, 39);
+            this.numLocalPort.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+            this.numLocalPort.Name = "numLocalPort";
+            this.numLocalPort.Size = new System.Drawing.Size(96, 20);
+            this.numLocalPort.TabIndex = 16;
+            // 
+            // chkLocalIp
+            // 
+            this.chkLocalIp.AutoSize = true;
+            this.chkLocalIp.Location = new System.Drawing.Point(17, 19);
+            this.chkLocalIp.Name = "chkLocalIp";
+            this.chkLocalIp.Size = new System.Drawing.Size(68, 17);
+            this.chkLocalIp.TabIndex = 12;
+            this.chkLocalIp.Text = "Local IP:";
+            this.chkLocalIp.UseVisualStyleBackColor = true;
+            // 
+            // chkRemotePort
+            // 
+            this.chkRemotePort.AutoSize = true;
+            this.chkRemotePort.Location = new System.Drawing.Point(223, 42);
+            this.chkRemotePort.Name = "chkRemotePort";
+            this.chkRemotePort.Size = new System.Drawing.Size(88, 17);
+            this.chkRemotePort.TabIndex = 15;
+            this.chkRemotePort.Text = "Remote Port:";
+            this.chkRemotePort.UseVisualStyleBackColor = true;
+            // 
+            // chkLocalPort
+            // 
+            this.chkLocalPort.AutoSize = true;
+            this.chkLocalPort.Location = new System.Drawing.Point(17, 42);
+            this.chkLocalPort.Name = "chkLocalPort";
+            this.chkLocalPort.Size = new System.Drawing.Size(77, 17);
+            this.chkLocalPort.TabIndex = 13;
+            this.chkLocalPort.Text = "Local Port:";
+            this.chkLocalPort.UseVisualStyleBackColor = true;
+            // 
+            // chkRemoteIp
+            // 
+            this.chkRemoteIp.AutoSize = true;
+            this.chkRemoteIp.Location = new System.Drawing.Point(223, 20);
+            this.chkRemoteIp.Name = "chkRemoteIp";
+            this.chkRemoteIp.Size = new System.Drawing.Size(79, 17);
+            this.chkRemoteIp.TabIndex = 14;
+            this.chkRemoteIp.Text = "Remote IP:";
+            this.chkRemoteIp.UseVisualStyleBackColor = true;
             // 
             // btnSelectScript
             // 
@@ -416,7 +511,7 @@
             this.tabHotkeys.Location = new System.Drawing.Point(4, 22);
             this.tabHotkeys.Name = "tabHotkeys";
             this.tabHotkeys.Padding = new System.Windows.Forms.Padding(3);
-            this.tabHotkeys.Size = new System.Drawing.Size(467, 338);
+            this.tabHotkeys.Size = new System.Drawing.Size(467, 405);
             this.tabHotkeys.TabIndex = 2;
             this.tabHotkeys.Text = "HotKeys";
             this.tabHotkeys.UseVisualStyleBackColor = true;
@@ -568,101 +663,6 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "Start:";
             // 
-            // chkLocalIp
-            // 
-            this.chkLocalIp.AutoSize = true;
-            this.chkLocalIp.Location = new System.Drawing.Point(17, 19);
-            this.chkLocalIp.Name = "chkLocalIp";
-            this.chkLocalIp.Size = new System.Drawing.Size(68, 17);
-            this.chkLocalIp.TabIndex = 12;
-            this.chkLocalIp.Text = "Local IP:";
-            this.chkLocalIp.UseVisualStyleBackColor = true;
-            // 
-            // chkLocalPort
-            // 
-            this.chkLocalPort.AutoSize = true;
-            this.chkLocalPort.Location = new System.Drawing.Point(17, 42);
-            this.chkLocalPort.Name = "chkLocalPort";
-            this.chkLocalPort.Size = new System.Drawing.Size(77, 17);
-            this.chkLocalPort.TabIndex = 13;
-            this.chkLocalPort.Text = "Local Port:";
-            this.chkLocalPort.UseVisualStyleBackColor = true;
-            // 
-            // chkRemoteIp
-            // 
-            this.chkRemoteIp.AutoSize = true;
-            this.chkRemoteIp.Location = new System.Drawing.Point(223, 20);
-            this.chkRemoteIp.Name = "chkRemoteIp";
-            this.chkRemoteIp.Size = new System.Drawing.Size(79, 17);
-            this.chkRemoteIp.TabIndex = 14;
-            this.chkRemoteIp.Text = "Remote IP:";
-            this.chkRemoteIp.UseVisualStyleBackColor = true;
-            // 
-            // chkRemotePort
-            // 
-            this.chkRemotePort.AutoSize = true;
-            this.chkRemotePort.Location = new System.Drawing.Point(223, 42);
-            this.chkRemotePort.Name = "chkRemotePort";
-            this.chkRemotePort.Size = new System.Drawing.Size(88, 17);
-            this.chkRemotePort.TabIndex = 15;
-            this.chkRemotePort.Text = "Remote Port:";
-            this.chkRemotePort.UseVisualStyleBackColor = true;
-            // 
-            // groupBox5
-            // 
-            this.groupBox5.Controls.Add(this.txtRemoteIp);
-            this.groupBox5.Controls.Add(this.txtLocalIp);
-            this.groupBox5.Controls.Add(this.numRemotePort);
-            this.groupBox5.Controls.Add(this.numLocalPort);
-            this.groupBox5.Controls.Add(this.chkLocalIp);
-            this.groupBox5.Controls.Add(this.chkRemotePort);
-            this.groupBox5.Controls.Add(this.chkLocalPort);
-            this.groupBox5.Controls.Add(this.chkRemoteIp);
-            this.groupBox5.Location = new System.Drawing.Point(23, 172);
-            this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(420, 71);
-            this.groupBox5.TabIndex = 16;
-            this.groupBox5.TabStop = false;
-            this.groupBox5.Text = "IP/Port Conditions (capture only)";
-            // 
-            // numLocalPort
-            // 
-            this.numLocalPort.Location = new System.Drawing.Point(105, 39);
-            this.numLocalPort.Maximum = new decimal(new int[] {
-            65535,
-            0,
-            0,
-            0});
-            this.numLocalPort.Name = "numLocalPort";
-            this.numLocalPort.Size = new System.Drawing.Size(96, 20);
-            this.numLocalPort.TabIndex = 16;
-            // 
-            // numRemotePort
-            // 
-            this.numRemotePort.Location = new System.Drawing.Point(316, 39);
-            this.numRemotePort.Maximum = new decimal(new int[] {
-            65535,
-            0,
-            0,
-            0});
-            this.numRemotePort.Name = "numRemotePort";
-            this.numRemotePort.Size = new System.Drawing.Size(96, 20);
-            this.numRemotePort.TabIndex = 17;
-            // 
-            // txtLocalIp
-            // 
-            this.txtLocalIp.Location = new System.Drawing.Point(105, 17);
-            this.txtLocalIp.Name = "txtLocalIp";
-            this.txtLocalIp.Size = new System.Drawing.Size(96, 20);
-            this.txtLocalIp.TabIndex = 18;
-            // 
-            // txtRemoteIp
-            // 
-            this.txtRemoteIp.Location = new System.Drawing.Point(316, 16);
-            this.txtRemoteIp.Name = "txtRemoteIp";
-            this.txtRemoteIp.Size = new System.Drawing.Size(96, 20);
-            this.txtRemoteIp.TabIndex = 19;
-            // 
             // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -680,6 +680,10 @@
             this.tabControlSettings.ResumeLayout(false);
             this.tabGeneral.ResumeLayout(false);
             this.tabGeneral.PerformLayout();
+            this.groupBox5.ResumeLayout(false);
+            this.groupBox5.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numRemotePort)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numLocalPort)).EndInit();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
             this.tabHotkeys.ResumeLayout(false);
@@ -689,10 +693,6 @@
             this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            this.groupBox5.ResumeLayout(false);
-            this.groupBox5.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numLocalPort)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numRemotePort)).EndInit();
             this.ResumeLayout(false);
 
         }

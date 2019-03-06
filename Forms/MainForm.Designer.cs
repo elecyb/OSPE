@@ -145,6 +145,7 @@
             this.cmsSendList = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.tsmiSendListIEdit = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiSendListDelete = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiSendListSelection = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
             this.tsmiSendListListOptions = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiSendListListLoad = new System.Windows.Forms.ToolStripMenuItem();
@@ -215,7 +216,6 @@
             this.tsmiSendPacket = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiAddToSendList = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiGenerateFilter = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmiSendListSelection = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStripMain.SuspendLayout();
             this.statusStripMain.SuspendLayout();
             this.trayMenuStrip.SuspendLayout();
@@ -1247,27 +1247,33 @@
             this.toolStripSeparator8,
             this.tsmiSendListListOptions});
             this.cmsSendList.Name = "cmsSendList";
-            this.cmsSendList.Size = new System.Drawing.Size(181, 120);
+            this.cmsSendList.Size = new System.Drawing.Size(152, 98);
             this.cmsSendList.Opening += new System.ComponentModel.CancelEventHandler(this.cmsSendList_Opening);
             // 
             // tsmiSendListIEdit
             // 
             this.tsmiSendListIEdit.Name = "tsmiSendListIEdit";
-            this.tsmiSendListIEdit.Size = new System.Drawing.Size(180, 22);
+            this.tsmiSendListIEdit.Size = new System.Drawing.Size(151, 22);
             this.tsmiSendListIEdit.Text = "Edit";
             this.tsmiSendListIEdit.Click += new System.EventHandler(this.tsmiSendListEdit_Click);
             // 
             // tsmiSendListDelete
             // 
             this.tsmiSendListDelete.Name = "tsmiSendListDelete";
-            this.tsmiSendListDelete.Size = new System.Drawing.Size(180, 22);
+            this.tsmiSendListDelete.Size = new System.Drawing.Size(151, 22);
             this.tsmiSendListDelete.Text = "Delete";
             this.tsmiSendListDelete.Click += new System.EventHandler(this.tsmiSendListDelete_Click);
+            // 
+            // tsmiSendListSelection
+            // 
+            this.tsmiSendListSelection.Name = "tsmiSendListSelection";
+            this.tsmiSendListSelection.Size = new System.Drawing.Size(151, 22);
+            this.tsmiSendListSelection.Text = "Send Selection";
             // 
             // toolStripSeparator8
             // 
             this.toolStripSeparator8.Name = "toolStripSeparator8";
-            this.toolStripSeparator8.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator8.Size = new System.Drawing.Size(148, 6);
             // 
             // tsmiSendListListOptions
             // 
@@ -1276,7 +1282,7 @@
             this.tsmiSendListListSave,
             this.tsmiSendListListClear});
             this.tsmiSendListListOptions.Name = "tsmiSendListListOptions";
-            this.tsmiSendListListOptions.Size = new System.Drawing.Size(180, 22);
+            this.tsmiSendListListOptions.Size = new System.Drawing.Size(151, 22);
             this.tsmiSendListListOptions.Text = "List";
             // 
             // tsmiSendListListLoad
@@ -1905,12 +1911,6 @@
             this.tsmiGenerateFilter.Size = new System.Drawing.Size(156, 22);
             this.tsmiGenerateFilter.Text = "Generate filter";
             this.tsmiGenerateFilter.Click += new System.EventHandler(this.tsmiGenerateFilter_Click);
-            // 
-            // tsmiSendListSelection
-            // 
-            this.tsmiSendListSelection.Name = "tsmiSendListSelection";
-            this.tsmiSendListSelection.Size = new System.Drawing.Size(180, 22);
-            this.tsmiSendListSelection.Text = "Send Selection";
             // 
             // MainForm
             // 
