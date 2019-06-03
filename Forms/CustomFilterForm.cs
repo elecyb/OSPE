@@ -120,8 +120,15 @@ int WINAPI DllMain ( void* hDLL, unsigned long dwReason, void*  Reserved) {
 
         private void buildToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            using (StreamWriter sw = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + @"\DLL-Ex\mydll.c"))
-                sw.Write(fctb.Text);
+            try
+            {
+                using (StreamWriter sw = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + @"\DLL-Ex\mydll.c"))
+                    sw.Write(fctb.Text);
+            } catch (Exception ex)
+            {
+                txtCompilerOutput.Text = "Not implemented yet.";
+                return;
+            }
             var proc = new Process();
             proc.StartInfo.WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory + @"\DLL-Ex";
             proc.StartInfo.FileName = AppDomain.CurrentDomain.BaseDirectory + @"\DLL-Ex\bcc32.exe";
