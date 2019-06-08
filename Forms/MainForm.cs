@@ -164,7 +164,8 @@ namespace OSPE
 
             Settings.CurrentTab = tabControlMain.SelectedIndex;
             Settings.CurrentCaptureFilterTab = tabControlCapturesAndFilters.SelectedIndex;
-            FilterManager.SaveTempFilterList();
+            if (FilterManager.GetNumberOfFiltersInList() > 0)
+                FilterManager.SaveTempFilterList();
         }
 
         private void frmMain_Resize(object sender, System.EventArgs e)
