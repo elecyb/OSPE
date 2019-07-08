@@ -27,7 +27,7 @@
 #endif
 
 #include "Defines.h"
-#include "OspeSpy.h"
+#include "OspeDll.h"
 #include "DllCommunication.h"
 #include "stdafx.h"
 #include "ipc.h"
@@ -276,7 +276,7 @@ int WINAPI MyWSARecvFrom(SOCKET s, LPWSABUF lpBuffers, DWORD dwBufferCount, LPDW
 
 //-----------------------------------------------------------------------------------
 
-// Estos son punteros a las funciones de la DLL Ex, si las define entonces se llaman en las funciones hook de OspeSpy
+// Estos son punteros a las funciones de la DLL Ex, si las define entonces se llaman en las funciones hook de OspeDll
 T_SENDWS1 send_ws1 = NULL;
 T_RECVWS1 recv_ws1 = NULL;
 T_SENDWS2 send_ws2 = NULL;
@@ -326,23 +326,25 @@ INT APIENTRY DllMain( HMODULE hDLL, DWORD dwReason, LPVOID Reserved) {
 			return 1;
 		}
 
-		// Create a hook for each winsock function, in disabled state.   //	MH_CreateHook(&send, &MySend, (LPVOID*)&pSend); 
+		// Create a hook for each winsock function, in disabled state.
+
+		// Winsock 1.1
 		MH_CreateHookApi(L"wsock32.dll", "send", MySend, (LPVOID*)&pSend);
 		MH_CreateHookApi(L"wsock32.dll", "sendto", MySendTo, (LPVOID*)&pSendTo);
 		MH_CreateHookApi(L"wsock32.dll", "recv", MyRecv, (LPVOID*)&pRecv); 
 		MH_CreateHookApi(L"wsock32.dll", "recvfrom", MyRecvFrom, (LPVOID*)&pRecvFrom); 
-
+		// Winsock 2.0
 		MH_CreateHookApi(L"Ws2_32.dll", "send", MyWS2Send, (LPVOID*)&pWS2Send); 
 		MH_CreateHookApi(L"Ws2_32.dll", "sendto", MyWS2SendTo, (LPVOID*)&pWS2SendTo);
 		MH_CreateHookApi(L"Ws2_32.dll", "recv", MyWS2Recv, (LPVOID*)&pWS2Recv); 
 		MH_CreateHookApi(L"Ws2_32.dll", "recvfrom", MyWS2RecvFrom, (LPVOID*)&pRecvFrom); 
-
+		// Winsock WSA
 		MH_CreateHookApi(L"Ws2_32.dll", "WSASend", MyWSASend, (LPVOID*)&pWSASend);
 		MH_CreateHookApi(L"Ws2_32.dll", "WSASendTo", MyWSASendTo, (LPVOID*)&pWSASendTo); 
 		MH_CreateHookApi(L"Ws2_32.dll", "WSARecv", MyWSARecv, (LPVOID*)&pWSARecv); 
 		MH_CreateHookApi(L"Ws2_32.dll", "WSARecvFrom", MyWSARecvFrom, (LPVOID*)&pWSARecvFrom);
 
-		MH_EnableHook(MH_ALL_HOOKS); // errorLog("HOOKED! ");
+		MH_EnableHook(MH_ALL_HOOKS);
 
         // Spawn command reader thread worker
         CreateThread(NULL, 0, Command_Reader, NULL, 0, NULL);

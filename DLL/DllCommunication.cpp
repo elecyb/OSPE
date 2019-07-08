@@ -18,7 +18,7 @@
 
 #include "stdafx.h"
 #include "DllCommunication.h"
-#include "OspeSpy.h"
+#include "OspeDll.h"
 #include "FilterManager.h"
 #include <sstream>
 

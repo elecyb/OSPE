@@ -30,7 +30,7 @@
     <ClCompile Include="DebugFunctions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="OspeSpy.cpp">
+    <ClCompile Include="OspeDll.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -56,7 +56,7 @@
     <ClInclude Include="MinHook.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="OspeSpy.h">
+    <ClInclude Include="OspeDll.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
