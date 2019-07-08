@@ -55,7 +55,7 @@ public:
 		int						_Padding;					// Padded used to ensure 64bit boundary
 		int						Index;						// Represents the index of the current node.
 
-        BYTE					_padding1;                  // Agregado mio para que coincida
+        int						AmountWritten;              // Holds the number of bytes written into this node.
 	};
 
 private:

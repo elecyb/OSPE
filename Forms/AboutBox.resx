@@ -367,7 +367,7 @@
 </value>
   </data>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>OSPE is an open source sniffer and packet editor, designed mainly for online games hacking. 
+    <value>OSPE is an open source sniffer and packet editor, designed for pentesting purposes only.
 
 This program uses the following libraries:
 

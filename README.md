@@ -33,10 +33,10 @@ Attacking targets without prior mutual consent is illegal. The author is not res
 
 ## Limitations
 
-- 32bit only for now (injector needs to be updated).
 - Exporting captures as HTML or TXT not implemented.
 - Packet injection to a new socket not implemented.
-- Target's process may crash unexpectly.
+- Custom script creator not implemented.
+- Target's process may crash unexpectedly.
 
 ## Usage
 
@@ -44,7 +44,7 @@ Attacking targets without prior mutual consent is illegal. The author is not res
 2) Start the program.
 3) Select a process
 4) A new dialog will open for the location of the DLL to be injected.
-5) Select OspeSpy.dll and then start a capture.
+5) Select the x86 or x64 dll and then start a capture.
 
 ## Screenshots
 

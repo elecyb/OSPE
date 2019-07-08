@@ -105,103 +105,91 @@ namespace OSPE
             string sDllPath, 
             out string sError) 
         { 
-            IntPtr hwnd = IntPtr.Zero; 
-            if (!CRT(pToBeInjected, sDllPath, out sError, out hwnd)) //CreateRemoteThread 
-            { 
-                //close the handle, since the method wasn't able to get to that 
-                if (hwnd != (IntPtr)0) 
-                    WINAPI.CloseHandle(hwnd); 
-                return false; 
-            } 
-            int wee = Marshal.GetLastWin32Error(); 
-            return true; 
-        } 
-
-        private static bool CRT(Process pToBeInjected, string sDllPath, out string sError, out IntPtr hwnd) 
-        { 
+            IntPtr hwnd = IntPtr.Zero;
             sError = String.Empty; //in case we encounter no errors 
 
             //Open the target process with read , write and execute priviledges
             IntPtr hndProc = WINAPI.OpenProcess(
-                (0x2 // PROCESS_CREATE_THREAD
-                | 0x8 // PROCESS_QUERY_INFORMATION
-                | 0x10 // PROCESS_VM_READ
-                | 0x20 // PROCESS_VM_WRITE
-                | 0x400 // PROCESS_VM_OPERATION
-                ), 1, (uint)pToBeInjected.Id); 
+                (0x000F0000 // STANDARD_RIGHTS_REQUIRED
+                | 0x00100000 // SYNCHRONIZE
+                | 0xFFFF
+                ), 0, (uint)pToBeInjected.Id);
 
-            hwnd = hndProc; 
+            hwnd = hndProc;
 
-            if (hndProc == (IntPtr)0) 
-            { 
-                sError = "Unable to attatch to process.\n"; 
-                sError += "Error code: " + Marshal.GetLastWin32Error(); 
-                return false; 
+            if (hndProc == (IntPtr)0)
+            {
+                sError = "Unable to attatch to process.\n";
+                sError += "Error code: " + Marshal.GetLastWin32Error();
+                return false;
             }
             //Get the address of LoadLibraryA
-            IntPtr lpLLAddress = WINAPI.GetProcAddress( 
-                WINAPI.GetModuleHandle("kernel32.dll"), 
-                "LoadLibraryA"); 
+            IntPtr lpLLAddress = WINAPI.GetProcAddress(
+                WINAPI.GetModuleHandle("kernel32.dll"),
+                "LoadLibraryA");
 
-            if (lpLLAddress == (IntPtr)0) 
-            { 
-                sError = "Unable to find address of \"LoadLibraryA\".\n"; 
-                sError += "Error code: " + Marshal.GetLastWin32Error(); 
-                return false; 
+            if (lpLLAddress == (IntPtr)0)
+            {
+                sError = "Unable to find address of \"LoadLibraryA\".\n";
+                sError += "Error code: " + Marshal.GetLastWin32Error();
+                return false;
             }
             // Allocate space in the process for our DLL 
-            IntPtr lpAddress = WINAPI.VirtualAllocEx( 
-                hndProc, 
-                (IntPtr)null, 
+            IntPtr lpAddress = WINAPI.VirtualAllocEx(
+                hndProc,
+                (IntPtr)null,
                 (IntPtr)sDllPath.Length, //520 bytes should be enough 
-                (uint)WINAPI.VAE_Enums.AllocationType.MEM_COMMIT | 
-                (uint)WINAPI.VAE_Enums.AllocationType.MEM_RESERVE, 
-                (uint)WINAPI.VAE_Enums.ProtectionConstants.PAGE_EXECUTE_READWRITE); 
+                (uint)WINAPI.VAE_Enums.AllocationType.MEM_COMMIT |
+                (uint)WINAPI.VAE_Enums.AllocationType.MEM_RESERVE,
+                (uint)WINAPI.VAE_Enums.ProtectionConstants.PAGE_EXECUTE_READWRITE);
 
 
-            if (lpAddress == (IntPtr)0) 
-            { 
-                sError = "Unable to allocate memory to target process.\n"; 
-                sError += "Error code: " + Marshal.GetLastWin32Error(); 
-                return false; 
-            } 
+            if (lpAddress == (IntPtr)0)
+            {
+                sError = "Unable to allocate memory to target process.\n";
+                sError += "Error code: " + Marshal.GetLastWin32Error();
+                return false;
+            }
 
 
-            byte[] bytes = CalcBytes(sDllPath); 
+            byte[] bytes = CalcBytes(sDllPath);
             IntPtr ipTmp = IntPtr.Zero;
             // Write the string name of our DLL in the memory allocated
-            WINAPI.WriteProcessMemory( 
-                hndProc, 
-                lpAddress, 
-                bytes, 
-                (uint)bytes.Length, 
+            int bResult = WINAPI.WriteProcessMemory(
+                hndProc,
+                lpAddress,
+                bytes,
+                (uint)bytes.Length,
                 out ipTmp);
 
-            // WORKAROUND: "Unable to write memory to process. Error code: 1300"
-            /*  if (Marshal.GetLastWin32Error() != 0) 
-              { 
-                  sError = "Unable to write memory to process."; 
-                  sError += "Error code: " + Marshal.GetLastWin32Error(); 
-                  return false; 
-              }*/
+            // ERROR x64: "Unable to write memory to process. Error code: 1300"
+            if (bResult == 0)
+            {
+                sError = "Unable to write memory to process.";
+                sError += "Error code: " + Marshal.GetLastWin32Error();
+                return false;
+            }
             // Load our DLL 
-            IntPtr ipThread = WINAPI.CreateRemoteThread( 
-                hndProc, 
-                (IntPtr)null, 
-                (IntPtr)0, 
-                lpLLAddress, 
-                lpAddress, 
-                0, 
-                (IntPtr)null); 
+            IntPtr ipThread = WINAPI.CreateRemoteThread(
+                hndProc,
+                (IntPtr)null,
+                (IntPtr)0,
+                lpLLAddress,
+                lpAddress,
+                0,
+                (IntPtr)null);
 
-            if (ipThread == (IntPtr)0) 
-            { 
-                sError = "Unable to load dll into memory."; 
-                sError += "Error code: " + Marshal.GetLastWin32Error(); 
-                return false; 
-            } 
+            if (ipThread == (IntPtr)0)
+            {
+                sError = "Unable to load dll into memory.";
+                sError += "Error code: " + Marshal.GetLastWin32Error();
+                return false;
+            }
 
-            return true; 
+            WINAPI.CloseHandle(hndProc);
+
+            return true;
+
         } 
 
         private static byte[] CalcBytes(string sToConvert) 

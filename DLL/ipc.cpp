@@ -128,6 +128,7 @@ void osIPC::Server::create(void)
     m_pNodeHeader->m_Nodes[N].Prev = (NodeCount - 1);
     m_pNodeHeader->m_Nodes[N].Offset = NodeBufferOffset;
     m_pNodeHeader->m_Nodes[N].Index = N;
+	m_pNodeHeader->m_Nodes[N].AmountWritten = 0;
     // Middle Nodes
     for (N = 1; N < NodeCount - 1; N++)
 	{
@@ -136,12 +137,14 @@ void osIPC::Server::create(void)
 		m_pNodeHeader->m_Nodes[N].Prev = (N - 1);
         m_pNodeHeader->m_Nodes[N].Offset = NodeBufferOffset + (m_pNodeHeader->NodeBufferSize * N);
         m_pNodeHeader->m_Nodes[N].Index = N;
+		m_pNodeHeader->m_Nodes[N].AmountWritten = 0;
 	}
     // Last Node
 	m_pNodeHeader->m_Nodes[N].Next = 0;
     m_pNodeHeader->m_Nodes[N].Prev = (NodeCount - 2);
     m_pNodeHeader->m_Nodes[N].Offset = NodeBufferOffset + (m_pNodeHeader->NodeBufferSize * N);
     m_pNodeHeader->m_Nodes[N].Index = N;
+	m_pNodeHeader->m_Nodes[N].AmountWritten = 0;
    
 	// Release memory
 	free(m_sEvtAvail);
@@ -401,6 +404,7 @@ DWORD osIPC::Client::write(void *pBuff, DWORD amount, DWORD dwTimeout)
 	DWORD dwAmount = min(amount, IPC_BLOCK_SIZE);
 
 	memcpy(m_pNodeHeader->Data[pNode->Index], pBuff, dwAmount);
+	pNode->AmountWritten = dwAmount;
 
 	// Post the block
 	PostNode(pNode);

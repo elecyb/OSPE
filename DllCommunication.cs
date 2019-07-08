@@ -102,7 +102,7 @@ namespace OSPE
                     //var t2 = Environment.TickCount; if (t2-t1 > 0) Debug.WriteLine("ANTES de packetMMF.Read {0} - diff: {1}", ID, t2-t1);
 
                     //The number of milliseconds to wait, or Timeout.Infinite (-1) to wait indefinitely. 
-                    int amount = packetMMF.Read(writtenData, -1);
+                    int amount = packetMMF.Read(writtenData, 0, -1);
 
                     //var t3 = Environment.TickCount; if (t3 - t2 > 0) Debug.WriteLine("DESPUES de server.Read {0} - diff: {1}", ID, t3 - t2);
 
@@ -241,7 +241,7 @@ namespace OSPE
             */
 
             //The number of milliseconds to wait, or Timeout.Infinite (-1) to wait indefinitely. 
-            int amount = cmdMMF.Write(writtenData, mmfWriteTimeout);
+            int amount = cmdMMF.Write(writtenData, 0, mmfWriteTimeout);
 
             if (amount == 0)
                 throw new Exception("Write 0 bytes to command MMF!");
