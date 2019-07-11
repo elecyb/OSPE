@@ -12,7 +12,6 @@
 #include <tchar.h>
 #include <windows.h>
 #include <memory.h>
-#include "DebugFunctions.h"
 
 
 // TODO: reference additional headers your program requires here

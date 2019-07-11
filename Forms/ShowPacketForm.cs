@@ -63,47 +63,7 @@ namespace OSPE
 
             picDirection.Image = pic;
 
-            switch (packet.FunctionID)
-            {
-                case Functions.CODE_SEND:
-                    lblFunc.Text = "WS1.1::Send";
-                    break;
-                case Functions.CODE_SENDTO:
-                    lblFunc.Text = "WS1.1::SendTo";
-                    break;
-                case Functions.CODE_RECV:
-                    lblFunc.Text = "WS1.1::Recv";
-                    break;
-                case Functions.CODE_RECVFROM:
-                    lblFunc.Text = "WS1.1::RecvFrom";
-                    break;
-                case Functions.CODE_WS2SEND:
-                    lblFunc.Text = "WS2.2::Send";
-                    break;
-                case Functions.CODE_WS2SENDTO:
-                    lblFunc.Text = "WS2.2::SendTo";
-                    break;
-                case Functions.CODE_WS2RECV:
-                    lblFunc.Text = "WS2.2::Recv";
-                    break;
-                case Functions.CODE_WS2RECVFROM:
-                    lblFunc.Text = "WS2.2::RecvFrom";
-                    break;
-                case Functions.CODE_WSASEND:
-                    lblFunc.Text = "WSA::Send";
-                    break;
-                case Functions.CODE_WSASENDTO:
-                    lblFunc.Text = "WSA::SendTo";
-                    break;
-                case Functions.CODE_WSARECV:
-                    lblFunc.Text = "WSA::Recv";
-                    break;
-                case Functions.CODE_WSARECVFROM:
-                    lblFunc.Text = "WSA:RecvFrom";
-                    break;
-            default:
-                throw new IndexOutOfRangeException();
-            }
+            lblFunc.Text = Program.FunctionNameToString(packet.FunctionID);
 
             // TODO: Implementar un delegate o hacer q SetHexBoxColors() que reciba como parametro el HexBox asi no hay q crear otra funcion igual
             //Program.mainForm.SetHexBoxColors();

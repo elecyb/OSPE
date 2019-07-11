@@ -48,6 +48,16 @@ namespace OSPE
         WSASendTo = 0x200,
         WSARecv = 0x400,
         WSARecvFrom = 0x800,
+        PRSend = 0x1000,
+        PRRecv = 0x2000,
+        PRRead = 0x4000,
+        PRWrite = 0x8000,
+        SSLEncryptPacket = 0x10000,
+        SSLDecryptPacket = 0x20000,
+        EncryptMessage = 0x40000,
+        DecryptMessage = 0x80000,
+        SSLRead = 0x100000,
+        SSLWrite = 0x200000,
     }
     [Flags]
     public enum FilterActions : uint

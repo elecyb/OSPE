@@ -355,6 +355,28 @@ namespace OSPE
             if (chkWSARecvFrom.Checked)
                 functions |= FilterCaptureFuncs.WSARecvFrom;
 
+            if (chkPRRead.Checked)
+                functions |= FilterCaptureFuncs.PRRead;
+            if (chkPRWrite.Checked)
+                functions |= FilterCaptureFuncs.PRWrite;
+            if (chkPRSend.Checked)
+                functions |= FilterCaptureFuncs.PRSend;
+            if (chkPRRecv.Checked)
+                functions |= FilterCaptureFuncs.PRRecv;
+
+            if (chkSSLEncryptPacket.Checked)
+                functions |= FilterCaptureFuncs.SSLEncryptPacket;
+            if (chkSSLDecryptPacket.Checked)
+                functions |= FilterCaptureFuncs.SSLDecryptPacket;
+            if (chkEncryptMessage.Checked)
+                functions |= FilterCaptureFuncs.EncryptMessage;
+            if (chkDecryptMessage.Checked)
+                functions |= FilterCaptureFuncs.DecryptMessage;
+            if (chkSSLWrite.Checked)
+                functions |= FilterCaptureFuncs.SSLWrite;
+            if (chkSSLRead.Checked)
+                functions |= FilterCaptureFuncs.SSLRead;
+
             return functions;
         }
 

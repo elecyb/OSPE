@@ -16,15 +16,19 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// Print error string to file
-void errorLog(char* cStr, int level=0);
+// Original code by Ionut Popescu (@NytroRST)
 
-// Convert integer to string (allocates needed memory)
-char* itos( int n );
+#ifndef _NONEXPORTEDHOOKS_H_
+#define _NONEXPORTEDHOOKS_H_
 
-// Concatena strings (allocates needed memory)
-char* strm( unsigned char count, ... );
+#include "Process.h"
+#include "HookedFunctions.h"
 
-char* GetSystemError( const char* msg );
+// Statically linked files
 
-const char * GetBufferAsHex(char * buf, int len);
+void HookChrome(string p_sModule);
+void HookPutty();
+void HookWinSCP();
+void HookSlack();
+
+#endif

@@ -85,6 +85,11 @@ namespace OSPE
                 case Functions.CODE_WS2RECVFROM:
                 case Functions.CODE_WSARECV:
                 case Functions.CODE_WSARECVFROM:
+                case Functions.CODE_PR_RECV:
+                case Functions.CODE_PR_READ:
+                case Functions.CODE_SSLDECRYPTPACKET:
+                case Functions.CODE_DECRYPTMESSAGE:
+                case Functions.CODE_SSL_READ:
                     direction = Packet.Directions.In;
                     TotalSizeReceived += packetInfo.Size;
                     break;
@@ -94,12 +99,16 @@ namespace OSPE
                 case Functions.CODE_WS2SENDTO:
                 case Functions.CODE_WSASEND:
                 case Functions.CODE_WSASENDTO:
+                case Functions.CODE_PR_SEND:
+                case Functions.CODE_PR_WRITE:
+                case Functions.CODE_SSLENCRYPTPACKET:
+                case Functions.CODE_ENCRYPTMESSAGE:
+                case Functions.CODE_SSL_WRITE:
                     direction = Packet.Directions.Out;
                     TotalSizeSent += packetInfo.Size;
                     break;
                 default:
-                    direction = Packet.Directions.None;
-                    break;
+                    throw new IndexOutOfRangeException();
             }
 
             var functionFlag = FilterManager.GetFilterActionFlagForFunction(packetInfo.FunctionID);

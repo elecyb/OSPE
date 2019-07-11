@@ -78,4 +78,4 @@ bool DoFilteringForPacket(char * data, UINT16 size, FilterCaptureFuncs functionF
 bool CheckPacketBlock(char * data, UINT16 size, FilterCaptureFuncs functionFlag);
 bool CheckPacketBreak(char * data, UINT16 size, FilterCaptureFuncs functionFlag);
 
-#endif
+#endif // FILTERMANAGER_H

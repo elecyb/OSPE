@@ -21,7 +21,7 @@
 #include "OspeDll.h"
 #include "FilterManager.h"
 #include <sstream>
-
+#include "Utils.h"
 
 //#define DBG_BLOCKPKT // para debuggear packets bloqueados
 #define DBG_SENDPACKETDATA // para debuggear data de los packets 
@@ -41,10 +41,10 @@ void SetInfo(SOCKET socket, Functions functionId, int length, PacketInfo* info)
 	socklen_t addr_len = sizeof(struct sockaddr_storage);
 
 	if (getsockname(socket, (struct sockaddr*)&addrLocal, &addr_len) == SOCKET_ERROR)
-		errorLog(strm(2, "getsockname: ", itos(WSAGetLastError())));
+		Utils::errorLog(Utils::strm(2, "getsockname: ", Utils::IntToString(WSAGetLastError())));
 
 	if (getpeername(socket, (struct sockaddr*)&addrRemote, &addr_len) == SOCKET_ERROR)
-		errorLog(strm(2, "getpeername: ", itos(WSAGetLastError())));
+		Utils::errorLog(Utils::strm(2, "getpeername: ", Utils::IntToString(WSAGetLastError())));
 
 	// deal with both IPv4 and IPv6:
 	if (addrLocal.ss_family == AF_INET)
@@ -59,7 +59,7 @@ void SetInfo(SOCKET socket, Functions functionId, int length, PacketInfo* info)
 	else
 	{ // AF_INET6
 		//Falta implementar
-		errorLog("CRASH ALERT: IPv6 SOCKET NOT IMPLEMENTED");
+		Utils::errorLog("CRASH ALERT: IPv6 SOCKET NOT IMPLEMENTED");
 		//struct sockaddr_in6 *sock_addr = (struct sockaddr_in6 *)&addrFrom;
 		//info->portFrom = ntohs(sock_addr->sin6_port);
 		//inet_ntop(AF_INET6, &sock_addr->sin6_addr, ipstr, sizeof ipstr);
@@ -83,14 +83,24 @@ void ProcessPacket(Functions functionId, char* &buffer, int &length, SOCKET sock
 	if (!client.IsOk())
 	{
 #ifdef DBG_SENDPACKETDATA 
-		errorLog("Fail to open MMF!!", 1);
+		Utils::errorLog("Fail to open MMF!!", 1);
 #endif
 		return;
 	}		
 
 	// Set needed packet info (ip, port, Function, Size)
 	PacketInfo info;
-	SetInfo(socket, functionId, (int)length, &info);
+	if (socket != NULL)
+		SetInfo(socket, functionId, (int)length, &info);
+	else {
+		info.functionId = functionId;
+		info.localIp = 0;
+		info.localPort = 0;
+		info.remoteIp = 0;
+		info.remotePort = 0;
+		info.size = length;
+		info.socketId = 0;
+	}
 
 	// Set data
 
@@ -99,7 +109,7 @@ void ProcessPacket(Functions functionId, char* &buffer, int &length, SOCKET sock
 	std::stringstream sinfo;
 	sinfo << "GOT Info - FunctionID=" << info.functionId << " LocalIp=" << info.localIp << " LocalPort=" << info.localPort << " RemoteIp="
 		<< info.remoteIp << " RemotePort=" << info.remotePort << " Size=" << info.size;
-	errorLog((char*)sinfo.str().c_str(), 2);
+	Utils::errorLog((char*)sinfo.str().c_str(), 2);
 #endif
 
 	char* pBuff = (char *) malloc(sizeof(info) + length);
@@ -135,6 +145,12 @@ void ProcessPacket(Functions functionId, char* &buffer, int &length, SOCKET sock
 	}
 	
 	free(pBuff);
+}
+
+void ProcessPacket(Functions functionId, char*& buffer, int& length) 
+{
+	bool blocked = false;
+	ProcessPacket(functionId, buffer, length, NULL, blocked);
 }
 
 void InjectPacket() 
@@ -184,7 +200,7 @@ DWORD WINAPI Command_Reader(LPVOID context)
 				UnLoadDllEx();
 				break;
 			default:
-				errorLog("UNKNOWN SERVER CODE!");
+				Utils::errorLog("UNKNOWN SERVER CODE!");
 		}
 
     }

@@ -16,27 +16,15 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WEPESPY_H
-#define WEPESPY_H
+#ifndef WEPEDLL_H
+#define WEPEDLL_H
 
+#include <string>
+#include <vector>
 #include <winsock2.h>
 #include <Windows.h>
+#include <tlhelp32.h> 
 #include "ipc.h"
-
-typedef void(__stdcall *T_SENDWS1)(SOCKET, const char*, int, int, LPVOID, LPVOID, LPVOID, LPVOID, bool);
-typedef void(__stdcall *T_RECVWS1)(SOCKET, char*, int, int, LPVOID, LPVOID, LPVOID, LPVOID, bool);
-typedef void(__stdcall *T_SENDWS2)(SOCKET, const char*, int, int, LPVOID, LPVOID, LPVOID, LPVOID, bool);
-typedef void(__stdcall *T_RECVWS2)(SOCKET, char*, int, int, LPVOID, LPVOID, LPVOID, LPVOID, bool);
-typedef void(__stdcall *T_SENDWSA)(SOCKET, LPWSABUF, DWORD, LPDWORD, DWORD, LPWSAOVERLAPPED, LPWSAOVERLAPPED_COMPLETION_ROUTINE, LPVOID, LPVOID, LPVOID, LPVOID, bool);
-typedef void(__stdcall *T_RECVWSA)(SOCKET, LPWSABUF, DWORD, LPDWORD, LPDWORD, LPWSAOVERLAPPED, LPWSAOVERLAPPED_COMPLETION_ROUTINE, LPVOID, LPVOID, LPVOID, LPVOID, bool);
-
-// Variables Globales
-extern T_SENDWS1 send_ws1;
-extern T_RECVWS1 recv_ws1;
-extern T_SENDWS2 send_ws2;
-extern T_RECVWS2 recv_ws2;
-extern T_SENDWSA send_wsa;
-extern T_RECVWSA recv_wsa;
 
 extern bool isCapturing;
 extern bool isFiltering;
@@ -51,4 +39,4 @@ void UnLoadDllEx();
 static osIPC::Server server;
 
 
-#endif
+#endif // WEPEDLL_H

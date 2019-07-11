@@ -47,6 +47,18 @@
             this.txtScript = new System.Windows.Forms.TextBox();
             this.chkLogEnabled = new System.Windows.Forms.CheckBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.chkSSLWrite = new System.Windows.Forms.CheckBox();
+            this.chkSSLRead = new System.Windows.Forms.CheckBox();
+            this.label12 = new System.Windows.Forms.Label();
+            this.chkDecryptMessage = new System.Windows.Forms.CheckBox();
+            this.chkEncryptMessage = new System.Windows.Forms.CheckBox();
+            this.chkSSLDecryptPacket = new System.Windows.Forms.CheckBox();
+            this.chkSSLEncryptPacket = new System.Windows.Forms.CheckBox();
+            this.label11 = new System.Windows.Forms.Label();
+            this.chkPRWrite = new System.Windows.Forms.CheckBox();
+            this.chkPRRead = new System.Windows.Forms.CheckBox();
+            this.chkPRRecv = new System.Windows.Forms.CheckBox();
+            this.chkPRSend = new System.Windows.Forms.CheckBox();
             this.label9 = new System.Windows.Forms.Label();
             this.chkWSARecvFrom = new System.Windows.Forms.CheckBox();
             this.chkWSARecv = new System.Windows.Forms.CheckBox();
@@ -101,7 +113,7 @@
             this.btnOk.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.btnOk.Location = new System.Drawing.Point(3, 447);
             this.btnOk.Name = "btnOk";
-            this.btnOk.Size = new System.Drawing.Size(475, 23);
+            this.btnOk.Size = new System.Drawing.Size(491, 23);
             this.btnOk.TabIndex = 3;
             this.btnOk.Text = "OK";
             this.btnOk.UseVisualStyleBackColor = true;
@@ -119,7 +131,7 @@
             this.tableLayoutPanel1.RowCount = 2;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 92.52577F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 7.474227F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(481, 473);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(497, 473);
             this.tableLayoutPanel1.TabIndex = 4;
             // 
             // tabControlSettings
@@ -130,7 +142,7 @@
             this.tabControlSettings.Location = new System.Drawing.Point(3, 3);
             this.tabControlSettings.Name = "tabControlSettings";
             this.tabControlSettings.SelectedIndex = 0;
-            this.tabControlSettings.Size = new System.Drawing.Size(475, 431);
+            this.tabControlSettings.Size = new System.Drawing.Size(491, 431);
             this.tabControlSettings.TabIndex = 0;
             // 
             // tabGeneral
@@ -149,7 +161,7 @@
             this.tabGeneral.Location = new System.Drawing.Point(4, 22);
             this.tabGeneral.Name = "tabGeneral";
             this.tabGeneral.Padding = new System.Windows.Forms.Padding(3);
-            this.tabGeneral.Size = new System.Drawing.Size(467, 405);
+            this.tabGeneral.Size = new System.Drawing.Size(483, 405);
             this.tabGeneral.TabIndex = 1;
             this.tabGeneral.Text = "General";
             this.tabGeneral.UseVisualStyleBackColor = true;
@@ -166,7 +178,7 @@
             this.groupBox5.Controls.Add(this.chkRemoteIp);
             this.groupBox5.Location = new System.Drawing.Point(23, 172);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(420, 71);
+            this.groupBox5.Size = new System.Drawing.Size(438, 71);
             this.groupBox5.TabIndex = 16;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "IP/Port Conditions (capture only)";
@@ -251,7 +263,7 @@
             // 
             // btnSelectScript
             // 
-            this.btnSelectScript.Location = new System.Drawing.Point(370, 136);
+            this.btnSelectScript.Location = new System.Drawing.Point(376, 136);
             this.btnSelectScript.Name = "btnSelectScript";
             this.btnSelectScript.Size = new System.Drawing.Size(73, 23);
             this.btnSelectScript.TabIndex = 11;
@@ -262,7 +274,7 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(22, 96);
+            this.label10.Location = new System.Drawing.Point(28, 96);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(62, 13);
             this.label10.TabIndex = 10;
@@ -270,7 +282,7 @@
             // 
             // txtScript
             // 
-            this.txtScript.Location = new System.Drawing.Point(25, 112);
+            this.txtScript.Location = new System.Drawing.Point(31, 112);
             this.txtScript.Name = "txtScript";
             this.txtScript.Size = new System.Drawing.Size(418, 20);
             this.txtScript.TabIndex = 9;
@@ -278,7 +290,7 @@
             // chkLogEnabled
             // 
             this.chkLogEnabled.AutoSize = true;
-            this.chkLogEnabled.Location = new System.Drawing.Point(189, 10);
+            this.chkLogEnabled.Location = new System.Drawing.Point(192, 10);
             this.chkLogEnabled.Name = "chkLogEnabled";
             this.chkLogEnabled.Size = new System.Drawing.Size(80, 17);
             this.chkLogEnabled.TabIndex = 8;
@@ -287,6 +299,18 @@
             // 
             // groupBox4
             // 
+            this.groupBox4.Controls.Add(this.chkSSLWrite);
+            this.groupBox4.Controls.Add(this.chkSSLRead);
+            this.groupBox4.Controls.Add(this.label12);
+            this.groupBox4.Controls.Add(this.chkDecryptMessage);
+            this.groupBox4.Controls.Add(this.chkEncryptMessage);
+            this.groupBox4.Controls.Add(this.chkSSLDecryptPacket);
+            this.groupBox4.Controls.Add(this.chkSSLEncryptPacket);
+            this.groupBox4.Controls.Add(this.label11);
+            this.groupBox4.Controls.Add(this.chkPRWrite);
+            this.groupBox4.Controls.Add(this.chkPRRead);
+            this.groupBox4.Controls.Add(this.chkPRRecv);
+            this.groupBox4.Controls.Add(this.chkPRSend);
             this.groupBox4.Controls.Add(this.label9);
             this.groupBox4.Controls.Add(this.chkWSARecvFrom);
             this.groupBox4.Controls.Add(this.chkWSARecv);
@@ -304,15 +328,133 @@
             this.groupBox4.Controls.Add(this.chkWSSend);
             this.groupBox4.Location = new System.Drawing.Point(23, 249);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(420, 148);
+            this.groupBox4.Size = new System.Drawing.Size(438, 148);
             this.groupBox4.TabIndex = 7;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Winsock Functions (capture only)";
             // 
+            // chkSSLWrite
+            // 
+            this.chkSSLWrite.AutoSize = true;
+            this.chkSSLWrite.Location = new System.Drawing.Point(323, 124);
+            this.chkSSLWrite.Name = "chkSSLWrite";
+            this.chkSSLWrite.Size = new System.Drawing.Size(71, 17);
+            this.chkSSLWrite.TabIndex = 26;
+            this.chkSSLWrite.Text = "SSLWrite";
+            this.chkSSLWrite.UseVisualStyleBackColor = true;
+            // 
+            // chkSSLRead
+            // 
+            this.chkSSLRead.AutoSize = true;
+            this.chkSSLRead.Location = new System.Drawing.Point(323, 108);
+            this.chkSSLRead.Name = "chkSSLRead";
+            this.chkSSLRead.Size = new System.Drawing.Size(72, 17);
+            this.chkSSLRead.TabIndex = 25;
+            this.chkSSLRead.Text = "SSLRead";
+            this.chkSSLRead.UseVisualStyleBackColor = true;
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(320, 25);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(62, 13);
+            this.label12.TabIndex = 24;
+            this.label12.Text = "SSL Funcs:";
+            // 
+            // chkDecryptMessage
+            // 
+            this.chkDecryptMessage.AutoSize = true;
+            this.chkDecryptMessage.Location = new System.Drawing.Point(323, 92);
+            this.chkDecryptMessage.Name = "chkDecryptMessage";
+            this.chkDecryptMessage.Size = new System.Drawing.Size(106, 17);
+            this.chkDecryptMessage.TabIndex = 23;
+            this.chkDecryptMessage.Text = "DecryptMessage";
+            this.chkDecryptMessage.UseVisualStyleBackColor = true;
+            // 
+            // chkEncryptMessage
+            // 
+            this.chkEncryptMessage.AutoSize = true;
+            this.chkEncryptMessage.Location = new System.Drawing.Point(323, 76);
+            this.chkEncryptMessage.Name = "chkEncryptMessage";
+            this.chkEncryptMessage.Size = new System.Drawing.Size(105, 17);
+            this.chkEncryptMessage.TabIndex = 22;
+            this.chkEncryptMessage.Text = "EncryptMessage";
+            this.chkEncryptMessage.UseVisualStyleBackColor = true;
+            // 
+            // chkSSLDecryptPacket
+            // 
+            this.chkSSLDecryptPacket.AutoSize = true;
+            this.chkSSLDecryptPacket.Location = new System.Drawing.Point(323, 60);
+            this.chkSSLDecryptPacket.Name = "chkSSLDecryptPacket";
+            this.chkSSLDecryptPacket.Size = new System.Drawing.Size(117, 17);
+            this.chkSSLDecryptPacket.TabIndex = 21;
+            this.chkSSLDecryptPacket.Text = "SSLDecryptPacket";
+            this.chkSSLDecryptPacket.UseVisualStyleBackColor = true;
+            // 
+            // chkSSLEncryptPacket
+            // 
+            this.chkSSLEncryptPacket.AutoSize = true;
+            this.chkSSLEncryptPacket.Location = new System.Drawing.Point(323, 44);
+            this.chkSSLEncryptPacket.Name = "chkSSLEncryptPacket";
+            this.chkSSLEncryptPacket.Size = new System.Drawing.Size(116, 17);
+            this.chkSSLEncryptPacket.TabIndex = 20;
+            this.chkSSLEncryptPacket.Text = "SSLEncryptPacket";
+            this.chkSSLEncryptPacket.UseVisualStyleBackColor = true;
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(248, 31);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(40, 13);
+            this.label11.TabIndex = 19;
+            this.label11.Text = "NSPR:";
+            // 
+            // chkPRWrite
+            // 
+            this.chkPRWrite.AutoSize = true;
+            this.chkPRWrite.Location = new System.Drawing.Point(248, 119);
+            this.chkPRWrite.Name = "chkPRWrite";
+            this.chkPRWrite.Size = new System.Drawing.Size(69, 17);
+            this.chkPRWrite.TabIndex = 18;
+            this.chkPRWrite.Text = "PR Write";
+            this.chkPRWrite.UseVisualStyleBackColor = true;
+            // 
+            // chkPRRead
+            // 
+            this.chkPRRead.AutoSize = true;
+            this.chkPRRead.Location = new System.Drawing.Point(248, 96);
+            this.chkPRRead.Name = "chkPRRead";
+            this.chkPRRead.Size = new System.Drawing.Size(70, 17);
+            this.chkPRRead.TabIndex = 17;
+            this.chkPRRead.Text = "PR Read";
+            this.chkPRRead.UseVisualStyleBackColor = true;
+            // 
+            // chkPRRecv
+            // 
+            this.chkPRRecv.AutoSize = true;
+            this.chkPRRecv.Location = new System.Drawing.Point(248, 73);
+            this.chkPRRecv.Name = "chkPRRecv";
+            this.chkPRRecv.Size = new System.Drawing.Size(70, 17);
+            this.chkPRRecv.TabIndex = 16;
+            this.chkPRRecv.Text = "PR Recv";
+            this.chkPRRecv.UseVisualStyleBackColor = true;
+            // 
+            // chkPRSend
+            // 
+            this.chkPRSend.AutoSize = true;
+            this.chkPRSend.Location = new System.Drawing.Point(248, 50);
+            this.chkPRSend.Name = "chkPRSend";
+            this.chkPRSend.Size = new System.Drawing.Size(69, 17);
+            this.chkPRSend.TabIndex = 15;
+            this.chkPRSend.Text = "PR Send";
+            this.chkPRSend.UseVisualStyleBackColor = true;
+            // 
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(296, 31);
+            this.label9.Location = new System.Drawing.Point(145, 31);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(104, 13);
             this.label9.TabIndex = 14;
@@ -321,7 +463,7 @@
             // chkWSARecvFrom
             // 
             this.chkWSARecvFrom.AutoSize = true;
-            this.chkWSARecvFrom.Location = new System.Drawing.Point(299, 119);
+            this.chkWSARecvFrom.Location = new System.Drawing.Point(148, 119);
             this.chkWSARecvFrom.Name = "chkWSARecvFrom";
             this.chkWSARecvFrom.Size = new System.Drawing.Size(100, 17);
             this.chkWSARecvFrom.TabIndex = 13;
@@ -331,7 +473,7 @@
             // chkWSARecv
             // 
             this.chkWSARecv.AutoSize = true;
-            this.chkWSARecv.Location = new System.Drawing.Point(299, 96);
+            this.chkWSARecv.Location = new System.Drawing.Point(148, 96);
             this.chkWSARecv.Name = "chkWSARecv";
             this.chkWSARecv.Size = new System.Drawing.Size(77, 17);
             this.chkWSARecv.TabIndex = 12;
@@ -341,7 +483,7 @@
             // chkWSASendTo
             // 
             this.chkWSASendTo.AutoSize = true;
-            this.chkWSASendTo.Location = new System.Drawing.Point(299, 73);
+            this.chkWSASendTo.Location = new System.Drawing.Point(148, 73);
             this.chkWSASendTo.Name = "chkWSASendTo";
             this.chkWSASendTo.Size = new System.Drawing.Size(89, 17);
             this.chkWSASendTo.TabIndex = 11;
@@ -351,7 +493,7 @@
             // chkWSASend
             // 
             this.chkWSASend.AutoSize = true;
-            this.chkWSASend.Location = new System.Drawing.Point(299, 50);
+            this.chkWSASend.Location = new System.Drawing.Point(148, 50);
             this.chkWSASend.Name = "chkWSASend";
             this.chkWSASend.Size = new System.Drawing.Size(76, 17);
             this.chkWSASend.TabIndex = 10;
@@ -361,7 +503,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(163, 31);
+            this.label8.Location = new System.Drawing.Point(74, 31);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(70, 13);
             this.label8.TabIndex = 9;
@@ -370,7 +512,7 @@
             // chkWS2RecvFrom
             // 
             this.chkWS2RecvFrom.AutoSize = true;
-            this.chkWS2RecvFrom.Location = new System.Drawing.Point(166, 119);
+            this.chkWS2RecvFrom.Location = new System.Drawing.Point(77, 119);
             this.chkWS2RecvFrom.Name = "chkWS2RecvFrom";
             this.chkWS2RecvFrom.Size = new System.Drawing.Size(75, 17);
             this.chkWS2RecvFrom.TabIndex = 8;
@@ -380,7 +522,7 @@
             // chkWS2Recv
             // 
             this.chkWS2Recv.AutoSize = true;
-            this.chkWS2Recv.Location = new System.Drawing.Point(166, 96);
+            this.chkWS2Recv.Location = new System.Drawing.Point(77, 96);
             this.chkWS2Recv.Name = "chkWS2Recv";
             this.chkWS2Recv.Size = new System.Drawing.Size(52, 17);
             this.chkWS2Recv.TabIndex = 7;
@@ -390,7 +532,7 @@
             // chkWS2SendTo
             // 
             this.chkWS2SendTo.AutoSize = true;
-            this.chkWS2SendTo.Location = new System.Drawing.Point(166, 73);
+            this.chkWS2SendTo.Location = new System.Drawing.Point(77, 73);
             this.chkWS2SendTo.Name = "chkWS2SendTo";
             this.chkWS2SendTo.Size = new System.Drawing.Size(64, 17);
             this.chkWS2SendTo.TabIndex = 6;
@@ -400,7 +542,7 @@
             // chkWS2Send
             // 
             this.chkWS2Send.AutoSize = true;
-            this.chkWS2Send.Location = new System.Drawing.Point(166, 50);
+            this.chkWS2Send.Location = new System.Drawing.Point(77, 50);
             this.chkWS2Send.Name = "chkWS2Send";
             this.chkWS2Send.Size = new System.Drawing.Size(51, 17);
             this.chkWS2Send.TabIndex = 5;
@@ -410,7 +552,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(23, 31);
+            this.label7.Location = new System.Drawing.Point(3, 31);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(70, 13);
             this.label7.TabIndex = 4;
@@ -419,7 +561,7 @@
             // chkWSRecvFrom
             // 
             this.chkWSRecvFrom.AutoSize = true;
-            this.chkWSRecvFrom.Location = new System.Drawing.Point(26, 119);
+            this.chkWSRecvFrom.Location = new System.Drawing.Point(6, 119);
             this.chkWSRecvFrom.Name = "chkWSRecvFrom";
             this.chkWSRecvFrom.Size = new System.Drawing.Size(75, 17);
             this.chkWSRecvFrom.TabIndex = 3;
@@ -429,7 +571,7 @@
             // chkWSRecv
             // 
             this.chkWSRecv.AutoSize = true;
-            this.chkWSRecv.Location = new System.Drawing.Point(26, 96);
+            this.chkWSRecv.Location = new System.Drawing.Point(6, 96);
             this.chkWSRecv.Name = "chkWSRecv";
             this.chkWSRecv.Size = new System.Drawing.Size(52, 17);
             this.chkWSRecv.TabIndex = 2;
@@ -439,7 +581,7 @@
             // chkWSSendTo
             // 
             this.chkWSSendTo.AutoSize = true;
-            this.chkWSSendTo.Location = new System.Drawing.Point(26, 73);
+            this.chkWSSendTo.Location = new System.Drawing.Point(6, 73);
             this.chkWSSendTo.Name = "chkWSSendTo";
             this.chkWSSendTo.Size = new System.Drawing.Size(64, 17);
             this.chkWSSendTo.TabIndex = 1;
@@ -449,7 +591,7 @@
             // chkWSSend
             // 
             this.chkWSSend.AutoSize = true;
-            this.chkWSSend.Location = new System.Drawing.Point(26, 50);
+            this.chkWSSend.Location = new System.Drawing.Point(6, 50);
             this.chkWSSend.Name = "chkWSSend";
             this.chkWSSend.Size = new System.Drawing.Size(51, 17);
             this.chkWSSend.TabIndex = 0;
@@ -459,7 +601,7 @@
             // chkMinimizeToSystemTray
             // 
             this.chkMinimizeToSystemTray.AutoSize = true;
-            this.chkMinimizeToSystemTray.Location = new System.Drawing.Point(23, 10);
+            this.chkMinimizeToSystemTray.Location = new System.Drawing.Point(31, 10);
             this.chkMinimizeToSystemTray.Name = "chkMinimizeToSystemTray";
             this.chkMinimizeToSystemTray.Size = new System.Drawing.Size(133, 17);
             this.chkMinimizeToSystemTray.TabIndex = 6;
@@ -469,7 +611,7 @@
             // 
             // btnSelectDLL
             // 
-            this.btnSelectDLL.Location = new System.Drawing.Point(368, 80);
+            this.btnSelectDLL.Location = new System.Drawing.Point(374, 80);
             this.btnSelectDLL.Name = "btnSelectDLL";
             this.btnSelectDLL.Size = new System.Drawing.Size(75, 23);
             this.btnSelectDLL.TabIndex = 5;
@@ -480,7 +622,7 @@
             // lblDLL
             // 
             this.lblDLL.AutoSize = true;
-            this.lblDLL.Location = new System.Drawing.Point(20, 40);
+            this.lblDLL.Location = new System.Drawing.Point(26, 40);
             this.lblDLL.Name = "lblDLL";
             this.lblDLL.Size = new System.Drawing.Size(43, 13);
             this.lblDLL.TabIndex = 4;
@@ -488,7 +630,7 @@
             // 
             // txtDLL
             // 
-            this.txtDLL.Location = new System.Drawing.Point(23, 56);
+            this.txtDLL.Location = new System.Drawing.Point(29, 56);
             this.txtDLL.Name = "txtDLL";
             this.txtDLL.Size = new System.Drawing.Size(420, 20);
             this.txtDLL.TabIndex = 3;
@@ -667,7 +809,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(501, 493);
+            this.ClientSize = new System.Drawing.Size(517, 493);
             this.Controls.Add(this.tableLayoutPanel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -753,5 +895,17 @@
         private System.Windows.Forms.CheckBox chkRemotePort;
         private System.Windows.Forms.CheckBox chkLocalPort;
         private System.Windows.Forms.CheckBox chkRemoteIp;
+        private System.Windows.Forms.CheckBox chkSSLWrite;
+        private System.Windows.Forms.CheckBox chkSSLRead;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.CheckBox chkDecryptMessage;
+        private System.Windows.Forms.CheckBox chkEncryptMessage;
+        private System.Windows.Forms.CheckBox chkSSLDecryptPacket;
+        private System.Windows.Forms.CheckBox chkSSLEncryptPacket;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.CheckBox chkPRWrite;
+        private System.Windows.Forms.CheckBox chkPRRead;
+        private System.Windows.Forms.CheckBox chkPRRecv;
+        private System.Windows.Forms.CheckBox chkPRSend;
     }
 }

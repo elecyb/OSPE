@@ -59,6 +59,16 @@ namespace OSPE
             chkWSASendTo.Checked = logFunctions.HasFlag(FilterCaptureFuncs.WSASendTo);
             chkWSARecv.Checked = logFunctions.HasFlag(FilterCaptureFuncs.WSARecv);
             chkWSARecvFrom.Checked = logFunctions.HasFlag(FilterCaptureFuncs.WSARecvFrom);
+            chkPRRead.Checked = logFunctions.HasFlag(FilterCaptureFuncs.PRRead);
+            chkPRWrite.Checked = logFunctions.HasFlag(FilterCaptureFuncs.PRWrite);
+            chkPRSend.Checked = logFunctions.HasFlag(FilterCaptureFuncs.PRSend);
+            chkPRRecv.Checked = logFunctions.HasFlag(FilterCaptureFuncs.PRRecv);
+            chkSSLEncryptPacket.Checked = logFunctions.HasFlag(FilterCaptureFuncs.SSLEncryptPacket);
+            chkSSLDecryptPacket.Checked = logFunctions.HasFlag(FilterCaptureFuncs.SSLDecryptPacket);
+            chkEncryptMessage.Checked = logFunctions.HasFlag(FilterCaptureFuncs.EncryptMessage);
+            chkDecryptMessage.Checked = logFunctions.HasFlag(FilterCaptureFuncs.DecryptMessage);
+            chkSSLWrite.Checked = logFunctions.HasFlag(FilterCaptureFuncs.SSLWrite);
+            chkSSLRead.Checked = logFunctions.HasFlag(FilterCaptureFuncs.SSLRead);
 
             txtDLL.Text = Settings.DLL;
             txtScript.Text = Settings.DLLEx;
@@ -282,6 +292,28 @@ namespace OSPE
                 logFuncs |= FilterCaptureFuncs.WSARecv;
             if (chkWSARecvFrom.Checked)
                 logFuncs |= FilterCaptureFuncs.WSARecvFrom;
+
+            if (chkPRRead.Checked)
+                logFuncs |= FilterCaptureFuncs.PRRead;
+            if (chkPRWrite.Checked)
+                logFuncs |= FilterCaptureFuncs.PRWrite;
+            if (chkPRSend.Checked)
+                logFuncs |= FilterCaptureFuncs.PRSend;
+            if (chkPRRecv.Checked)
+                logFuncs |= FilterCaptureFuncs.PRRecv;
+
+            if (chkSSLEncryptPacket.Checked)
+                logFuncs |= FilterCaptureFuncs.SSLEncryptPacket;
+            if (chkSSLDecryptPacket.Checked)
+                logFuncs |= FilterCaptureFuncs.SSLDecryptPacket;
+            if (chkEncryptMessage.Checked)
+                logFuncs |= FilterCaptureFuncs.EncryptMessage;
+            if (chkDecryptMessage.Checked)
+                logFuncs |= FilterCaptureFuncs.DecryptMessage;
+            if (chkSSLWrite.Checked)
+                logFuncs |= FilterCaptureFuncs.SSLWrite;
+            if (chkSSLRead.Checked)
+                logFuncs |= FilterCaptureFuncs.SSLRead;
 
             Settings.LogFunctions = (int)logFuncs;
             PacketManager.LogFunctions = (FilterCaptureFuncs)logFuncs; // para no tener que reiniciar el programa...

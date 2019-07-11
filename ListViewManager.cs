@@ -72,39 +72,6 @@ namespace OSPE
             Both, Received, Sent, Watch
         }
 
-        private string FunctionNameToString(Functions f)
-        {
-            switch (f)
-            {
-                case Functions.CODE_SEND:
-                    return "WS1.1 Send";
-                case Functions.CODE_RECV:
-                    return "WS1.1 Recv";
-                case Functions.CODE_SENDTO:
-                    return "WS1.1 SendTo";
-                case Functions.CODE_RECVFROM:
-                    return "WS1.1 SendFrom";
-                case Functions.CODE_WS2SEND:
-                    return "WS2.0 Send";
-                case Functions.CODE_WS2RECV:
-                    return "WS2.0 Recv";
-                case Functions.CODE_WS2SENDTO:
-                    return "WS2.0 SendTo";
-                case Functions.CODE_WS2RECVFROM:
-                    return "WS2.0 RecvFrom";
-                case Functions.CODE_WSASEND:
-                    return "WSA Send";
-                case Functions.CODE_WSARECV:
-                    return "WSA Recv";
-                case Functions.CODE_WSASENDTO:
-                    return "WSA SendTo";
-                case Functions.CODE_WSARECVFROM:
-                    return "WSA RecvFrom";
-                default:
-                    throw new NotImplementedException();
-            }
-        }
-
         /// <summary>
         /// Crea un item de tabla y se almacena en una lista de items.
         /// El item está preparado para ser entregado a la tabla cuando ésta lo requiera.
@@ -116,7 +83,7 @@ namespace OSPE
             if (data.Length > ColDataTextLength)
                 data = data.Substring(0, ColDataTextLength);
 
-            string[] strings = { " " + ListItems.Count, packet.LocalIp + " : " + packet.LocalPort, packet.RemoteIp + " : " + packet.RemotePort, FunctionNameToString(packet.FunctionID), packet.Size.ToString(), data };
+            string[] strings = { " " + ListItems.Count, packet.LocalIp + " : " + packet.LocalPort, packet.RemoteIp + " : " + packet.RemotePort, Program.FunctionNameToString(packet.FunctionID), packet.Size.ToString(), data };
             ListItems.Add(new WeListViewItem(strings) {ImageIndex = (int) packet.Direction});
         }
 
@@ -133,7 +100,7 @@ namespace OSPE
             if(data.Length > ColDataTextLength)
                 data = data.Substring(0, ColDataTextLength);
 
-            string[] strings = { " " + id, packet.LocalIp + " : " + packet.LocalPort, packet.RemoteIp + " : " + packet.RemotePort, FunctionNameToString(packet.FunctionID), packet.Size.ToString(), data };
+            string[] strings = { " " + id, packet.LocalIp + " : " + packet.LocalPort, packet.RemoteIp + " : " + packet.RemotePort, Program.FunctionNameToString(packet.FunctionID), packet.Size.ToString(), data };
             ListItems[id] = new WeListViewItem(strings) { ImageIndex = (int)packet.Direction };
         }
 

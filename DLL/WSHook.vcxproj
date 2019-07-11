@@ -34,7 +34,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
     <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -147,20 +147,26 @@
   <ItemGroup>
     <ClCompile Include="DllCommunication.cpp" />
     <ClCompile Include="FilterManager.cpp" />
+    <ClCompile Include="HookedFunctions.cpp" />
     <ClCompile Include="ipc.cpp" />
-    <ClCompile Include="DebugFunctions.cpp" />
-    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="NonExportedHooks.cpp" />
+    <ClCompile Include="Process.cpp" />
     <ClCompile Include="OspeDll.cpp" />
+    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Defines.h" />
     <ClInclude Include="DllCommunication.h" />
     <ClInclude Include="FilterManager.h" />
+    <ClInclude Include="HookedFunctions.h" />
     <ClInclude Include="ipc.h" />
-    <ClInclude Include="DebugFunctions.h" />
     <ClInclude Include="MinHook.h" />
+    <ClInclude Include="NonExportedHooks.h" />
     <ClInclude Include="OspeDll.h" />
+    <ClInclude Include="Process.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="Utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
