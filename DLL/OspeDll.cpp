@@ -75,7 +75,7 @@ INT APIENTRY DllMain( HMODULE hDLL, DWORD dwReason, LPVOID Reserved) {
 				return 1;
 			}
 
-			Utils::errorLog("STARTING HOOKS ");
+			//Utils::errorLog("STARTING HOOKS ");
 
 			// Create a hook for each winsock function, in disabled state.
 			// Hooks specific to loaded DLLs

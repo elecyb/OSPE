@@ -82,7 +82,7 @@ int PR_Read_Callback(void* fd, void* buffer, DWORD amount)
 	signed int ret = PR_Read_Original(fd, buffer, amount);
 	// Do things
 	if ((PR_GetDescType_Original(fd) == 2 || PR_GetDescType_Original(fd) == 4) && ret > 0)
-			ProcessPacket(CODE_PR_READ, (char*&)buffer, (int&)amount);
+			ProcessPacket(CODE_PR_READ, (char*&)buffer, (int&)ret);
 
 	return ret;
 }

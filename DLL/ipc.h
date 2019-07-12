@@ -23,7 +23,7 @@
 
 // Definitions
 #define IPC_BLOCK_COUNT			50
-#define IPC_BLOCK_SIZE			32788 // MaxPacket 32768 + packetInfo 20
+#define IPC_BLOCK_SIZE			32792 // MaxPacket 32768 + packetInfo 24
 
 #define IPC_SRV_MMF_NAME        "OSPECMDBUFF"
 

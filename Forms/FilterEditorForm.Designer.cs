@@ -69,20 +69,20 @@
             this.chkWSARecv = new System.Windows.Forms.CheckBox();
             this.chkWSASendTo = new System.Windows.Forms.CheckBox();
             this.chkWSASend = new System.Windows.Forms.CheckBox();
-            this.dataGridViewReplace = new System.Windows.Forms.DataGridView();
-            this.dataGridViewReplace2 = new System.Windows.Forms.DataGridView();
             this.tabPage4 = new System.Windows.Forms.TabPage();
-            this.tabPage5 = new System.Windows.Forms.TabPage();
             this.chkPRSend = new System.Windows.Forms.CheckBox();
             this.chkPRRecv = new System.Windows.Forms.CheckBox();
             this.chkPRWrite = new System.Windows.Forms.CheckBox();
             this.chkPRRead = new System.Windows.Forms.CheckBox();
+            this.tabPage5 = new System.Windows.Forms.TabPage();
+            this.chkSSLRead = new System.Windows.Forms.CheckBox();
+            this.chkSSLWrite = new System.Windows.Forms.CheckBox();
             this.chkDecryptMessage = new System.Windows.Forms.CheckBox();
             this.chkEncryptMessage = new System.Windows.Forms.CheckBox();
             this.chkSSLDecryptPacket = new System.Windows.Forms.CheckBox();
             this.chkSSLEncryptPacket = new System.Windows.Forms.CheckBox();
-            this.chkSSLRead = new System.Windows.Forms.CheckBox();
-            this.chkSSLWrite = new System.Windows.Forms.CheckBox();
+            this.dataGridViewReplace = new System.Windows.Forms.DataGridView();
+            this.dataGridViewReplace2 = new System.Windows.Forms.DataGridView();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewSearch)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox5.SuspendLayout();
@@ -96,10 +96,10 @@
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.tabPage3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewReplace)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewReplace2)).BeginInit();
             this.tabPage4.SuspendLayout();
             this.tabPage5.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewReplace)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewReplace2)).BeginInit();
             this.SuspendLayout();
             // 
             // dataGridViewSearch
@@ -582,46 +582,6 @@
             this.chkWSASend.Text = "WSASend";
             this.chkWSASend.UseVisualStyleBackColor = true;
             // 
-            // dataGridViewReplace
-            // 
-            this.dataGridViewReplace.AllowUserToAddRows = false;
-            this.dataGridViewReplace.AllowUserToDeleteRows = false;
-            this.dataGridViewReplace.AllowUserToResizeColumns = false;
-            this.dataGridViewReplace.AllowUserToResizeRows = false;
-            this.dataGridViewReplace.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.dataGridViewReplace.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridViewReplace.Location = new System.Drawing.Point(12, 74);
-            this.dataGridViewReplace.Name = "dataGridViewReplace";
-            this.dataGridViewReplace.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
-            this.dataGridViewReplace.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
-            this.dataGridViewReplace.Size = new System.Drawing.Size(632, 63);
-            this.dataGridViewReplace.TabIndex = 9;
-            this.dataGridViewReplace.Visible = false;
-            this.dataGridViewReplace.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.dataGridView_CellPainting);
-            this.dataGridViewReplace.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.dataGridView_EditingControlShowing);
-            this.dataGridViewReplace.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dataGridView_KeyDown);
-            // 
-            // dataGridViewReplace2
-            // 
-            this.dataGridViewReplace2.AllowUserToAddRows = false;
-            this.dataGridViewReplace2.AllowUserToDeleteRows = false;
-            this.dataGridViewReplace2.AllowUserToResizeColumns = false;
-            this.dataGridViewReplace2.AllowUserToResizeRows = false;
-            this.dataGridViewReplace2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.dataGridViewReplace2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridViewReplace2.Location = new System.Drawing.Point(12, 74);
-            this.dataGridViewReplace2.Name = "dataGridViewReplace2";
-            this.dataGridViewReplace2.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
-            this.dataGridViewReplace2.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
-            this.dataGridViewReplace2.Size = new System.Drawing.Size(632, 63);
-            this.dataGridViewReplace2.TabIndex = 10;
-            this.dataGridViewReplace2.Visible = false;
-            this.dataGridViewReplace2.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.dataGridView_CellPainting);
-            this.dataGridViewReplace2.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.dataGridView_EditingControlShowing);
-            this.dataGridViewReplace2.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dataGridView_KeyDown);
-            // 
             // tabPage4
             // 
             this.tabPage4.BackColor = System.Drawing.Color.Transparent;
@@ -634,6 +594,50 @@
             this.tabPage4.Size = new System.Drawing.Size(184, 111);
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "NSPR";
+            // 
+            // chkPRSend
+            // 
+            this.chkPRSend.AutoSize = true;
+            this.chkPRSend.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkPRSend.Location = new System.Drawing.Point(14, 83);
+            this.chkPRSend.Name = "chkPRSend";
+            this.chkPRSend.Size = new System.Drawing.Size(69, 17);
+            this.chkPRSend.TabIndex = 11;
+            this.chkPRSend.Text = "PR Send";
+            this.chkPRSend.UseVisualStyleBackColor = true;
+            // 
+            // chkPRRecv
+            // 
+            this.chkPRRecv.AutoSize = true;
+            this.chkPRRecv.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkPRRecv.Location = new System.Drawing.Point(14, 60);
+            this.chkPRRecv.Name = "chkPRRecv";
+            this.chkPRRecv.Size = new System.Drawing.Size(70, 17);
+            this.chkPRRecv.TabIndex = 10;
+            this.chkPRRecv.Text = "PR Recv";
+            this.chkPRRecv.UseVisualStyleBackColor = true;
+            // 
+            // chkPRWrite
+            // 
+            this.chkPRWrite.AutoSize = true;
+            this.chkPRWrite.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkPRWrite.Location = new System.Drawing.Point(14, 37);
+            this.chkPRWrite.Name = "chkPRWrite";
+            this.chkPRWrite.Size = new System.Drawing.Size(69, 17);
+            this.chkPRWrite.TabIndex = 9;
+            this.chkPRWrite.Text = "PR Write";
+            this.chkPRWrite.UseVisualStyleBackColor = true;
+            // 
+            // chkPRRead
+            // 
+            this.chkPRRead.AutoSize = true;
+            this.chkPRRead.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkPRRead.Location = new System.Drawing.Point(14, 14);
+            this.chkPRRead.Name = "chkPRRead";
+            this.chkPRRead.Size = new System.Drawing.Size(70, 17);
+            this.chkPRRead.TabIndex = 8;
+            this.chkPRRead.Text = "PR Read";
+            this.chkPRRead.UseVisualStyleBackColor = true;
             // 
             // tabPage5
             // 
@@ -650,49 +654,27 @@
             this.tabPage5.TabIndex = 4;
             this.tabPage5.Text = "SSL";
             // 
-            // chkPRSend
+            // chkSSLRead
             // 
-            this.chkPRSend.AutoSize = true;
-            this.chkPRSend.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chkPRSend.Location = new System.Drawing.Point(18, 83);
-            this.chkPRSend.Name = "chkPRSend";
-            this.chkPRSend.Size = new System.Drawing.Size(69, 17);
-            this.chkPRSend.TabIndex = 11;
-            this.chkPRSend.Text = "PR Send";
-            this.chkPRSend.UseVisualStyleBackColor = true;
+            this.chkSSLRead.AutoSize = true;
+            this.chkSSLRead.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkSSLRead.Location = new System.Drawing.Point(118, 37);
+            this.chkSSLRead.Name = "chkSSLRead";
+            this.chkSSLRead.Size = new System.Drawing.Size(71, 17);
+            this.chkSSLRead.TabIndex = 13;
+            this.chkSSLRead.Text = "SSLWrite";
+            this.chkSSLRead.UseVisualStyleBackColor = true;
             // 
-            // chkPRRecv
+            // chkSSLWrite
             // 
-            this.chkPRRecv.AutoSize = true;
-            this.chkPRRecv.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chkPRRecv.Location = new System.Drawing.Point(18, 60);
-            this.chkPRRecv.Name = "chkPRRecv";
-            this.chkPRRecv.Size = new System.Drawing.Size(70, 17);
-            this.chkPRRecv.TabIndex = 10;
-            this.chkPRRecv.Text = "PR Recv";
-            this.chkPRRecv.UseVisualStyleBackColor = true;
-            // 
-            // chkPRWrite
-            // 
-            this.chkPRWrite.AutoSize = true;
-            this.chkPRWrite.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chkPRWrite.Location = new System.Drawing.Point(18, 37);
-            this.chkPRWrite.Name = "chkPRWrite";
-            this.chkPRWrite.Size = new System.Drawing.Size(69, 17);
-            this.chkPRWrite.TabIndex = 9;
-            this.chkPRWrite.Text = "PR Write";
-            this.chkPRWrite.UseVisualStyleBackColor = true;
-            // 
-            // chkPRRead
-            // 
-            this.chkPRRead.AutoSize = true;
-            this.chkPRRead.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chkPRRead.Location = new System.Drawing.Point(18, 14);
-            this.chkPRRead.Name = "chkPRRead";
-            this.chkPRRead.Size = new System.Drawing.Size(70, 17);
-            this.chkPRRead.TabIndex = 8;
-            this.chkPRRead.Text = "PR Read";
-            this.chkPRRead.UseVisualStyleBackColor = true;
+            this.chkSSLWrite.AutoSize = true;
+            this.chkSSLWrite.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkSSLWrite.Location = new System.Drawing.Point(118, 14);
+            this.chkSSLWrite.Name = "chkSSLWrite";
+            this.chkSSLWrite.Size = new System.Drawing.Size(72, 17);
+            this.chkSSLWrite.TabIndex = 12;
+            this.chkSSLWrite.Text = "SSLRead";
+            this.chkSSLWrite.UseVisualStyleBackColor = true;
             // 
             // chkDecryptMessage
             // 
@@ -738,27 +720,45 @@
             this.chkSSLEncryptPacket.Text = "SSLEncryptPacket";
             this.chkSSLEncryptPacket.UseVisualStyleBackColor = true;
             // 
-            // chkSSLRead
+            // dataGridViewReplace
             // 
-            this.chkSSLRead.AutoSize = true;
-            this.chkSSLRead.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chkSSLRead.Location = new System.Drawing.Point(118, 37);
-            this.chkSSLRead.Name = "chkSSLRead";
-            this.chkSSLRead.Size = new System.Drawing.Size(71, 17);
-            this.chkSSLRead.TabIndex = 13;
-            this.chkSSLRead.Text = "SSLWrite";
-            this.chkSSLRead.UseVisualStyleBackColor = true;
+            this.dataGridViewReplace.AllowUserToAddRows = false;
+            this.dataGridViewReplace.AllowUserToDeleteRows = false;
+            this.dataGridViewReplace.AllowUserToResizeColumns = false;
+            this.dataGridViewReplace.AllowUserToResizeRows = false;
+            this.dataGridViewReplace.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataGridViewReplace.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridViewReplace.Location = new System.Drawing.Point(12, 74);
+            this.dataGridViewReplace.Name = "dataGridViewReplace";
+            this.dataGridViewReplace.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
+            this.dataGridViewReplace.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
+            this.dataGridViewReplace.Size = new System.Drawing.Size(632, 63);
+            this.dataGridViewReplace.TabIndex = 9;
+            this.dataGridViewReplace.Visible = false;
+            this.dataGridViewReplace.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.dataGridView_CellPainting);
+            this.dataGridViewReplace.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.dataGridView_EditingControlShowing);
+            this.dataGridViewReplace.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dataGridView_KeyDown);
             // 
-            // chkSSLWrite
+            // dataGridViewReplace2
             // 
-            this.chkSSLWrite.AutoSize = true;
-            this.chkSSLWrite.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chkSSLWrite.Location = new System.Drawing.Point(118, 14);
-            this.chkSSLWrite.Name = "chkSSLWrite";
-            this.chkSSLWrite.Size = new System.Drawing.Size(72, 17);
-            this.chkSSLWrite.TabIndex = 12;
-            this.chkSSLWrite.Text = "SSLRead";
-            this.chkSSLWrite.UseVisualStyleBackColor = true;
+            this.dataGridViewReplace2.AllowUserToAddRows = false;
+            this.dataGridViewReplace2.AllowUserToDeleteRows = false;
+            this.dataGridViewReplace2.AllowUserToResizeColumns = false;
+            this.dataGridViewReplace2.AllowUserToResizeRows = false;
+            this.dataGridViewReplace2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataGridViewReplace2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridViewReplace2.Location = new System.Drawing.Point(12, 74);
+            this.dataGridViewReplace2.Name = "dataGridViewReplace2";
+            this.dataGridViewReplace2.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
+            this.dataGridViewReplace2.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
+            this.dataGridViewReplace2.Size = new System.Drawing.Size(632, 63);
+            this.dataGridViewReplace2.TabIndex = 10;
+            this.dataGridViewReplace2.Visible = false;
+            this.dataGridViewReplace2.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.dataGridView_CellPainting);
+            this.dataGridViewReplace2.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.dataGridView_EditingControlShowing);
+            this.dataGridViewReplace2.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dataGridView_KeyDown);
             // 
             // FilterEditorForm
             // 
@@ -799,12 +799,12 @@
             this.tabPage2.PerformLayout();
             this.tabPage3.ResumeLayout(false);
             this.tabPage3.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewReplace)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewReplace2)).EndInit();
             this.tabPage4.ResumeLayout(false);
             this.tabPage4.PerformLayout();
             this.tabPage5.ResumeLayout(false);
             this.tabPage5.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewReplace)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewReplace2)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

@@ -75,7 +75,7 @@ namespace OSPE
 
         private static string _pktMmfName;
         private static int _pktMmfNodeCount = 50;
-        private static int _pktMmfBufferSize = 32788;
+        private static int _pktMmfBufferSize = 32792;
 
         public static void StartPacketReaderMMF()
         {
@@ -129,8 +129,8 @@ namespace OSPE
                     var cSize = packetInfo.Size;
                     var cData = new byte[cSize];
 
-                    if (cSize > _pktMmfBufferSize)
-                        Output.outError("LOST DATA!, got packet with size ({0}) bigger than {0}!", cSize, _pktMmfBufferSize);
+                    // Packet size can not be bigger than buffer size
+                    Debug.Assert(cSize < _pktMmfBufferSize);
 
                     Buffer.BlockCopy(writtenData, piSize, cData, 0, cSize);
 

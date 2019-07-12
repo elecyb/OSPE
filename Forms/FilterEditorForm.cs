@@ -416,6 +416,19 @@ namespace OSPE
             chkWSASendTo.Checked = functions.HasFlag(FilterCaptureFuncs.WSASendTo);
             chkWSARecv.Checked = functions.HasFlag(FilterCaptureFuncs.WSARecv);
             chkWSARecvFrom.Checked = functions.HasFlag(FilterCaptureFuncs.WSARecvFrom);
+
+            chkPRSend.Checked = functions.HasFlag(FilterCaptureFuncs.PRSend);
+            chkPRRecv.Checked = functions.HasFlag(FilterCaptureFuncs.PRRecv);
+            chkPRRead.Checked = functions.HasFlag(FilterCaptureFuncs.PRRead);
+            chkPRWrite.Checked = functions.HasFlag(FilterCaptureFuncs.PRWrite);
+
+            chkSSLEncryptPacket.Checked = functions.HasFlag(FilterCaptureFuncs.SSLEncryptPacket);
+            chkSSLDecryptPacket.Checked = functions.HasFlag(FilterCaptureFuncs.SSLDecryptPacket);
+            chkEncryptMessage.Checked = functions.HasFlag(FilterCaptureFuncs.EncryptMessage);
+            chkDecryptMessage.Checked = functions.HasFlag(FilterCaptureFuncs.DecryptMessage);
+            chkSSLRead.Checked = functions.HasFlag(FilterCaptureFuncs.SSLRead);
+            chkSSLWrite.Checked = functions.HasFlag(FilterCaptureFuncs.SSLWrite);
+
         }
 
         private void chkPackeLength_CheckedChanged(object sender, EventArgs e)
