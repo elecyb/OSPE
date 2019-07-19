@@ -9,8 +9,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OSPEdll", "DLL\WSHook.vcxpr
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B2F9973C-4267-4FF0-8307-95352B4DD135}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharedMemory", "SharedMemory\SharedMemory.csproj", "{79507317-5CAE-416F-AEF4-76D2166C6D2C}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -35,10 +33,6 @@ Global
 		{20074830-CE8A-4F03-B69D-F30559E1FCDD}.Release|x64.Build.0 = Release|x64
 		{20074830-CE8A-4F03-B69D-F30559E1FCDD}.Release|x86.ActiveCfg = Release|Win32
 		{20074830-CE8A-4F03-B69D-F30559E1FCDD}.Release|x86.Build.0 = Release|Win32
-		{79507317-5CAE-416F-AEF4-76D2166C6D2C}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{79507317-5CAE-416F-AEF4-76D2166C6D2C}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{79507317-5CAE-416F-AEF4-76D2166C6D2C}.Release|x64.ActiveCfg = Release|Any CPU
-		{79507317-5CAE-416F-AEF4-76D2166C6D2C}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

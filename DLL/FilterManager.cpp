@@ -76,7 +76,7 @@ bool FilterMeetConditions(Filter filter, UINT16 packetSize, FilterCaptureFuncs f
 {
 	if ((filter.Active) &&
 		(CheckIfBetweenLength(filter, packetSize)) && // El filtro tiene length y tiene que estar dentro del lengthMin y lengthMax
-		(filter.Functions&(functionFlag) != 0) && // Debe ser alguna de las funciones del filtro
+		((filter.Functions&(functionFlag)) != 0) && // Debe ser alguna de las funciones del filtro
 		(filter.searches.size() == 0 || filter.searches.crbegin()->first < packetSize)) // El ultimo offset se pasa del tamaño del packet
 		return true;
 	return false;

@@ -66,7 +66,6 @@ T_RECVWSA recv_wsa = NULL;
 
 int PR_Write_Callback(void* fd, void* buffer, DWORD amount)
 {
-	LONG res;
 	// Check if this is traffic
 	if ((PR_GetDescType_Original(fd) == 2 || PR_GetDescType_Original(fd) == 4) && buffer != NULL)
 		ProcessPacket(CODE_PR_WRITE, (char*&)buffer, (int&)amount);
@@ -91,7 +90,6 @@ int PR_Read_Callback(void* fd, void* buffer, DWORD amount)
 
 int SSL_Write_Callback(void* fd, void* buffer, int amount)
 {
-	LONG res;
 	ProcessPacket(CODE_SSL_WRITE, (char*&)buffer, amount);
 
 	// Call original function
@@ -114,7 +112,6 @@ int SSL_Read_Callback(void* fd, void* buffer, int amount)
 
 int SSLeay_Write_Callback(void* fd, void* buffer, int amount)
 {
-	LONG res;
 	ProcessPacket(CODE_SSL_WRITE, (char*&)buffer, amount);
 
 	// Call original function
@@ -168,7 +165,6 @@ int PR_Recv_Callback(void* fd, void* buf, int amount, int flags, DWORD timeout)
 
 LONG __stdcall SslEncryptPacket_Callback(ULONG_PTR hSslProvider, ULONG_PTR hKey, PBYTE* pbInput, DWORD cbInput, PBYTE pbOutput, DWORD cbOutput, DWORD* pcbResult, ULONGLONG SequenceNumber, DWORD dwContentType, DWORD dwFlags)
 {
-	LONG res;
 	// Do things
 	if (pbInput != NULL && cbInput > 0)
 	{
