@@ -527,7 +527,7 @@
             // 
             this.displayQuickBarToolStripMenuItem.CheckOnClick = true;
             this.displayQuickBarToolStripMenuItem.Name = "displayQuickBarToolStripMenuItem";
-            this.displayQuickBarToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.displayQuickBarToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
             this.displayQuickBarToolStripMenuItem.Text = "Hide Quick Bar";
             this.displayQuickBarToolStripMenuItem.Click += new System.EventHandler(this.tsmiDisplayQuickBar_Click);
             // 
@@ -535,20 +535,20 @@
             // 
             this.viewLogToolStripMenuItem.Image = global::OSPE.Properties.Resources.File_info16;
             this.viewLogToolStripMenuItem.Name = "viewLogToolStripMenuItem";
-            this.viewLogToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.viewLogToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
             this.viewLogToolStripMenuItem.Text = "Open Log";
             this.viewLogToolStripMenuItem.Click += new System.EventHandler(this.tsmiViewLog_Click);
             // 
             // toolStripSeparator11
             // 
             this.toolStripSeparator11.Name = "toolStripSeparator11";
-            this.toolStripSeparator11.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator11.Size = new System.Drawing.Size(150, 6);
             // 
             // tsmiMenuConfigure
             // 
             this.tsmiMenuConfigure.Image = global::OSPE.Properties.Resources.Maintenance16;
             this.tsmiMenuConfigure.Name = "tsmiMenuConfigure";
-            this.tsmiMenuConfigure.Size = new System.Drawing.Size(180, 22);
+            this.tsmiMenuConfigure.Size = new System.Drawing.Size(153, 22);
             this.tsmiMenuConfigure.Text = "Configure";
             this.tsmiMenuConfigure.Click += new System.EventHandler(this.tsmiConfigure_Click);
             // 

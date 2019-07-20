@@ -173,11 +173,6 @@ extern SslDecryptPacket_Typedef SslDecryptPacket_Original;
 extern EncryptMessage_Typedef EncryptMessage_Original;
 extern DecryptMessage_Typedef DecryptMessage_Original;
 
-extern PuttySend_Typedef PuttySend_Original;
-extern PuttyRecv_Typedef PuttyRecv_Original;
-
-extern SecureCRT_Typedef SecureCRT_Original;
-
 // =============================================================================================//
 
 

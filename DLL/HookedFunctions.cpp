@@ -342,24 +342,6 @@ int __fastcall SSH_Rdpkt_Callback(int datalen, unsigned char* data)
 	return ret;
 }
 
-// SecureCRT_Write callback
-
-int __cdecl SecureCRT_Callback(void* pthis, unsigned char** data, DWORD size)
-{
-	// Stuff required to avoid overwriting ECX
-
-	unsigned char** temp_data = data;
-	DWORD temp_size = size;
-
-	int ret = SecureCRT_Original(pthis, temp_data, temp_size);
-
-	// Do things
-	if (*data != NULL) 
-		ProcessPacket(CODE_DECRYPTMESSAGE, (char*&)data, (int&)size);
-
-	return ret;
-}
-
 // Targent Function Pointers ------------------------------------------------------------
 #pragma region Function Pointers
 

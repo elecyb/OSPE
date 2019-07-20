@@ -230,8 +230,18 @@ namespace OSPE
 
         public static string DLL
         {
-            get { return (string) (registry.GetValue("DLL") ?? ""); }
-            set { registry.SetValue("DLL", value); }
+            get {
+                if (Environment.Is64BitProcess)
+                    return (string) (registry.GetValue("DLLx64") ?? "");
+                else
+                    return (string)(registry.GetValue("DLLx86") ?? "");
+            }
+            set {
+                if (Environment.Is64BitProcess)
+                    registry.SetValue("DLLx64", value);
+                else
+                    registry.SetValue("DLLx86", value);
+            }
         }
 
         public static string DLLEx
