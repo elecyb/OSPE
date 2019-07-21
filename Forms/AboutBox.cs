@@ -124,11 +124,6 @@ namespace OSPE.Forms
             Close();
         }
 
-        private void picDonate_Click(object sender, EventArgs e)
-        {
-            Process.Start("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=EN7ESU9UQJCUQ");
-        }
-
         private void picGithub_Click(object sender, EventArgs e)
         {
             Process.Start("http://github.com/elecyb/ospe");

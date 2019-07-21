@@ -291,19 +291,19 @@ namespace OSPE
             return (FilterCaptureFuncs) flag;
         }
 
-        // Sin uso en el cliente del ospe 
+        // Not used for now (implemented in the DLL)
         public static bool DoFilteringForPacket(ref byte[] data, UInt16 size, FilterCaptureFuncs functionFlag)
         {
             bool dataModified = false;
             foreach (var filter in _filterList)
             {
-                if (filter.Replaces.Count == 0) // Nada que filtrar
+                if (filter.Replaces.Count == 0) // Nothing to filer
                     continue;
                 if (!FilterMeetConditions(filter, size, functionFlag))
                     continue;
                 int pos = 0;
                 bool allOffsetMatch = AllSearchOffsetMatch(data, size, filter, ref pos);
-                if (allOffsetMatch) // Todos los offset de search machean, hacemos los reemplazos
+                if (allOffsetMatch) // All search offsets match, let's do the edits 
                 {
                     if (filter.Mode == FilterModes.SearchAndReplaceFromBegin || filter.Mode == FilterModes.SearchOcurrenceReplaceFromBegin)
                         foreach (KeyValuePair<int, byte> pair in filter.Replaces.TakeWhile(pair => pair.Key <= size - 1))
@@ -325,9 +325,9 @@ namespace OSPE
         private static bool FilterMeetConditions(Filter filter, UInt16 packetSize, FilterCaptureFuncs functionFlag)
         {
             if ((filter.Active) &&
-             (CheckIfBetweenLength(filter, packetSize)) && // El filtro tiene length y tiene que estar dentro del lengthMin y lengthMax
-             (filter.Functions.HasFlag(functionFlag)) && // Debe ser alguna de las funciones del filtro
-             (filter.Searches.Count == 0 || filter.Searches.Last().Key < packetSize)) // El ultimo offset se pasa del tamaño del packet
+             (CheckIfBetweenLength(filter, packetSize)) && // If the filter has length, it must be between lengthMin and lengthMax
+             (filter.Functions.HasFlag(functionFlag)) && // The packet's function flag must be actived in the filter
+             (filter.Searches.Count == 0 || filter.Searches.Last().Key < packetSize)) // Latest search offset position must be less than packet Size
                 return true;
             return false;
         }
@@ -343,19 +343,19 @@ namespace OSPE
                     bool shouldContinue = false;
                     foreach (KeyValuePair<int, byte> pair in filter.Searches)
                     {
-                        if (pair.Key + i > len-1) // El offset actual de search se pasa del len del packet, NO HAY MATCH
+                        if (pair.Key + i > len-1) // Next search offset position is greather than packet length, NO MATCH
                             return false;
-                        if (data[pair.Key+i]!=pair.Value) // Los datos del offset no coinciden
+                        if (data[pair.Key+i]!=pair.Value) // Offset data is different?
                         {
-                            shouldContinue = true; // Debemos continuar, hay q incrementar i y probar desde el siguiente valor de i
-                            break; // Break foreach, uno de los offsets no coincide, no hace falta ver los demas
+                            shouldContinue = true; // We must continue, increment i and try from the next value of i
+                            break; // Break foreach, one of the offsets are not equal, no need to check the rest
                         }
                     }
                     if (shouldContinue) continue;
                     pos = i;
                     return true;
                 }
-                return false; // No hubo coincidentas, tampoco se paso de len...
+                return false; // No matches, neither we past the len...
             }
             throw new IndexOutOfRangeException();
         }

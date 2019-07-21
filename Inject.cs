@@ -18,9 +18,8 @@
 
 using System; 
 using System.Diagnostics; 
-using System.Runtime.InteropServices; 
+using System.Runtime.InteropServices;
 
-//This is used to actually inject the specific DLL into the selected process 
 
 namespace OSPE
 { 
@@ -91,14 +90,14 @@ namespace OSPE
                     PAGE_NOACCESS = 0X01 
                 }
             } 
-        }        
+        }
 
         /// <summary>
-        /// Metodo para injectar una DLL, SOLO x86!
+        /// Injects a x86 or x64 DLL into the process
         /// </summary>
-        /// <param name="pToBeInjected">Process a injectar (obtenido con Process.GetProcesses() ) </param>
-        /// <param name="sDllPath">String que representa el path de la DLL a injectar</param>
-        /// <param name="sError">Parametro OUT tipo String con el error en caso que se produzca</param>
+        /// <param name="pToBeInjected">Process to be injected (obtained with Process.GetProcesses() ) </param>
+        /// <param name="sDllPath">Full path to the DLL to be injected</param>
+        /// <param name="sError">OUT parameter with an error string</param>
         /// <returns></returns>
         public static bool DoInject( 
             Process pToBeInjected, 

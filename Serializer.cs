@@ -26,7 +26,7 @@ namespace OSPE
     class Serializer
     {
         /// <summary>
-        /// Guarda la lista de Filtros en el directorio especificado
+        /// Saves the filter list in the specified directory
         /// </summary>
         /// <param name="filename"></param>
         /// <param name="filterList"></param>
@@ -48,7 +48,7 @@ namespace OSPE
         }
 
         /// <summary>
-        /// Este método guarda la lista en el directorio del ospe, es la lista actual que luego se carga cuando se inicia el programa
+        /// Saves the current filter list in the program's directory. This list is auto-loaded when program starts
         /// </summary>
         /// <param name="filterList"></param>
         public static void SerializeTempFilterList(List<FilterManager.Filter> filterList)
@@ -72,7 +72,7 @@ namespace OSPE
         }
 
         /// <summary>
-        /// Guarda la lista de Capturas en el directorio especificado
+        /// Saves the capture list in the specified directory
         /// </summary>
         /// <param name="filename"></param>
         /// <param name="captureList"></param>
@@ -94,7 +94,7 @@ namespace OSPE
         }
 
         /// <summary>
-        /// Guarda la lista Send en el directorio especificado
+        /// Saves the send list in the specified directory
         /// </summary>
         /// <param name="filename"></param>
         /// <param name="sendList"></param>

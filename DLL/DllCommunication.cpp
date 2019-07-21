@@ -24,7 +24,7 @@
 #include "Utils.h"
 
 //#define DBG_BLOCKPKT // para debuggear packets bloqueados
-#define DBG_SENDPACKETDATA // para debuggear data de los packets 
+//#define DBG_SENDPACKETDATA // para debuggear data de los packets 
 
 char readData[IPC_BLOCK_SIZE];
 
@@ -72,7 +72,7 @@ void SetInfo(SOCKET socket, Functions functionId, int length, PacketInfo* info)
 	info->size = length;
 }
 
-// Escribe el paquete en la MMF y luego retorna
+// This method writes the packet to the memory mapped file then returns
 void ProcessPacket(Functions functionId, char* &buffer, int &length, SOCKET socket, bool &blocked)
 {
 	char * name = (char*)malloc(IPC_MAX_NAME);
@@ -131,14 +131,14 @@ void ProcessPacket(Functions functionId, char* &buffer, int &length, SOCKET sock
 		else
 			blocked = true;
 
-	client.write(pBuff, sizeof(info) + length); // Envía el packet al ospe
+	client.write(pBuff, sizeof(info) + length); // Send the packet to ospe
 
 	if (breakpoint)
 	{
 		hMainThread = OpenThread(THREAD_ALL_ACCESS, FALSE, GetCurrentThreadId());
-		SuspendThread(hMainThread); // Suspendemos el thread hasta recibir los datos del ospe
+		SuspendThread(hMainThread); // Suspend thread until we receive new data from ospe
 		UINT16 newLength = 0; 
-		newLength = ((UINT8)readData[2] << 8) | ((UINT8)readData[1]); // Logitud del nuevo packet
+		newLength = ((UINT8)readData[2] << 8) | ((UINT8)readData[1]); // Set the length for the new packet
 		length = newLength;
 		buffer = (char *)malloc(length);
 		memcpy((void*)buffer, &readData[3], length); // read new data

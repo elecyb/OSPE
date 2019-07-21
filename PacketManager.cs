@@ -112,8 +112,8 @@ namespace OSPE
             }
 
             var functionFlag = FilterManager.GetFilterActionFlagForFunction(packetInfo.FunctionID);
-            var packetEdited = false;
 
+            // If a matching breakpoint type filter is active, we open a new window to edit the data
             if (IsFilteringActived && FilterManager.CheckPacketBreak(data, packetInfo.Size, functionFlag))
             {
                 var pckt = new Packet(packetInfo.FunctionID, packetInfo.SocketId, packetInfo.LocalIp, packetInfo.LocalPort, packetInfo.RemoteIp, packetInfo.RemotePort, data, direction);
@@ -123,16 +123,15 @@ namespace OSPE
                 {
                     data = showPacketForm.NewPacketData;
                     packetInfo.Size = showPacketForm.NewPacketSize;
-                    packetEdited = true;
                 }
-
+                // Send the new data to the DLL
                 DllCommunication.WriteCommandToCmdMMF(ServerCodes.SCODE_SETPACKET, data, packetInfo.Size);
             }
 
-            if (!IsCaptureEnabled)
+            if (!IsCaptureEnabled) // Capture disabled, return
                 return;
 
-            // No se logean las funciones, ips o puertos que no estan activadas en Settings
+            // Don't log Functions, Ips, or Ports that are not activated in the program's settings menu
             if (!LogFunctions.HasFlag(FilterManager.GetFilterActionFlagForFunction(packetInfo.FunctionID)))
                 return;
             if ((Settings.LocalIpChecked && packetInfo.LocalIp != (uint)Settings.LocalIp) ||
@@ -152,15 +151,13 @@ namespace OSPE
                 Program.mainForm.AddPacket(packet);
             }  
 
-            if (IsFilteringActived && (packetEdited || FilterManager.CheckPacketWatch(data, packetInfo.Size, functionFlag)))
+            if (IsFilteringActived && FilterManager.CheckPacketWatch(data, packetInfo.Size, functionFlag))
                 Watch.Add(ID);
-            // No se logean los packets ignored
+            // Don't log ignored packets
             if (IsFilteringActived && FilterManager.CheckPacketIgnore(data, packetInfo.Size, functionFlag))
                 return;
 
             Both.Add(ID);
-
-            //TODO: Ver si se agregan las tab Blocked y All
 
             switch (direction)
             {
@@ -172,9 +169,7 @@ namespace OSPE
                     break;
             }
             
-
             SmartRefresh();
-
         }
 
         private static void SmartRefresh(bool forced = false)
@@ -196,7 +191,7 @@ namespace OSPE
 
         private static void On_TimerElapsed(object sender, EventArgs e)
         {
-            // Si llegaron paquetes nuevos y pasaron mas de 500 milisegundos del anterior Refresh entonces hace Refresh.
+            // If new packets arrived and more than 500 ms from the last Refresh have passed then we do a Refresh.
             if (PacketList.Count > _lastPacketCount && (Environment.TickCount - _lastTableRefresh) > 500)
             {
                 Program.mainForm.UpdateLabels(PacketList.Count, TotalSizeReceived, TotalSizeSent);
@@ -210,10 +205,10 @@ namespace OSPE
         {
             lock (LockingVar)
             {
-                if (PacketList.Count == 0) // Lista vacia, nada que limpiar
+                if (PacketList.Count == 0) // Already clear
                     return; 
 
-                PacketList = new List<Packet>();  // So, let's rely on GC  :S
+                PacketList = new List<Packet>();
             }
             Both = new List<int>();
             Sent = new List<int>();

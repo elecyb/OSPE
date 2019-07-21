@@ -19,9 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
+
 
 namespace OSPE
 {
@@ -56,16 +54,6 @@ namespace OSPE
         public static void outError(string str, params object[] args)
         {
             LogForm.WriteLine("ERROR: " + String.Format(str, args), Color.Red);
-        }
-
-        /// <summary>
-        /// Metodo para alerta de errores usando MessageBox
-        /// </summary>
-        /// <param name="str">String formateado; Ej: "String and parameters {0} {1} {2}"</param>
-        /// <param name="args">Resto de la salida, los parametros que estan entre llaves {}</param>
-        public static void outMsgBox(string str, params object[] args)
-        {
-            MessageBox.Show(String.Format(str, args), "Output::outMsgBox");
         }
 
     }

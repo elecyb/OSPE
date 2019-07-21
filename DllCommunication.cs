@@ -76,7 +76,6 @@ namespace OSPE
         private static string _pktMmfName;
         private static int _pktMmfNodeCount = 50;
         private static int _pktMmfBufferSize = 32792;
-
         public static void StartPacketReaderMMF()
         {
             int nodeBufferSize = sizeof(byte) * _pktMmfBufferSize;
@@ -117,15 +116,14 @@ namespace OSPE
                     var piSize = Marshal.SizeOf(packetInfo);
                     var piData = new byte[piSize];
 
-                    // Lee los hSize bytes correspondientes al packetInfo
+                    // Reads the piSize bytes corresponding to the packetInfo
                     Buffer.BlockCopy(writtenData, 0, piData, 0, piSize);
 
-                    // Convierte los bytes al Struct (variable packetInfo)
+                    // Converts the bytes to a packetInfo
                     IntPtr ptr = Marshal.AllocHGlobal(piSize);
                     Marshal.Copy(piData, 0, ptr, piSize);
                     packetInfo = (PacketInfo)Marshal.PtrToStructure(ptr, packetInfo.GetType());
 
-                    // CONTENIDO  (datos de tamaño en header)
                     var cSize = packetInfo.Size;
                     var cData = new byte[cSize];
 
@@ -141,7 +139,7 @@ namespace OSPE
                 }
             };
 
-            // Inicia el thread reader
+            // Start reader thread
             ThreadPool.QueueUserWorkItem(o => { reader(); });
              
         }
@@ -151,7 +149,6 @@ namespace OSPE
 
         private static string _cmdMmfName;
         private static SharedMemory.CircularBuffer cmdMMF;
-
         public static void WriteCommandToCmdMMF(ServerCodes sc, byte[] data = null, UInt16 newLength = 0, ushort socketId = 0)
         {
             int mmfWriteTimeout = 1000;
@@ -225,20 +222,9 @@ namespace OSPE
                 cmdMMF = new SharedMemory.CircularBuffer(_cmdMmfName);
             else
             {
-                Output.outMsgBox("ERROR, MMF does not exists!"); // No esta el archivo
+                System.Windows.Forms.MessageBox.Show("ERROR, MMF does not exists!"); // No esta el archivo
                 return;
             }
-
-           /* try
-            {
-                MemoryMappedFile.OpenExisting("Global\\"+_cmdMmfName, MemoryMappedFileRights.FullControl,System.IO.HandleInheritability.None);
-            }
-            catch (FileNotFoundException)
-            {
-                Output.outMsgBox("FAIL, NO ENCUENTA EL MMF"); // No esta el archivo
-                return;
-            }
-            */
 
             //The number of milliseconds to wait, or Timeout.Infinite (-1) to wait indefinitely. 
             int amount = cmdMMF.Write(writtenData, 0, mmfWriteTimeout);
@@ -249,9 +235,6 @@ namespace OSPE
             //Output.outString("Write data: {0}", BitConverter.ToString(writtenData));
 
         }
-
-
-
 
 
     }

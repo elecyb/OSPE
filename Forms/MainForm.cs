@@ -49,6 +49,7 @@ namespace OSPE
             _captures = new List<CaptureRecord>();
             notifyIcon.ContextMenuStrip = trayMenuStrip;
             
+            // Load settings
             if( ! Settings.FormSize.IsEmpty)
             {
                 StartPosition = FormStartPosition.Manual;
@@ -61,8 +62,7 @@ namespace OSPE
                 if(Settings.LogOpened)
                     LogForm.Show();
 
-                if (Settings.LogEnabled)
-                    Output.LogEnabled = true;
+                Output.LogEnabled = Settings.LogEnabled;
 
                 _isViewAsHexOn = Settings.ViewAsHex;
                 _isAutoScrollOn = Settings.AutoScroll;
@@ -143,8 +143,6 @@ namespace OSPE
 
         private void frmMainClosed(object sender, EventArgs e)
         {
-       //     PipeServer.StopPipeServer();
-
             Settings.LogOpened = LogForm.Visible;
             Settings.ViewAsHex = tsmiViewAsHex.Checked;
             Settings.AutoScroll = tsmiAutoScroll.Checked;
@@ -178,7 +176,7 @@ namespace OSPE
 
         private void AddToCaptureList()
         {
-            // Guarda la captura si hay packets en la lista
+            // Save the capture if there are packets in the list
             if (PacketManager.IsModifiedList)
             {
                 CaptureRecord cr = new CaptureRecord(PacketManager.PacketList, PacketManager.Both, PacketManager.Sent,
@@ -243,9 +241,9 @@ namespace OSPE
             _isScriptActive = false;
         }
         /// <summary>
-        /// Checkea que exista la DLL para injectar, si no existe abre un FileDialog para buscarla
+        /// Check that there is a DLL to inject, if not exists, an open file dialog will open
         /// </summary>
-        /// <returns>Falso si no se eligio el archivo, True en caso contrario</returns>
+        /// <returns>False if no file is selected, True otherwise</returns>
         private bool CheckDllFile(bool ex = false)
         {
             var setting = ex ? Settings.DLLEx : Settings.DLL;
@@ -268,8 +266,7 @@ namespace OSPE
             return true;
         }
         /// <summary>
-        /// Injecta el ultimo proceso creado (mayor StartTime) que tenga el nombre del proceso ultimo injectado (usando Select Process)
-        /// Por ejemplo al abrir el iexplorer se crean 2 procesos iexplorer.exe, el que hay q injectar es el ultimo creado.
+        /// Injects the last process created (with higher StartTime) which has the same name of the latest injected process (using Select Process)
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -319,7 +316,7 @@ namespace OSPE
 
         #endregion
 
-        #region acciones de la interface
+        #region interface actions
 
         public void ActionExitProgram()
         {
@@ -535,7 +532,7 @@ namespace OSPE
 
         #region ToolStripMenu Items
 
-        // Menu principal -----------
+        // Main menu -----------
         private void tsmiProgram_Click(object sender, EventArgs e)
         {
             ActionMainOrTrayMenuOpen();
@@ -576,14 +573,6 @@ namespace OSPE
         {
             new CustomFilterForm().Show();
         }
-        private void tsmiClearList_Click(object sender, EventArgs e)
-        {
-            ActionClearPacketList();
-        }
-        private void tsmiFilterManager_Click(object sender, EventArgs e)
-        {
-            new FilterEditorForm();
-        }
         private void tsmiActiveFilters_CheckedChanged(object sender, EventArgs e)
         {
             ActionStartStopFiltering(!_isFiltering);
@@ -594,7 +583,7 @@ namespace OSPE
         }
         private void tsmiDisplayQuickBar_Click(object sender, EventArgs e)
         {
-            groupBox1.Visible = !groupBox1.Visible; // Todo: HORRIBLE!
+            groupBox1.Visible = !groupBox1.Visible;
         }
         private void tsmiActiveCustomFilters_CheckStateChanged(object sender, EventArgs e)
         {
@@ -729,14 +718,14 @@ namespace OSPE
         {
             lvFilters.Items.Clear();
             var filterList = FilterManager.GetFilterList();
-            lvFilters.ItemCheck -= lvFilters_ItemCheck; // desactiva el handler
+            lvFilters.ItemCheck -= lvFilters_ItemCheck;
             foreach (var filter in filterList)
             {
                 var item = lvFilters.Items.Add(filter.Name);
                 item.Checked = filter.Active;
 
             }
-            lvFilters.ItemCheck += lvFilters_ItemCheck; // activa nuevamente el handler
+            lvFilters.ItemCheck += lvFilters_ItemCheck;
         }
         private void cmsFilterList_Opening(object sender, CancelEventArgs e)
         {
@@ -794,20 +783,6 @@ namespace OSPE
         {
             ActionClearFilterList();
         }
-        private void tsmiFilterListShowHide_Click(object sender, EventArgs e)
-        {
-            if (splitContainerFiltersAndBody.Panel1MinSize > 0)
-            {
-                splitContainerFiltersAndBody.Panel1MinSize = 0;
-                splitContainerFiltersAndBody.SplitterDistance = 0;
-            }
-            else
-            {
-                splitContainerFiltersAndBody.Panel1MinSize = 120;
-                splitContainerFiltersAndBody.SplitterDistance = 120; // todo: usar valor del registro
-            }
-
-        }
 
         #endregion
 
@@ -817,14 +792,14 @@ namespace OSPE
         {
             lvSendList.Items.Clear();
             var sendList = SendManager.GetSendList();
-            lvSendList.ItemCheck -= lvSendList_ItemCheck; // desactiva el handler
+            lvSendList.ItemCheck -= lvSendList_ItemCheck;
             foreach (var sendItem in sendList)
             {
                 var item = lvSendList.Items.Add(sendItem.Name);
                 item.Checked = sendItem.Active;
 
             }
-            lvSendList.ItemCheck += lvSendList_ItemCheck; // activa nuevamente el handler
+            lvSendList.ItemCheck += lvSendList_ItemCheck;
         }
         private void cmsSendList_Opening(object sender, CancelEventArgs e)
         {

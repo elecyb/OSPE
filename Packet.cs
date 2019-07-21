@@ -105,16 +105,16 @@ namespace OSPE
         /// <summary>
         /// Coverts the buffer data to a hexadecimal representation.
         /// </summary>
-        /// <returns>String con los datos en hexadecimal.</returns>
+        /// <returns>A string with the data in hexadecimal.</returns>
         public string GetBufferAsHex()
         {
             return BitConverter.ToString(Data, 0, Size).Replace("-", " ");
         }
 
         /// <summary>
-        /// Coverts the buffer data to string.
+        /// Coverts the buffer data to a string representation.
         /// </summary>
-        /// <returns>String con los datos del buffer</returns>
+        /// <returns>A string with the data in ASCII</returns>
         public string GetBufferAsText()
         {
             char[] str2 = new char[Size + 1];

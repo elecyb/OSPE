@@ -54,7 +54,6 @@ namespace OSPE
         }
   
 
-
         #region Main Form Settings
 
         public static Point FormLocation
@@ -72,7 +71,6 @@ namespace OSPE
                 registry.SetValue("FormLocationY", value.Y);
             }
         }
-
         public static Size FormSize
         {
             get
@@ -88,49 +86,31 @@ namespace OSPE
                 registry.SetValue("FormSizeH", value.Height);
             }
         }
-
         public static FormWindowState FormState
         {
             get { return (FormWindowState) (registry.GetValue("FormState") ?? FormWindowState.Normal); }
             set { registry.SetValue("FormState", (int) value); }
         }
-
         public static int CurrentTab
         {
             get { return (int)(registry.GetValue("CurrentTab") ?? 2); }
             set { registry.SetValue("CurrentTab", value); }
         }
-
         public static int CurrentCaptureFilterTab
         {
             get { return (int)(registry.GetValue("CaptureFilterTab") ?? 2); }
             set { registry.SetValue("CaptureFilterTab", value); }
         }
-
         public static bool ViewAsHex
         {
             get { return 0 != (int)(registry.GetValue("ViewAsHex") ?? 0); }
             set { registry.SetValue("ViewAsHex", value ? 1 : 0); }
         }
-
-        public static bool FiltersActive
-        {
-            get { return 0 != (int)(registry.GetValue("FiltersActive") ?? 0); }
-            set { registry.SetValue("FiltersActive", value ? 1 : 0); }
-        }
-
-        public static bool FilterCustomActive
-        {
-            get { return 0 != (int)(registry.GetValue("FilterCustomActive") ?? 0); }
-            set { registry.SetValue("FilterCustomActive", value ? 1 : 0); }
-        }
-
         public static bool AutoScroll
         {
             get { return 0 != (int)(registry.GetValue("AutoScroll") ?? 0); }
             set { registry.SetValue("AutoScroll", value ? 1 : 0); }
         }
-
         public static int SpliterDistanceTabsAndHex
         {
             get { return (int)(registry.GetValue("SpliterDistanceTabsAndHex") ?? 360); }
@@ -170,6 +150,7 @@ namespace OSPE
             get { return (int)(registry.GetValue("colSize") ?? 60); }
             set { registry.SetValue("colSize", value); }
         }
+        
         #endregion
 
         #region Form Log Settings
@@ -179,13 +160,11 @@ namespace OSPE
             get { return 0 != (int)(registry.GetValue("LogOpened") ?? 0); }
             set { registry.SetValue("LogOpened", value ? 1 : 0); }
         }
-
         public static bool LogEnabled
         {
             get { return 0 != (int)(registry.GetValue("LogEnabled") ?? 0); }
             set { registry.SetValue("LogEnabled", value ? 1 : 0); }
         }
-        
         public static Point LogLocation
         {
             get
@@ -201,7 +180,6 @@ namespace OSPE
                 registry.SetValue("LogLocationY", value.Y);
             }
         }
-
         public static Size LogSize
         {
             get
@@ -217,7 +195,6 @@ namespace OSPE
                 registry.SetValue("LogSizeH", value.Height - 10);
             }
         }
-
         public static FormWindowState LogState
         {
             get { return (FormWindowState) (registry.GetValue("LogState") ?? FormWindowState.Normal); }
@@ -243,25 +220,21 @@ namespace OSPE
                     registry.SetValue("DLLx86", value);
             }
         }
-
         public static string DLLEx
         {
             get { return (string)(registry.GetValue("DLLEx") ?? ""); }
             set { registry.SetValue("DLLEx", value); }
         }
-
         public static string LastProcessInjected
         {
             get { return (string)(registry.GetValue("LastProcessInjected") ?? ""); }
             set { registry.SetValue("LastProcessInjected", value); }
         }
-
         public static int SelectProcessViewMode
         {
             get { return (int) (registry.GetValue("SelectProcessViewMode") ?? 16); }
             set { registry.SetValue("SelectProcessViewMode", value); }
         }
-
         public static Point FormSelectProcessLocation
         {
             get
@@ -277,7 +250,6 @@ namespace OSPE
                 registry.SetValue("FormSelectProcessLocationY", value.Y);
             }
         }
-
         public static Size FormSelectProcessSize
         {
             get
@@ -293,13 +265,11 @@ namespace OSPE
                 registry.SetValue("FormSelectProcessH", value.Height);
             }
         }
-
         public static int colName
         {
             get { return (int)(registry.GetValue("colName") ?? 100); }
             set { registry.SetValue("colName", value); }
         }
-
         public static int colPID
         {
             get { return (int)(registry.GetValue("colPID") ?? 60); }
@@ -355,13 +325,11 @@ namespace OSPE
             get { return (int)(registry.GetValue("HotKeyInjectLast") ?? 0); }
             set { if (value != -1) registry.SetValue("HotKeyInjectLast", value); }
         }
-
         public static int LogFunctions
         {
             get { return (int)(registry.GetValue("LogFunctions") ?? 4095); }
             set { registry.SetValue("LogFunctions", value); }
         }
-
         public static bool LocalIpChecked
         {
             get { return 0 != (int)(registry.GetValue("LocalIpChecked") ?? 0); }

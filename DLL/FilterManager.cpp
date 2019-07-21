@@ -36,8 +36,8 @@ void CovertBytesToFilterList(char * readData)
 	| ---------------------------------------- filterData ------------------------------------------------------------------------------------------------------|
 	*/
 	// Maximo 50 filtros
-	filterCount = readData[1];
-	int pos = 2; // el byte 0 era el ServerCode y el 1 al filtercount
+	filterCount = readData[1]; // byte 0 is for ServerCode and the byte 1 is for FilterCount
+	int pos = 2;
 	for (int i = 0; i < filterCount; i++) {
 		_filterList[i].Active = readData[pos]; // enabled
 		_filterList[i].Mode = (FilterModes)readData[pos + 1]; // Mode
@@ -75,9 +75,9 @@ bool CheckIfBetweenLength(Filter f, UINT16 pSize)
 bool FilterMeetConditions(Filter filter, UINT16 packetSize, FilterCaptureFuncs functionFlag)
 {
 	if ((filter.Active) &&
-		(CheckIfBetweenLength(filter, packetSize)) && // El filtro tiene length y tiene que estar dentro del lengthMin y lengthMax
-		((filter.Functions&(functionFlag)) != 0) && // Debe ser alguna de las funciones del filtro
-		(filter.searches.size() == 0 || filter.searches.crbegin()->first < packetSize)) // El ultimo offset se pasa del tamaño del packet
+		(CheckIfBetweenLength(filter, packetSize)) && // If the filter has length, it must be between lengthMin and lengthMax
+		((filter.Functions&(functionFlag)) != 0) && // The packet's function flag must be actived in the filter
+		(filter.searches.size() == 0 || filter.searches.crbegin()->first < packetSize)) // Latest search offset position must be less than packet Size
 		return true;
 	return false;
 }
@@ -100,61 +100,21 @@ bool AllSearchOffsetMatch(char * data, UINT16 len, Filter filter, int * pos)
 			bool shouldContinue = false;
 			for (auto rit = filter.searches.begin(); rit != filter.searches.end(); ++rit)
 			{
-				if (rit->first + i > len - 1) // El offset actual de search se pasa del len del packet, NO HAY MATCH
+				if (rit->first + i > len - 1) // Next search offset position is greather than packet length, NO MATCH
 					return false;
-				if (data[rit->first + i] != rit->second) // Los datos del offset no coinciden
+				if (data[rit->first + i] != rit->second) // Offset data is different?
 				{
-					shouldContinue = true; // Debemos continuar, hay q incrementar i y probar desde el siguiente valor de i
-					break; // Break foreach, uno de los offsets no coincide, no hace falta ver los demas
+					shouldContinue = true; // We must continue, increment i and try from the next value of i
+					break; // Break foreach, one of the offsets are not equal, no need to check the rest
 				}
 			}
 			if (shouldContinue) continue;
 			(*pos) = i;
 			return true;
 		}
-		return false; // No hubo coincidentas, tampoco se paso de len...
+		return false; // No matches, neither we past the len...
 	}
 	throw;
-}
-
-bool CheckBlockIgnoreWatchBreak(char * data, UINT16 size, FilterCaptureFuncs functionFlag, FilterActions checkType)
-{
-
-	for (int i = 0; i<filterCount; i++)
-	{
-		Filter filter = _filterList[i];
-		switch (checkType)
-		{
-			case FilterActions::Block:
-				if (!(filter.Actions & FilterActions::Block))
-					continue;
-				break;
-			case FilterActions::Ignore:
-				if (!(filter.Actions & FilterActions::Ignore))
-					continue;
-				break;
-			case FilterActions::Watch:
-				if (!(filter.Actions & FilterActions::Watch))
-					continue;
-				break;
-			case FilterActions::Break:
-				if (!(filter.Actions & FilterActions::Break))
-					continue;
-				break;
-			default:
-				throw;
-		}
-		if (filter.searches.size() == 0) // Filtro sin search? No vamos a blockear, watchear o ignorar todoo...
-			continue;
-		if (!FilterMeetConditions(filter, size, functionFlag))
-			continue;
-		int pos = 0;
-		bool allOffsetMatch = AllSearchOffsetMatch(data, size, filter, &pos);
-		if (allOffsetMatch)
-			return true; // Todos los offset de search machean con el valor en data, la accion del filtro se aplica
-	}
-
-	return false;
 }
 
 bool DoFilteringForPacket(char * data, UINT16 size, FilterCaptureFuncs functionFlag)
@@ -163,13 +123,13 @@ bool DoFilteringForPacket(char * data, UINT16 size, FilterCaptureFuncs functionF
 	for (int i = 0; i<filterCount; i++)
 	{
 		Filter filter = _filterList[i];
-		if (filter.replaces.size() == 0) // Nada que filtrar
+		if (filter.replaces.size() == 0) // Nothing to filer
 			continue;
 		if (!FilterMeetConditions(filter, size, functionFlag))
 			continue;
 		int pos = 0;
 		bool allOffsetMatch = AllSearchOffsetMatch(data, size, filter, &pos);
-		if (allOffsetMatch) // Todos los offset de search machean, hacemos los reemplazos
+		if (allOffsetMatch) // All search offsets match, let's do the edits 
 		{
 			if (filter.Mode == FilterModes::SearchAndReplaceFromBegin || filter.Mode == FilterModes::SearchOcurrenceReplaceFromBegin)
 				for (auto rit = filter.replaces.begin(); rit != filter.replaces.end() && rit->first <= size; ++rit)
@@ -188,6 +148,46 @@ bool DoFilteringForPacket(char * data, UINT16 size, FilterCaptureFuncs functionF
 	return dataModified;
 }
 
+bool CheckBlockIgnoreWatchBreak(char* data, UINT16 size, FilterCaptureFuncs functionFlag, FilterActions checkType)
+{
+
+    for (int i = 0; i < filterCount; i++)
+    {
+        Filter filter = _filterList[i];
+        switch (checkType)
+        {
+        case FilterActions::Block:
+            if (!(filter.Actions & FilterActions::Block))
+                continue;
+            break;
+        case FilterActions::Ignore:
+            if (!(filter.Actions & FilterActions::Ignore))
+                continue;
+            break;
+        case FilterActions::Watch:
+            if (!(filter.Actions & FilterActions::Watch))
+                continue;
+            break;
+        case FilterActions::Break:
+            if (!(filter.Actions & FilterActions::Break))
+                continue;
+            break;
+        default:
+            throw;
+        }
+        if (filter.searches.size() == 0) // Filter without search? Skip to next..
+            continue;
+        if (!FilterMeetConditions(filter, size, functionFlag))
+            continue;
+        int pos = 0;
+        bool allOffsetMatch = AllSearchOffsetMatch(data, size, filter, &pos);
+        if (allOffsetMatch)
+            return true; // All search offsets match with the corresponding offsets in data buffer, filter action will be applied
+    }
+
+    return false;
+}
+
 bool CheckPacketBlock(char * data, UINT16 size, FilterCaptureFuncs functionFlag)
 {
 	for (int i = 0; i<filterCount; i++)
@@ -196,14 +196,14 @@ bool CheckPacketBlock(char * data, UINT16 size, FilterCaptureFuncs functionFlag)
 		if (!(filter.Actions & FilterActions::Block))
 			continue;
 
-		if (filter.searches.size() == 0) // Filtro sin search? No vamos a blockear, watchear o ignorar todoo...
+		if (filter.searches.size() == 0) // Filter without search? Skip to next..
 			continue;
 		if (!FilterMeetConditions(filter, size, functionFlag))
 			continue;
 		int pos = 0;
 		bool allOffsetMatch = AllSearchOffsetMatch(data, size, filter, &pos);
 		if (allOffsetMatch)
-			return true; // Todos los offset de search machean con el valor en data, la accion del filtro se aplica
+			return true; // All search offsets match with the corresponding offsets in data buffer, filter action will be applied
 	}
 
 	return false;
@@ -222,7 +222,7 @@ bool CheckPacketBreak(char * data, UINT16 size, FilterCaptureFuncs functionFlag)
 		int pos = 0;
 		bool allOffsetMatch = AllSearchOffsetMatch(data, size, filter, &pos);
 		if (allOffsetMatch)
-			return true; // Todos los offset de search machean con el valor en data, la accion del filtro se aplica
+			return true; // All search offsets match with the corresponding offsets in data buffer, filter action will be applied
 	}
 
 	return false;
