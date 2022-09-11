@@ -43,8 +43,9 @@ Attacking targets without prior mutual consent is illegal. The author is not res
 1) Compile the main program and the DLL. 
 2) Start the program.
 3) Select a process
-4) A new dialog will open for the location of the DLL to be injected.
-5) Select the x86 or x64 dll and then start a capture.
+4) Hey i am contacting you, because your programm look strong but when i try top open an application i got error : "MMF doesn't exist"
+5) A new dialog will open for the location of the DLL to be injected.
+6) Select the x86 or x64 dll and then start a capture.
 
 ## Screenshots
 
